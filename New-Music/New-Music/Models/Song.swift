@@ -7,7 +7,10 @@
 
 import Foundation
 
-struct Song: Codable {
+struct Song: Codable, Hashable, SearchResults {
+    
+    var searchType: String = SearchType.song.rawValue
+    
     let songName: String
     let playID: String
     let kind: String
@@ -36,7 +39,7 @@ struct Song: Codable {
         self.albumName = try container.decode(String.self, forKey: .albumName)
         self.playID = try playParamsContainer.decode(String.self, forKey: .id)
         self.kind = try playParamsContainer.decode(String.self, forKey: .kind)
-        let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "300").replacingOccurrences(of: "{h}", with: "300")
+        let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "80").replacingOccurrences(of: "{h}", with: "80")
         self.imageURL = URL(string: stringURL)!
     }
 }

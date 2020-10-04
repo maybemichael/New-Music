@@ -26,7 +26,8 @@ enum NetworkError: Error {
 
 class MusicController {
     
-    var authController: AuthController?
+    var authController: AuthController
+    static let shared = MusicController(auth: AuthController())
     let baseURL = URL(string: "https://api.music.apple.com/v1/catalog")!
     static let player = MPMusicPlayerController.applicationMusicPlayer
     var songs = [Song]()
@@ -48,8 +49,8 @@ class MusicController {
         print("Request URL: \(requestURL)")
         var request = URLRequest(url: requestURL)
         request.httpMethod = HTTPMethod.get.rawValue
-        request.setValue("Bearer \(authController!.developerToken)", forHTTPHeaderField: "Authorization")
-        request.setValue(authController?.userToken, forHTTPHeaderField: "Music-User-Token")
+        request.setValue("Bearer \(authController.developerToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(authController.userToken, forHTTPHeaderField: "Music-User-Token")
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let networkError = NetworkError(data: data, response: response, error: error) {
@@ -59,11 +60,14 @@ class MusicController {
             
             do {
                 let jsonResults = try JSONSerialization.jsonObject(with: data!, options: []) as! Dictionary<String, Any>
-                let results = Results(dictionary: jsonResults)?.songs
-                let songData = try JSONSerialization.data(withJSONObject: results!, options: [])
-                let songs = try JSONDecoder().decode([Song].self, from: songData)
-                self.songs = songs
-                completion(.success(true))
+                if let results = Results(dictionary: jsonResults)?.songs {
+                    
+                    let songData = try JSONSerialization.data(withJSONObject: results, options: [])
+                    let songs = try JSONDecoder().decode([Song].self, from: songData)
+                    self.songs = songs
+                    print("Songs count: \(self.songs.count)")
+                    completion(.success(true))
+                }
             } catch {
                 print("Error pasing json data \(error)")
                 completion(.failure(.decodingError(error)))
@@ -72,25 +76,25 @@ class MusicController {
         }.resume()
     }
     
-    func fetchImage(url: URL, completion: @escaping (Result<Bool, NetworkError>) -> Void) {
+    func fetchImage(url: URL, completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let networkError = NetworkError(data: data, response: nil, error: error) {
                 print("Some error: \(networkError)")
                 completion(.failure(networkError))
                 return
             }
-            completion(.success(true))
+            
+            let image = UIImage(data: data!)
+            completion(.success(image))
         }.resume()
     }
     
     
-    init(auth: AuthController) {
+    private init(auth: AuthController) {
         self.authController = auth
-        self.authController?.requestAppleMusicAccess()
-        self.authController?.getUsersStoreFrontID { _ in
-            self.searchForSongWith("Whats Poppin") { _ in
-                
-            }
+        self.authController.requestAppleMusicAccess()
+        self.authController.getUsersStoreFrontID { _ in
+            
         }
     }
 }

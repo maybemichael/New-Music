@@ -7,21 +7,20 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        
-    }
+class SearchViewController: UIViewController {
     
-
-    let musicController = MusicController(auth: AuthController())
-    let searchChildVC = SearchChildViewController()
+    var collectionView: UICollectionView!
     let searchController = UISearchController(searchResultsController: nil)
+    typealias SearchDataSource = UICollectionViewDiffableDataSource<Int, Song>
+    typealias SongsSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
+    var dataSource: SearchDataSource?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setUpViews()
-        setUpChildren()
+        configureCollectionView()
+        createDataSource()
     }
     
     private func setUpViews() {
@@ -30,22 +29,71 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search Albums, Artists, or Songs"
         searchController.searchBar.barStyle = .black
+        searchController.searchBar.delegate = self
+        searchController.searchBar.sizeToFit()
         navigationItem.searchController = searchController
         self.navigationController?.navigationBar.barTintColor = .systemGray6
         navigationController?.navigationBar.topItem?.title = "Search"
-        let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
-        navBar.barStyle = .black
     }
     
-    private func setUpChildren() {
-        let children = [searchChildVC]
-        children.forEach {
-            addChild($0)
-            view.addSubview($0.view)
-            $0.didMove(toParent: self)
-        }
-        searchChildVC.view.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, padding: .zero)
-        searchChildVC.view.backgroundColor = .backgroundColor
+    private func configureCollectionView() {
+        collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createCompLayout())
+        collectionView.register(SongsCollectionViewCell.self, forCellWithReuseIdentifier: SongsCollectionViewCell.identifier)
+        view.addSubview(collectionView)
+        collectionView.backgroundColor = .clear
+        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor)
+        
     }
-
+    
+    func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with song: Song, for indexPath: IndexPath) -> T {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.identifier, for: indexPath) as? T else {
+            fatalError("Unable to dequeue cell: \(cellType)")
+        }
+        let song = MusicController.shared.songs[indexPath.item]
+        cell.configure(with: song)
+        return cell
+    }
+    
+    func createDataSource() {
+        dataSource = SearchDataSource(collectionView: collectionView) { collectionView, indexPath, song in
+            self.configure(SongsCollectionViewCell.self, with: song, for: indexPath)
+        }
+    }
+    
+    func reloadData() {
+        var snapshot = SongsSnapshot()
+        snapshot.appendSections([0])
+        snapshot.appendItems(MusicController.shared.songs)
+        dataSource?.apply(snapshot)
+    }
+    
+    func createSongsSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.14))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 8, bottom: 0, trailing: 8)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.97), heightDimension: .fractionalHeight(1.0))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        return layoutSection
+    }
+    
+    func createCompLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+            return self.createSongsSection()
+        }
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.interSectionSpacing = 8
+        layout.configuration = config
+        return layout
+    }
+    
+    private func createLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        return layout
+    }
 }
