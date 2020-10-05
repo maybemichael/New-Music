@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4C0FD8D2252A6A79003AA808 /* SearchVC+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8D1252A6A79003AA808 /* SearchVC+UISearchBarDelegate.swift */; };
+		4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8DC252AB79E003AA808 /* MusicController.swift */; };
+		4C0FD8E2252ADFC1003AA808 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */; };
+		4C0FD8E7252AF62E003AA808 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E6252AF62E003AA808 /* Colors.swift */; };
 		4C646B0225296B8300B05D8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B0125296B8300B05D8A /* AppDelegate.swift */; };
 		4C646B0425296B8300B05D8A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B0325296B8300B05D8A /* SceneDelegate.swift */; };
 		4C646B0925296B8300B05D8A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C646B0725296B8300B05D8A /* Main.storyboard */; };
@@ -18,7 +21,7 @@
 		4C646B3625296BE500B05D8A /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B3525296BE500B05D8A /* MainCoordinator.swift */; };
 		4C646B4325296C8A00B05D8A /* UIView+Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B4225296C8A00B05D8A /* UIView+Constraints.swift */; };
 		4C646B4B25296CCA00B05D8A /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B4A25296CCA00B05D8A /* AuthController.swift */; };
-		4C646B5025296CFB00B05D8A /* MusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B4F25296CFB00B05D8A /* MusicController.swift */; };
+		4C646B5025296CFB00B05D8A /* APIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B4F25296CFB00B05D8A /* APIController.swift */; };
 		4C646B5525296D2400B05D8A /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B5425296D2400B05D8A /* Results.swift */; };
 		4C646B5A25296D4100B05D8A /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B5925296D4100B05D8A /* Song.swift */; };
 		4C646B5F25296D7A00B05D8A /* NetworkError+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B5E25296D7A00B05D8A /* NetworkError+Init.swift */; };
@@ -52,6 +55,9 @@
 
 /* Begin PBXFileReference section */
 		4C0FD8D1252A6A79003AA808 /* SearchVC+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchVC+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
+		4C0FD8DC252AB79E003AA808 /* MusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicController.swift; sourceTree = "<group>"; };
+		4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		4C0FD8E6252AF62E003AA808 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		4C646AFE25296B8300B05D8A /* New-Music.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "New-Music.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C646B0125296B8300B05D8A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4C646B0325296B8300B05D8A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -68,7 +74,7 @@
 		4C646B3525296BE500B05D8A /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		4C646B4225296C8A00B05D8A /* UIView+Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Constraints.swift"; sourceTree = "<group>"; };
 		4C646B4A25296CCA00B05D8A /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
-		4C646B4F25296CFB00B05D8A /* MusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicController.swift; sourceTree = "<group>"; };
+		4C646B4F25296CFB00B05D8A /* APIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIController.swift; sourceTree = "<group>"; };
 		4C646B5425296D2400B05D8A /* Results.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		4C646B5925296D4100B05D8A /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		4C646B5E25296D7A00B05D8A /* NetworkError+Init.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkError+Init.swift"; sourceTree = "<group>"; };
@@ -184,7 +190,8 @@
 			isa = PBXGroup;
 			children = (
 				4C646B4A25296CCA00B05D8A /* AuthController.swift */,
-				4C646B4F25296CFB00B05D8A /* MusicController.swift */,
+				4C646B4F25296CFB00B05D8A /* APIController.swift */,
+				4C0FD8DC252AB79E003AA808 /* MusicController.swift */,
 			);
 			path = ModelControllers;
 			sourceTree = "<group>";
@@ -195,6 +202,7 @@
 				4C646B862529725800B05D8A /* SongsCollectionViewCell.swift */,
 				4C646B8B2529726600B05D8A /* AlbumsCollectionViewCell.swift */,
 				4C646B902529727200B05D8A /* ArtistCollectionViewCell.swift */,
+				4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -217,6 +225,7 @@
 				4C646B8125296FB400B05D8A /* UIColors.swift */,
 				4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */,
 				4C0FD8D1252A6A79003AA808 /* SearchVC+UISearchBarDelegate.swift */,
+				4C0FD8E6252AF62E003AA808 /* Colors.swift */,
 			);
 			path = "Helpers+Extensions";
 			sourceTree = "<group>";
@@ -363,6 +372,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C646B5A25296D4100B05D8A /* Song.swift in Sources */,
+				4C0FD8E7252AF62E003AA808 /* Colors.swift in Sources */,
+				4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */,
 				4C646B9B2529769900B05D8A /* SelfConfiguringCell.swift in Sources */,
 				4C646B4B25296CCA00B05D8A /* AuthController.swift in Sources */,
 				4C646B5525296D2400B05D8A /* Results.swift in Sources */,
@@ -373,10 +384,11 @@
 				4C646B4325296C8A00B05D8A /* UIView+Constraints.swift in Sources */,
 				4C646B962529759000B05D8A /* Section.swift in Sources */,
 				4C646B912529727200B05D8A /* ArtistCollectionViewCell.swift in Sources */,
+				4C0FD8E2252ADFC1003AA808 /* NowPlayingView.swift in Sources */,
 				4C0FD8D2252A6A79003AA808 /* SearchVC+UISearchBarDelegate.swift in Sources */,
 				4C646B872529725800B05D8A /* SongsCollectionViewCell.swift in Sources */,
 				4C646B6925296DF900B05D8A /* SearchViewController.swift in Sources */,
-				4C646B5025296CFB00B05D8A /* MusicController.swift in Sources */,
+				4C646B5025296CFB00B05D8A /* APIController.swift in Sources */,
 				4C646B0225296B8300B05D8A /* AppDelegate.swift in Sources */,
 				4C646B6425296DCA00B05D8A /* NowPlayingViewController.swift in Sources */,
 				4C646B0425296B8300B05D8A /* SceneDelegate.swift in Sources */,

@@ -10,10 +10,14 @@ import UIKit
 class PlaylistViewController: UIViewController {
 
     var musicController: MusicController?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .backgroundColor
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
     }
 }

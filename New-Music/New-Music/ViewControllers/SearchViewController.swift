@@ -7,13 +7,17 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+class SearchViewController: UIViewController, SongsCellDelegate {
+    
+    
     
     var collectionView: UICollectionView!
     let searchController = UISearchController(searchResultsController: nil)
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Int, Song>
     typealias SongsSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
     var dataSource: SearchDataSource?
+    
+    var musicController: MusicController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,15 +46,15 @@ class SearchViewController: UIViewController {
         view.addSubview(collectionView)
         collectionView.backgroundColor = .clear
         collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor)
-        
     }
     
     func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with song: Song, for indexPath: IndexPath) -> T {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.identifier, for: indexPath) as? T else {
+        guard var cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.identifier, for: indexPath) as? T else {
             fatalError("Unable to dequeue cell: \(cellType)")
         }
-        let song = MusicController.shared.songs[indexPath.item]
+        let song = APIController.shared.searchedSongs[indexPath.item]
         cell.configure(with: song)
+        cell.delegate = self
         return cell
     }
     
@@ -63,15 +67,15 @@ class SearchViewController: UIViewController {
     func reloadData() {
         var snapshot = SongsSnapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(MusicController.shared.songs)
+        snapshot.appendItems(APIController.shared.searchedSongs)
         dataSource?.apply(snapshot)
     }
     
     func createSongsSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.14))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 8, bottom: 0, trailing: 8)
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.97), heightDimension: .fractionalHeight(1.0))
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 0, trailing: 12)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.95), heightDimension: .absolute(UIScreen.main.bounds.width / 4.5))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         return layoutSection
@@ -95,5 +99,9 @@ class SearchViewController: UIViewController {
         let section = NSCollectionLayoutSection(group: group)
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
+    }
+    func addSongTapped(cell: SongsCollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        musicController?.addSongToPlaylist(indexPath: indexPath)
     }
 }

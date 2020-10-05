@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol SongsCellDelegate: AnyObject {
+    func addSongTapped(cell: SongsCollectionViewCell)
+}
+
 class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     static let identifier = "SongCell"
     
@@ -14,11 +18,12 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     let songTitle = UILabel()
     let imageView = UIImageView()
     let addButton = UIButton(type: .custom)
+    weak var delegate: SongsCellDelegate?
     
     func configure(with song: Song) {
         artist.text = song.artistName
         songTitle.text = song.songName
-        MusicController.shared.fetchImage(url: song.imageURL) { result in
+        APIController.shared.fetchImage(url: song.imageURL) { result in
             switch result {
             case .success(let image):
                 DispatchQueue.main.async {
@@ -49,6 +54,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         songTitle.numberOfLines = 0
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
+        imageView.setSize(width: UIScreen.main.bounds.width / 5, height: UIScreen.main.bounds.width / 5)
         addButton.setImage(UIImage(systemName: "plus"), for: .normal)
         imageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         addButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -60,6 +66,11 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         outerStackView.spacing = 10
         contentView.addSubview(outerStackView)
         outerStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor)
-        
+        addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
+    }
+    
+    @objc func addSong(_ sender: UIButton) {
+        delegate?.addSongTapped(cell: self)
+        addButton.setImage(UIImage(), for: .normal)
     }
 }

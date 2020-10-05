@@ -9,6 +9,6 @@ import Foundation
 
 protocol SelfConfiguringCell {
     static var identifier: String { get }
-    
+    var delegate: SongsCellDelegate? { get set }
     func configure(with song: Song)
 }

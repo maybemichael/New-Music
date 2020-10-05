@@ -13,10 +13,11 @@ protocol Coordinator: AnyObject {
 
 class MainCoordinator {
     private var window: UIWindow
-    private var listenVC = NowPlayingViewController()
+    private var nowPlayingVC = NowPlayingViewController()
     private var tabBarController = UITabBarController()
     private var playlistVC = PlaylistViewController()
     private var navController = UINavigationController(rootViewController: SearchViewController())
+    private var musicController = MusicController()
     var coordinator: Coordinator?
     
     init(window: UIWindow) {
@@ -25,6 +26,7 @@ class MainCoordinator {
     
     func start() {
         setUpAppNavViews()
+        passMusicController()
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
@@ -33,10 +35,18 @@ class MainCoordinator {
         navController.navigationBar.barStyle = .black
         navController.navigationBar.prefersLargeTitles = true
         navController.navigationBar.barTintColor = .backgroundColor
-        tabBarController.setViewControllers([navController, listenVC, playlistVC], animated: false)
+        tabBarController.setViewControllers([navController, nowPlayingVC, playlistVC], animated: false)
         tabBarController.tabBar.barTintColor = .backgroundColor
-        listenVC.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
+        nowPlayingVC.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
         navController.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
         playlistVC.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "heart.fill"), tag: 2)
+    }
+    private func passMusicController() {
+        nowPlayingVC.musicController = musicController
+        playlistVC.musicController = musicController
+        if let searchVC = navController.topViewController as? SearchViewController {
+            searchVC.musicController = musicController
+            
+        }
     }
 }
