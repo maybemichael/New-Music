@@ -40,7 +40,10 @@ class MainCoordinator {
         nowPlayingVC.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
         navController.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
         playlistVC.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "heart.fill"), tag: 2)
+//        tabBarController.tabBar.unselectedItemTintColor = .white
+        tabBarController.tabBar.tintColor = .white
     }
+    
     private func passMusicController() {
         nowPlayingVC.musicController = musicController
         playlistVC.musicController = musicController

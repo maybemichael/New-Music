@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Song: Codable, Hashable, SearchResults {
     
@@ -18,6 +19,7 @@ struct Song: Codable, Hashable, SearchResults {
     let artistName: String
     let imageURL: URL
     var isAdded: Bool = false
+    var albumArtwork: Data?
     
     enum SongKeys: String, CodingKey {
         case name
@@ -40,7 +42,7 @@ struct Song: Codable, Hashable, SearchResults {
         self.albumName = try container.decode(String.self, forKey: .albumName)
         self.playID = try playParamsContainer.decode(String.self, forKey: .id)
         self.kind = try playParamsContainer.decode(String.self, forKey: .kind)
-        let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "2000").replacingOccurrences(of: "{h}", with: "2000")
+        let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "1500").replacingOccurrences(of: "{h}", with: "1500")
         self.imageURL = URL(string: stringURL)!
     }
 }
