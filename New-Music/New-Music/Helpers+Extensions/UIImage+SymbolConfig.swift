@@ -9,5 +9,6 @@ import UIKit
 
 extension UIImage.SymbolConfiguration {
     static var addSongConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
-    static var musicControlConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+    static var trackButtons = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+    static let playButton = UIImage.SymbolConfiguration(pointSize: 25, weight: .black)
 }

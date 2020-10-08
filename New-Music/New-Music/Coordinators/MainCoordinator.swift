@@ -26,7 +26,7 @@ class MainCoordinator {
     
     func start() {
         setUpAppNavViews()
-        passMusicController()
+//        passDependencies()
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
@@ -44,12 +44,12 @@ class MainCoordinator {
         tabBarController.tabBar.tintColor = .white
     }
     
-    private func passMusicController() {
-        nowPlayingVC.musicController = musicController
-        playlistVC.musicController = musicController
-        if let searchVC = navController.topViewController as? SearchViewController {
-            searchVC.musicController = musicController
-            
-        }
+    private func passDependencies() {
+//        nowPlayingVC.musicController = musicController
+//        playlistVC.musicController = musicController
+//        if let searchVC = navController.topViewController as? SearchViewController {
+//            searchVC.musicController = musicController
+//            
+//        }
     }
 }

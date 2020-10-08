@@ -45,4 +45,13 @@ struct Song: Codable, Hashable, SearchResults {
         let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "1500").replacingOccurrences(of: "{h}", with: "1500")
         self.imageURL = URL(string: stringURL)!
     }
+    
+    init(songName: String, artistName: String, imageURL: URL) {
+        self.songName = songName
+        self.artistName = artistName
+        self.imageURL = imageURL
+        self.playID = ""
+        self.kind = ""
+        self.albumName = ""
+    }
 }

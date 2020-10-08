@@ -46,6 +46,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         view.addSubview(collectionView)
         collectionView.backgroundColor = .clear
         collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor)
+        collectionView.showsVerticalScrollIndicator = false
     }
     
     func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with song: Song, for indexPath: IndexPath) -> T {
@@ -102,6 +103,5 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     }
     func addSongTapped(cell: SongsCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
-        musicController?.addSongToPlaylist(indexPath: indexPath)
     }
 }

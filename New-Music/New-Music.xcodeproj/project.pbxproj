@@ -37,6 +37,7 @@
 		4C646B912529727200B05D8A /* ArtistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B902529727200B05D8A /* ArtistCollectionViewCell.swift */; };
 		4C646B962529759000B05D8A /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B952529759000B05D8A /* Section.swift */; };
 		4C646B9B2529769900B05D8A /* SelfConfiguringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */; };
+		4C87CE8C252DB578001B9935 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C87CE8B252DB578001B9935 /* Notifications.swift */; };
 		4C92A442252C5C1100376FCD /* LinearGradient+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C92A441252C5C1100376FCD /* LinearGradient+Init.swift */; };
 /* End PBXBuildFile section */
 
@@ -94,6 +95,7 @@
 		4C646B902529727200B05D8A /* ArtistCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCollectionViewCell.swift; sourceTree = "<group>"; };
 		4C646B952529759000B05D8A /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfConfiguringCell.swift; sourceTree = "<group>"; };
+		4C87CE8B252DB578001B9935 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		4C92A441252C5C1100376FCD /* LinearGradient+Init.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LinearGradient+Init.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -238,6 +240,7 @@
 				4C0FD8EB252B17D6003AA808 /* UIImage+SymbolConfig.swift */,
 				4C0FD8F0252B219E003AA808 /* UIView+GradientLayer.swift */,
 				4C92A441252C5C1100376FCD /* LinearGradient+Init.swift */,
+				4C87CE8B252DB578001B9935 /* Notifications.swift */,
 			);
 			path = "Helpers+Extensions";
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 				4C646B5A25296D4100B05D8A /* Song.swift in Sources */,
 				4C0FD8E7252AF62E003AA808 /* Colors.swift in Sources */,
 				4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */,
+				4C87CE8C252DB578001B9935 /* Notifications.swift in Sources */,
 				4C646B9B2529769900B05D8A /* SelfConfiguringCell.swift in Sources */,
 				4C0FD8F1252B219E003AA808 /* UIView+GradientLayer.swift in Sources */,
 				4C646B4B25296CCA00B05D8A /* AuthController.swift in Sources */,

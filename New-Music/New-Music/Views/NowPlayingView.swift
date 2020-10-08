@@ -12,31 +12,37 @@ struct NowPlayingView: View {
     @ObservedObject var viewModel: NowPlayingViewModel
 //    @State var trackPercentage: CGFloat = 0
     var musicController: MusicController?
-    
+   
     var body: some View {
         ZStack {
             Color.nowPlayingBG
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 20) {
-                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGrayFive, color2: .sysGrayFour, image: $viewModel.albumArtwork)
+                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: viewModel)
                     .frame(width: 325, height: 325)
                 VStack {
                     Text(viewModel.artist)
-                        .font(Font.system(.headline).weight(.medium))
+                        .font(Font.system(.title).weight(.light))
                         .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
                     Text(viewModel.songTitle)
-                        .font(Font.system(.subheadline).weight(.medium))
+                        .font(Font.system(.headline).weight(.medium))
                         .foregroundColor(.lightTextColor)
+                        .multilineTextAlignment(.center)
                 }
-                .padding(.bottom, 140)
+                .padding(.bottom, 60)
+                TrackProgressView(viewModel: viewModel)
+                
+                
                 HStack(spacing: 40) {
                     Spacer()
                     TrackButton(imageName: "backward.fill", size: 70, trackForward: false)
-                    NeuPlayPauseButton()
-                        .frame(width: 80, height: 80)
+                    NeuPlayPauseButton(symbolConfig: .playButton)
+                        .frame(width: 85, height: 85)
                     TrackButton(imageName: "forward.fill", size: 70, trackForward: true)
                     Spacer()
                 }
+                .frame(height: 120)
             }
             
             
@@ -72,7 +78,8 @@ struct NowPlayingView: View {
 
 struct NowPlayingView_Previews: PreviewProvider {
     static var previews: some View {
-        NowPlayingView(viewModel: NowPlayingViewModel(musicController: MusicController.shared))
+        NowPlayingView(viewModel: NowPlayingViewModel(artist: "", songTitle: "", albumArtwork: UIImage()))
+        
     }
 }
 
@@ -242,15 +249,26 @@ struct ToggleButtonStyle: ToggleStyle {
 struct NeuPlayPauseButton: View {
     
     @State var isPlaying = false
+    var symbolConfig: UIImage.SymbolConfiguration
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
             Image(systemName: isPlaying ? "pause": "play.fill")
+                .resizable()
                 .foregroundColor(.white)
                 .aspectRatio(contentMode: .fit)
                 .font(Font.system(.callout).weight(.black))
+                
         }
         .toggleStyle(ToggleButtonStyle())
+    }
+    
+    func symbolForState() -> UIImage {
+        guard
+            let play = UIImage(systemName: "play.fill", withConfiguration: symbolConfig)?.withTintColor(.white),
+            let pause = UIImage(systemName: "pause", withConfiguration: symbolConfig)?.withTintColor(.white)
+        else { return UIImage() }
+        return isPlaying ? pause : play
     }
 }
 
@@ -258,7 +276,8 @@ struct NeuAlbumArtworkView<S: Shape>: View {
     var shape: S
     var color1: Color
     var color2: Color
-    @Binding var image: UIImage?
+    @ObservedObject var viewModel: NowPlayingViewModel
+    @State var image: UIImage = UIImage()
     
     var body: some View {
         ZStack {
@@ -280,10 +299,41 @@ struct NeuAlbumArtworkView<S: Shape>: View {
                 .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
                 .shadow(color: Color.white.opacity(0.1), radius: 7, x: -3, y: -3)
 //                .shadow(color: Color.white.opacity(0.1), radius: 7, x: -3, y: -3)
-            Image(uiImage: image ?? UIImage())
+            Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 315, height: 315)
+        }.onReceive(self.viewModel.didChange, perform: { receivedImage in
+            self.image = receivedImage ?? UIImage()
+        })
+    }
+}
+
+struct TrackProgressView: View {
+    @ObservedObject var viewModel: NowPlayingViewModel
+    var body: some View {
+        VStack {
+            HStack {
+                Text(viewModel.elapsedTime)
+                    .font(Font.system(.headline).weight(.regular))
+                    .foregroundColor(.white)
+                Spacer()
+                Text(viewModel.duration)
+                    .font(Font.system(.headline).weight(.regular))
+                    .foregroundColor(.white)
+                
+            }
+            ZStack {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(LinearGradient(gradient:
+                                            Gradient(stops: [Gradient.Stop(color: .sysGrayFour, location: 0.1),
+                                                             Gradient.Stop(color: Color.black.opacity(0.7), location: 0.9)]),
+                                         startPoint: .bottom,
+                                         endPoint: .top))
+                    .frame(height: 12)
+            }
         }
+        .padding(.leading, 40)
+        .padding(.trailing, 40)
     }
 }
