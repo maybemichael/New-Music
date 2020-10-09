@@ -9,25 +9,22 @@ import Foundation
 import MediaPlayer
 
 class MusicController: ObservableObject {
-    static let shared = MusicController()
+
     let musicPlayer = MPMusicPlayerController.applicationMusicPlayer
-    var isPlaying = false
     private var currentQueue = MPMusicPlayerStoreQueueDescriptor(storeIDs: [])
-    var timer: Timer?
+    private var timer: Timer?
     var currentPlaylist = [Song]() {
         didSet {
             if let lastAdded = currentPlaylist.last {
                 currentQueue.storeIDs?.append(lastAdded.playID)
-                self.musicPlayer.setQueue(with: self.currentQueue)
+                musicPlayer.setQueue(with: self.currentQueue)
             }
         }
     }
     var searchedSongs = [Song]()
-    var nowPlayingSong: MPMediaItem?
+    lazy var nowPlayingViewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", albumArtwork: UIImage())
     
     func play() {
-        isPlaying = true
-        musicPlayer.beginGeneratingPlaybackNotifications()
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateElapsedTime(_:)), userInfo: nil, repeats: true)
         if musicPlayer.isPreparedToPlay {
             musicPlayer.play()
@@ -37,8 +34,8 @@ class MusicController: ObservableObject {
         }
         timer?.fire()
     }
+    
     func pause() {
-        isPlaying = false
         musicPlayer.pause()
         timer?.invalidate()
     }
@@ -67,7 +64,12 @@ class MusicController: ObservableObject {
         NotificationCenter.default.post(name: .elapsedTime, object: nil, userInfo: elapsedTimeDictionary)
     }
     
+    init() {
+        musicPlayer.beginGeneratingPlaybackNotifications()
+    }
+    
     deinit {
         timer?.invalidate()
+        musicPlayer.endGeneratingPlaybackNotifications()
     }
 }

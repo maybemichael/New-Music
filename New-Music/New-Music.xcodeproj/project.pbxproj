@@ -12,7 +12,6 @@
 		4C0FD8E2252ADFC1003AA808 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */; };
 		4C0FD8E7252AF62E003AA808 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E6252AF62E003AA808 /* Colors.swift */; };
 		4C0FD8EC252B17D6003AA808 /* UIImage+SymbolConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8EB252B17D6003AA808 /* UIImage+SymbolConfig.swift */; };
-		4C0FD8F1252B219E003AA808 /* UIView+GradientLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8F0252B219E003AA808 /* UIView+GradientLayer.swift */; };
 		4C1B7EE9252D05D0005A1424 /* NowPlayingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7EE8252D05D0005A1424 /* NowPlayingViewModel.swift */; };
 		4C646B0225296B8300B05D8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B0125296B8300B05D8A /* AppDelegate.swift */; };
 		4C646B0425296B8300B05D8A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B0325296B8300B05D8A /* SceneDelegate.swift */; };
@@ -64,7 +63,6 @@
 		4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		4C0FD8E6252AF62E003AA808 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		4C0FD8EB252B17D6003AA808 /* UIImage+SymbolConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+SymbolConfig.swift"; sourceTree = "<group>"; };
-		4C0FD8F0252B219E003AA808 /* UIView+GradientLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+GradientLayer.swift"; sourceTree = "<group>"; };
 		4C1B7EE8252D05D0005A1424 /* NowPlayingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingViewModel.swift; sourceTree = "<group>"; };
 		4C646AFE25296B8300B05D8A /* New-Music.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "New-Music.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C646B0125296B8300B05D8A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -238,7 +236,6 @@
 				4C0FD8D1252A6A79003AA808 /* SearchVC+UISearchBarDelegate.swift */,
 				4C0FD8E6252AF62E003AA808 /* Colors.swift */,
 				4C0FD8EB252B17D6003AA808 /* UIImage+SymbolConfig.swift */,
-				4C0FD8F0252B219E003AA808 /* UIView+GradientLayer.swift */,
 				4C92A441252C5C1100376FCD /* LinearGradient+Init.swift */,
 				4C87CE8B252DB578001B9935 /* Notifications.swift */,
 			);
@@ -391,7 +388,6 @@
 				4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */,
 				4C87CE8C252DB578001B9935 /* Notifications.swift in Sources */,
 				4C646B9B2529769900B05D8A /* SelfConfiguringCell.swift in Sources */,
-				4C0FD8F1252B219E003AA808 /* UIView+GradientLayer.swift in Sources */,
 				4C646B4B25296CCA00B05D8A /* AuthController.swift in Sources */,
 				4C646B5525296D2400B05D8A /* Results.swift in Sources */,
 				4C646B8225296FB400B05D8A /* UIColors.swift in Sources */,

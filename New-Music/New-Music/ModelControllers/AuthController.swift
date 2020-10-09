@@ -9,11 +9,8 @@ import Foundation
 import StoreKit
 
 class AuthController {
-    
-    
-    
+
     let skServiceController = SKCloudServiceController()
-    
     let developerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IlVNMktGRDgzNjUifQ.eyJpc3MiOiJWNVg3SFFTU002IiwiaWF0IjoxNjAwMzc0MTg5LjI3Mzk0NDksImV4cCI6MTYxNTQwNzc4OS4yNzM5NDQ5fQ.rJ_AbDv5Hc_wbLcj8o2bVsG9fnIodPu3a_iLO8mWiGEgtGg6t88H4--KACX7bj2HtqGqqZJ1PnoSLBJiVNDtbA"
     var userToken: String?
     var storeFrontID: String?
@@ -141,7 +138,6 @@ class AuthController {
             } else {
                 viewController.present(signUpVC, animated: true)
             }
-            
         }
     }
 }

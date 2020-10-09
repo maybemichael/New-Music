@@ -11,7 +11,7 @@ import MediaPlayer
 struct NowPlayingView: View {
     @ObservedObject var viewModel: NowPlayingViewModel
 //    @State var trackPercentage: CGFloat = 0
-    var musicController: MusicController?
+    var musicController: MusicController!
    
     var body: some View {
         ZStack {
@@ -36,10 +36,10 @@ struct NowPlayingView: View {
                 
                 HStack(spacing: 40) {
                     Spacer()
-                    TrackButton(imageName: "backward.fill", size: 70, trackForward: false)
-                    NeuPlayPauseButton(symbolConfig: .playButton)
+                    TrackButton(imageName: "backward.fill", size: 70, trackForward: false, musicController: musicController)
+                    NeuPlayPauseButton(viewModel: viewModel, isPlaying: viewModel.isPlaying, musicController: musicController, symbolConfig: .playButton)
                         .frame(width: 85, height: 85)
-                    TrackButton(imageName: "forward.fill", size: 70, trackForward: true)
+                    TrackButton(imageName: "forward.fill", size: 70, trackForward: true, musicController: musicController)
                     Spacer()
                 }
                 .frame(height: 120)
@@ -71,14 +71,11 @@ struct NowPlayingView: View {
 //            }
         }
     }
-    func printStuff() {
-        
-    }
 }
 
 struct NowPlayingView_Previews: PreviewProvider {
     static var previews: some View {
-        NowPlayingView(viewModel: NowPlayingViewModel(artist: "", songTitle: "", albumArtwork: UIImage()))
+        NowPlayingView(viewModel: MusicController().nowPlayingViewModel)
         
     }
 }
@@ -191,9 +188,10 @@ struct TrackButton: View {
     var imageName: String
     var size: CGFloat
     var trackForward: Bool
+    var musicController: MusicController
     var body: some View {
         Button(action: {
-            trackForward ? MusicController.shared.nextTrack() : MusicController.shared.previousTrack()
+            trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
             Image(systemName: imageName)
                 .foregroundColor(.white)
@@ -233,10 +231,11 @@ struct NeuToggleBackground<S: Shape>: View {
 }
 
 struct ToggleButtonStyle: ToggleStyle {
+    var musicController: MusicController
     func makeBody(configuration: Self.Configuration) -> some View {
         Button(action: {
             configuration.isOn.toggle()
-            configuration.isOn ? MusicController.shared.play() : MusicController.shared.pause()
+            configuration.isOn ? musicController.play() : musicController.pause()
         }) {
             configuration.label
                 .padding(30)
@@ -247,20 +246,21 @@ struct ToggleButtonStyle: ToggleStyle {
 }
 
 struct NeuPlayPauseButton: View {
-    
-    @State var isPlaying = false
+    @ObservedObject var viewModel: NowPlayingViewModel
+    @State var isPlaying: Bool
+    var musicController: MusicController
     var symbolConfig: UIImage.SymbolConfiguration
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
-            Image(systemName: isPlaying ? "pause": "play.fill")
+            Image(systemName: viewModel.isPlaying ? "pause": "play.fill")
                 .resizable()
                 .foregroundColor(.white)
                 .aspectRatio(contentMode: .fit)
                 .font(Font.system(.callout).weight(.black))
                 
         }
-        .toggleStyle(ToggleButtonStyle())
+        .toggleStyle(ToggleButtonStyle(musicController: musicController))
     }
     
     func symbolForState() -> UIImage {
@@ -298,7 +298,6 @@ struct NeuAlbumArtworkView<S: Shape>: View {
                 .overlay(shape.stroke(LinearGradient(.sysGraySix, .black), lineWidth: 10))
                 .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
                 .shadow(color: Color.white.opacity(0.1), radius: 7, x: -3, y: -3)
-//                .shadow(color: Color.white.opacity(0.1), radius: 7, x: -3, y: -3)
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()

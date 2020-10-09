@@ -16,8 +16,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Int, Song>
     typealias SongsSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
     var dataSource: SearchDataSource?
-    
-    var musicController: MusicController?
+    var musicController: MusicController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +48,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         collectionView.showsVerticalScrollIndicator = false
     }
     
-    func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with song: Song, for indexPath: IndexPath) -> T {
+    private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with song: Song, for indexPath: IndexPath) -> T {
         guard var cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.identifier, for: indexPath) as? T else {
             fatalError("Unable to dequeue cell: \(cellType)")
         }
@@ -59,7 +58,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         return cell
     }
     
-    func createDataSource() {
+    private func createDataSource() {
         dataSource = SearchDataSource(collectionView: collectionView) { collectionView, indexPath, song in
             self.configure(SongsCollectionViewCell.self, with: song, for: indexPath)
         }
@@ -72,7 +71,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         dataSource?.apply(snapshot)
     }
     
-    func createSongsSection() -> NSCollectionLayoutSection {
+    private func createSongsSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 0, trailing: 12)
@@ -82,7 +81,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         return layoutSection
     }
     
-    func createCompLayout() -> UICollectionViewLayout {
+    private func createCompLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
             return self.createSongsSection()
         }
@@ -101,7 +100,10 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
+    
     func addSongTapped(cell: SongsCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        let song = musicController.searchedSongs[indexPath.item]
+        musicController.addSongToPlaylist(song: song)
     }
 }

@@ -9,7 +9,7 @@ import UIKit
 
 class PlaylistViewController: UIViewController {
 
-    var musicController: MusicController?
+    var musicController: MusicController!
 
     override func viewDidLoad() {
         super.viewDidLoad()

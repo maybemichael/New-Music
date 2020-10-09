@@ -83,9 +83,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     }
     
     @objc func addSong(_ sender: UIButton) {
-        MusicController.shared.addSongToPlaylist(song: self.song!)
         self.song?.isAdded = true
         delegate?.addSongTapped(cell: self)
-//        addButton.setImage(UIImage(), for: .normal)
     }
 }
