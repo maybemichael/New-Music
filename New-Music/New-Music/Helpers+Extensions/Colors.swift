@@ -15,4 +15,6 @@ extension Color {
     static let sysGrayFive = Color("SystemGrayFive")
     static let sysGrayFour = Color("SystemGrayFour")
     static let lightTextColor = Color("LightTextColor")
+    static let fikeBG = Color("3Nights")
+    static let second3Nights = Color("3Nights2nd")
 }

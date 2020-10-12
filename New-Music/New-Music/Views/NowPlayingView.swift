@@ -9,73 +9,48 @@ import SwiftUI
 import MediaPlayer
 
 struct NowPlayingView: View {
-    @ObservedObject var viewModel: NowPlayingViewModel
-//    @State var trackPercentage: CGFloat = 0
+    @ObservedObject var song: NowPlayingViewModel
     var musicController: MusicController!
    
     var body: some View {
         ZStack {
             Color.nowPlayingBG
                 .edgesIgnoringSafeArea(.all)
-            VStack(spacing: 20) {
-                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: viewModel)
+            VStack(spacing: 0) {
+                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: song)
                     .frame(width: 325, height: 325)
+                    .padding(.bottom, 20)
                 VStack {
-                    Text(viewModel.artist)
+                    Text(song.artist)
                         .font(Font.system(.title).weight(.light))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                    Text(viewModel.songTitle)
+                    Text(song.songTitle)
                         .font(Font.system(.headline).weight(.medium))
                         .foregroundColor(.lightTextColor)
                         .multilineTextAlignment(.center)
                 }
-                .padding(.bottom, 60)
-                TrackProgressView(viewModel: viewModel)
+                .padding(.bottom, 40)
                 
-                
+                TrackProgressView(song: song, musicController: musicController)
+                    .padding(.bottom, 20)
                 HStack(spacing: 40) {
                     Spacer()
-                    TrackButton(imageName: "backward.fill", size: 70, trackForward: false, musicController: musicController)
-                    NeuPlayPauseButton(viewModel: viewModel, isPlaying: viewModel.isPlaying, musicController: musicController, symbolConfig: .playButton)
+                    TrackButton(imageName: "backward.fill", size: 70, trackDirection: .trackBackward, musicController: musicController)
+                    NeuPlayPauseButton(viewModel: song, isPlaying: song.isPlaying, musicController: musicController, symbolConfig: .playButton)
                         .frame(width: 85, height: 85)
-                    TrackButton(imageName: "forward.fill", size: 70, trackForward: true, musicController: musicController)
+                    TrackButton(imageName: "forward.fill", size: 70, trackDirection: .trackForward, musicController: musicController)
                     Spacer()
                 }
-                .frame(height: 120)
             }
-            
-            
-//            VStack {
-//                Spacer()
-//                Text("hey")
-//                    .padding(.bottom, 12)
-//                    .foregroundColor(.white)
-//                    .font(Font.system(.headline).weight(.bold))
-//                ZStack {
-//                    Pulsation()
-//                    ProgressTrack()
-//                    Progress(trackPercentage: trackPercentage)
-//                }
-//                Spacer()
-//                HStack {
-//                    Button(action: {
-//                        self.trackPercentage = CGFloat(85)
-//                    }, label: {
-//                        Image(systemName: "play.circle.fill").resizable()
-//                            .frame(width: 65, height: 65)
-//                            .aspectRatio(contentMode: .fit)
-//                            .foregroundColor(.white)
-//                    })
-//                }
-//            }
         }
     }
 }
 
 struct NowPlayingView_Previews: PreviewProvider {
     static var previews: some View {
-        NowPlayingView(viewModel: MusicController().nowPlayingViewModel)
+        let musicController = MusicController()
+        NowPlayingView(song: musicController.nowPlayingViewModel, musicController: musicController)
         
     }
 }
@@ -84,40 +59,6 @@ struct ArtworkView: View {
     var body: some View {
         ZStack {
             
-        }
-    }
-}
-
-
-struct Progress: View {
-    var trackPercentage: CGFloat = 80
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.clear)
-                .frame(width: 150, height: 150)
-            .overlay(
-            Circle()
-                .trim(from: 0.0, to: trackPercentage * 0.01)
-                .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round, lineJoin: .round))
-                .fill(AngularGradient(gradient: .init(colors: [.blue]), center: .center, startAngle: .zero, endAngle: .init(degrees: 360)))
-            ).animation(.spring(response: 2.0, dampingFraction: 1.0, blendDuration: 1.0))
-        }
-    }
-}
-
-struct ProgressTrack: View {
-    
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.nowPlayingBG)
-                .frame(width: 150, height: 150)
-            .overlay(
-            Circle()
-                .stroke(style: StrokeStyle(lineWidth: 20))
-                .fill(AngularGradient(gradient: .init(colors: [.sysGraySix]), center: .center))
-            )
         }
     }
 }
@@ -187,11 +128,11 @@ struct NeuButtonStyle: ButtonStyle {
 struct TrackButton: View {
     var imageName: String
     var size: CGFloat
-    var trackForward: Bool
+    var trackDirection: TrackDirection
     var musicController: MusicController
     var body: some View {
         Button(action: {
-            trackForward ? musicController.nextTrack() : musicController.previousTrack()
+            trackDirection == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
             Image(systemName: imageName)
                 .foregroundColor(.white)
@@ -199,20 +140,20 @@ struct TrackButton: View {
                 .font(Font.system(.headline).weight(.semibold))
         }
         .frame(width: size, height: size)
-//        .overlay(Circle().stroke(LinearGradient(.sysGraySix, .black), lineWidth: 2))
         .buttonStyle(NeuButtonStyle())
     }
 }
 
 struct NeuToggleBackground<S: Shape>: View {
-    var isToggled: Bool
+    @State var isToggled: Bool
+    @ObservedObject var viewModel: NowPlayingViewModel
     var shape: S
     var color1: Color
     var color2: Color
     
     var body: some View {
         ZStack {
-            if isToggled {
+            if viewModel.isPlaying {
                 shape
                     .fill(LinearGradient(color2, color1))
                     .overlay(shape.stroke(LinearGradient(.sysGrayFive, .sysGrayFour), lineWidth: 2))
@@ -232,15 +173,18 @@ struct NeuToggleBackground<S: Shape>: View {
 
 struct ToggleButtonStyle: ToggleStyle {
     var musicController: MusicController
+    @ObservedObject var viewModel: NowPlayingViewModel
+    
     func makeBody(configuration: Self.Configuration) -> some View {
         Button(action: {
-            configuration.isOn.toggle()
+            viewModel.isPlaying.toggle()
+            configuration.isOn = viewModel.isPlaying ? true : false
             configuration.isOn ? musicController.play() : musicController.pause()
         }) {
             configuration.label
                 .padding(30)
                 .contentShape(Circle())
-                .background(NeuToggleBackground(isToggled: configuration.isOn, shape: Circle(), color1: .sysGrayFour, color2: .sysGrayFive))
+                .background(NeuToggleBackground(isToggled: configuration.isOn, viewModel: viewModel, shape: Circle(), color1: .sysGrayFour, color2: .sysGrayFive))
         }
     }
 }
@@ -260,7 +204,7 @@ struct NeuPlayPauseButton: View {
                 .font(Font.system(.callout).weight(.black))
                 
         }
-        .toggleStyle(ToggleButtonStyle(musicController: musicController))
+        .toggleStyle(ToggleButtonStyle(musicController: musicController, viewModel: viewModel))
     }
     
     func symbolForState() -> UIImage {
@@ -309,30 +253,104 @@ struct NeuAlbumArtworkView<S: Shape>: View {
 }
 
 struct TrackProgressView: View {
-    @ObservedObject var viewModel: NowPlayingViewModel
+    
+    @ObservedObject var song: NowPlayingViewModel
+    var musicController: MusicController
+    @State var isDragging: Bool = false
+    var newPlaybackTime: TimeInterval = 0
+    
+    
+    var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "m:ss"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
+    }()
+    
     var body: some View {
         VStack {
-            HStack {
-                Text(viewModel.elapsedTime)
-                    .font(Font.system(.headline).weight(.regular))
-                    .foregroundColor(.white)
-                Spacer()
-                Text(viewModel.duration)
-                    .font(Font.system(.headline).weight(.regular))
-                    .foregroundColor(.white)
-                
-            }
             ZStack {
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(LinearGradient(gradient:
-                                            Gradient(stops: [Gradient.Stop(color: .sysGrayFour, location: 0.1),
-                                                             Gradient.Stop(color: Color.black.opacity(0.7), location: 0.9)]),
-                                         startPoint: .bottom,
-                                         endPoint: .top))
-                    .frame(height: 12)
+                GeometryReader { geo in
+                    HStack {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(LinearGradient(gradient:
+                                                    Gradient(stops: [Gradient.Stop(color: .sysGrayFour, location: 0.1),
+                                                                     Gradient.Stop(color: Color.black.opacity(0.7), location: 0.9)]),
+                                                 startPoint: .bottom,
+                                                 endPoint: .top))
+                            .frame(height: 10)
+                            .padding(.top, 1)
+                    }
+                }
+                GeometryReader { geo in
+                    HStack {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color.fikeBG)
+                            .frame(width: geo.size.width * self.percentagePlayedForSong(), height: 10)
+                            .padding(.top, 1)
+                        Spacer(minLength: 0)
+                    }
+                }
+                GeometryReader { geo in
+                    HStack {
+                        Circle()
+                            .fill(Color.fikeBG)
+                            .frame(width: 12, height: 12)
+                            .animation(nil)
+                            .scaleEffect(isDragging ? 1.5 : 1)
+                            .padding(.leading, geo.size.width * self.percentagePlayedForSong() - 7)
+                            
+                            .gesture(
+                                DragGesture()
+                                    .onChanged({ value in
+                                        self.isDragging = true 
+                                        musicController.musicPlayer.beginSeekingForward()
+                                        self.song.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
+                                            
+                                    })
+                                    
+                                    .onEnded({ value in
+                                        self.isDragging = false
+                                        musicController.musicPlayer.currentPlaybackTime = self.time(for: value.location.x, in: geo.size.width)
+                                        musicController.musicPlayer.endSeeking()
+                                    })
+                            )
+                        Spacer(minLength: 0)
+                    }
+                }
+                HStack {
+                    Text(formattedTimeFor(timeInterval: song.elapsedTime))
+                        .font(Font.system(.headline).weight(.regular))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Text(formattedTimeFor(timeInterval: song.duration))
+                        .font(Font.system(.headline).weight(.regular))
+                        .foregroundColor(.white)
+                }
             }
         }
-        .padding(.leading, 40)
-        .padding(.trailing, 40)
+        .frame(width: UIScreen.main.bounds.width - 80, height: 80)
+        .padding(.top, 50)
+    }
+    
+    func formattedTimeFor(timeInterval: TimeInterval) -> String {
+        let date = Date(timeIntervalSinceReferenceDate: timeInterval)
+        return dateFormatter.string(from: date)
+    }
+
+    func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
+        let percentage = location / width
+        let time = song.duration * TimeInterval(percentage)
+        if time < 0 {
+            return 0
+        } else if time > song.duration {
+            return song.duration
+        }
+        return time
+    }
+
+    func percentagePlayedForSong() -> CGFloat {
+        let percentagePlayed = CGFloat(song.elapsedTime / song.duration)
+        return percentagePlayed.isNaN ? 0.0 : percentagePlayed
     }
 }

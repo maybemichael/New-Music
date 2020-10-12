@@ -9,8 +9,6 @@ import UIKit
 
 class SearchViewController: UIViewController, SongsCellDelegate {
     
-    
-    
     var collectionView: UICollectionView!
     let searchController = UISearchController(searchResultsController: nil)
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Int, Song>

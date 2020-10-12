@@ -8,5 +8,5 @@
 import Foundation
 
 extension Notification.Name {
-    static let elapsedTime = Notification.Name(rawValue: "elapsedTime")
+    static let elapsedTime = Notification.Name(rawValue: "ElapsedTime")
 }
