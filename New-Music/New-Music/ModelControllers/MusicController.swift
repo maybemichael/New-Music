@@ -13,12 +13,15 @@ class MusicController: ObservableObject {
     let musicPlayer = MPMusicPlayerController.applicationMusicPlayer
     private var currentQueue = MPMusicPlayerStoreQueueDescriptor(storeIDs: [])
     private var timer: Timer?
-    var currentPlaylist = [Song]()
+    var currentPlaylist = [Song]() {
+        didSet {
+            nowPlayingViewModel.songs = self.currentPlaylist
+        }
+    }
     var searchedSongs = [Song]()
-    lazy var nowPlayingViewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", albumArtwork: UIImage(), duration: 0.0)
+    lazy var nowPlayingViewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", albumArtwork: UIImage(), duration: 0.0, songs: currentPlaylist)
     
     func play() {
-        musicPlayer.setQueue(with: currentQueue)
         if musicPlayer.isPreparedToPlay {
             musicPlayer.play()
         } else {
@@ -32,25 +35,11 @@ class MusicController: ObservableObject {
     }
     
     func nextTrack() {
-        if musicPlayer.playbackState == .playing {
-            musicPlayer.pause()
-            musicPlayer.prepareToPlay()
-            musicPlayer.skipToNextItem()
-            musicPlayer.play()
-        } else {
-            musicPlayer.skipToNextItem()
-        }
+        musicPlayer.skipToNextItem()
     }
     
     func previousTrack() {
-        if musicPlayer.playbackState == .playing {
-            musicPlayer.pause()
-            musicPlayer.prepareToPlay()
-            musicPlayer.skipToPreviousItem()
-            musicPlayer.play()
-        } else {
-            musicPlayer.skipToPreviousItem()
-        }
+        musicPlayer.skipToPreviousItem()
     }
     
     func removeSongFromPlaylist(song: Song) {

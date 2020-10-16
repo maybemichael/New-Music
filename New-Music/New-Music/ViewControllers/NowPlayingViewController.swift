@@ -28,7 +28,7 @@ class NowPlayingViewController: UIViewController {
     }
     
     private func configureContentView() {
-        let contentView = UIHostingController(rootView: NowPlayingView(song: musicController.nowPlayingViewModel, musicController: self.musicController))
+        let contentView = UIHostingController(rootView: NowPlayingView(songViewModel: musicController.nowPlayingViewModel, musicController: self.musicController))
         view.backgroundColor = .backgroundColor
         addChild(contentView)
         view.addSubview(contentView.view)

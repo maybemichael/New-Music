@@ -9,7 +9,7 @@ import SwiftUI
 import MediaPlayer
 
 struct NowPlayingView: View {
-    @ObservedObject var song: NowPlayingViewModel
+    @ObservedObject var songViewModel: NowPlayingViewModel
     var musicController: MusicController!
    
     var body: some View {
@@ -17,29 +17,35 @@ struct NowPlayingView: View {
             Color.nowPlayingBG
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
-                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: song)
+                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: songViewModel)
                     .frame(width: 325, height: 325)
                     .padding(.bottom, 20)
                 VStack {
-                    Text(song.artist)
+                    Text(songViewModel.artist)
                         .font(Font.system(.title).weight(.light))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                    Text(song.songTitle)
+                    Text(songViewModel.songTitle)
                         .font(Font.system(.headline).weight(.medium))
                         .foregroundColor(.lightTextColor)
                         .multilineTextAlignment(.center)
+//                    Text("White Level: \(songViewModel.whiteLevel)")
+//                        .font(Font.system(.headline).weight(.medium))
+//                        .foregroundColor(.white)
                 }
+                .frame(minHeight: 80)
                 .padding(.bottom, 40)
+                .padding(.leading, 40)
+                .padding(.trailing, 40)
                 
-                TrackProgressView(song: song, musicController: musicController)
+                TrackProgressView(songViewModel: songViewModel, musicController: musicController)
                     .padding(.bottom, 20)
                 HStack(spacing: 40) {
                     Spacer()
-                    TrackButton(imageName: "backward.fill", size: 70, trackDirection: .trackBackward, musicController: musicController)
-                    NeuPlayPauseButton(viewModel: song, isPlaying: song.isPlaying, musicController: musicController, symbolConfig: .playButton)
-                        .frame(width: 85, height: 85)
-                    TrackButton(imageName: "forward.fill", size: 70, trackDirection: .trackForward, musicController: musicController)
+                    TrackButton(imageName: "backward.fill", size: 60, trackDirection: .trackBackward, musicController: musicController, songViewModel: songViewModel)
+                    NeuPlayPauseButton(viewModel: songViewModel, isPlaying: songViewModel.isPlaying, musicController: musicController, symbolConfig: .playButton)
+                        .frame(width: 90, height: 90)
+                    TrackButton(imageName: "forward.fill", size: 60, trackDirection: .trackForward, musicController: musicController, songViewModel: songViewModel)
                     Spacer()
                 }
             }
@@ -50,7 +56,7 @@ struct NowPlayingView: View {
 struct NowPlayingView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingView(song: musicController.nowPlayingViewModel, musicController: musicController)
+        NowPlayingView(songViewModel: musicController.nowPlayingViewModel, musicController: musicController)
         
     }
 }
@@ -82,46 +88,96 @@ struct Pulsation: View {
 struct NeuButtonBackground<S: Shape>: View {
     var isHighlighted: Bool
     var shape: S
-    var color1: Color
-    var color2: Color
+    var size: CGFloat
+    @ObservedObject var songViewModel: NowPlayingViewModel
     
     var body: some View {
         ZStack {
-            if isHighlighted {
-                shape
-                    .fill(LinearGradient(color2, color1))
-//                    .overlay(
-//                        shape
-//                            .stroke(Color.sysGrayThree, lineWidth: 2)
-//                            .blur(radius: 4)
-//                            .offset(x: -2, y: -2)
-//                            .mask(shape.fill(LinearGradient(Color.clear, Color.black))))
-//                    .overlay(
-//                        shape
-//                            .stroke(Color.sysGraySix, lineWidth: 2)
-//                            .blur(radius: 8)
-//                            .offset(x: -2, y: -2)
-//                            .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
-                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: -3, y: -3)
-                    .shadow(color: Color.white.opacity(0.1), radius: 5, x: 2, y: 2)
+            if songViewModel.whiteLevel < 0.3 {
+                if isHighlighted {
+                    shape
+                        .fill(gradient(for: isHighlighted))
+                        .overlay(
+                            shape
+                                .stroke(songViewModel.lighterAccentColor, lineWidth: 2)
+                                .blur(radius: 4)
+                                .offset(x: -2, y: -2)
+                                .mask(shape.fill(LinearGradient(Color.clear, Color.black))))
+                        .overlay(
+                            shape
+                                .stroke(songViewModel.darkerAccentColor, lineWidth: 2)
+                                .blur(radius: 8)
+                                .offset(x: -2, y: -2)
+                                .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
+                        .overlay(shape.stroke(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)))
+                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 7, y: 7)
+                        .shadow(color: Color.white.opacity(0.5), radius: 10, x: -7, y: -7)
+                        .blendMode(.overlay)
+                    shape
+                        .fill(gradient(for: isHighlighted))
+                } else {
+                    shape
+                        .fill(gradient(for: isHighlighted))
+                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black)))
+                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 10, y: 10)
+                        .shadow(color: Color.white.opacity(0.5), radius: 10, x: -10, y: -10)
+                        .blendMode(.overlay)
+                    shape
+                        .fill(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor))
+                }
             } else {
-                shape
-                    .fill(LinearGradient(color2, color1))
-                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
-                    .shadow(color: Color.white.opacity(0.15), radius: 10, x: -3, y: -3)
+                if isHighlighted {
+                    shape
+                        .fill(gradient(for: isHighlighted))
+                        .overlay(
+                            shape
+                                .stroke(songViewModel.lighterAccentColor, lineWidth: 2)
+                                .blur(radius: 4)
+                                .offset(x: -2, y: -2)
+                                .mask(shape.fill(LinearGradient(Color.clear, Color.black))))
+                        .overlay(
+                            shape
+                                .stroke(songViewModel.darkerAccentColor, lineWidth: 2)
+                                .blur(radius: 8)
+                                .offset(x: -2, y: -2)
+                                .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
+                        .overlay(shape.stroke(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)))
+                        .shadow(color: Color.black.opacity(0.7), radius: 8, x: 7, y: 7)
+                        .shadow(color: Color.white.opacity(0.8), radius: 8, x: -7, y: -7)
+                        .blendMode(.overlay)
+                    shape
+                        .fill(gradient(for: isHighlighted))
+                } else {
+                    shape
+                        .fill(gradient(for: isHighlighted))
+                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black)))
+                        .shadow(color: Color.black.opacity(0.7), radius: 8, x: 10, y: 10)
+                        .shadow(color: Color.white.opacity(0.8), radius: 8, x: -10, y: -10)
+                        .blendMode(.overlay)
+                    shape
+                        .fill(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor))
+                }
             }
         }
-        .frame(width: 70, height: 70)
+        .frame(width: 60, height: 60)
+    }
+    
+    private func gradient(for state: Bool) -> LinearGradient {
+        state ? LinearGradient(songViewModel.darkerAccentColor, songViewModel.lighterAccentColor) : LinearGradient(songViewModel.darkerAccentColor, songViewModel.lighterAccentColor)
     }
 }
 
 struct NeuButtonStyle: ButtonStyle {
+    var songViewModel: NowPlayingViewModel
+    var lighterColor: Color
+    var darkerColor: Color
+    var size: CGFloat
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .padding(30)
             .contentShape(Circle())
-            .background(NeuButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), color1: .sysGrayFive, color2: .sysGrayFour))
+            .background(NeuButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), size: size, songViewModel: songViewModel))
     }
 }
 
@@ -130,17 +186,22 @@ struct TrackButton: View {
     var size: CGFloat
     var trackDirection: TrackDirection
     var musicController: MusicController
+    @ObservedObject var songViewModel: NowPlayingViewModel
+    
     var body: some View {
         Button(action: {
             trackDirection == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
             Image(systemName: imageName)
-                .foregroundColor(.white)
+                .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
                 .aspectRatio(contentMode: .fit)
                 .font(Font.system(.headline).weight(.semibold))
         }
         .frame(width: size, height: size)
-        .buttonStyle(NeuButtonStyle())
+        .buttonStyle(NeuButtonStyle(songViewModel: songViewModel, lighterColor: songViewModel.lighterAccentColor, darkerColor: songViewModel.darkerAccentColor, size: size))
+    }
+    func imageTint(isTooLight: Bool) -> Color {
+        isTooLight ? Color.black : Color.white
     }
 }
 
@@ -148,26 +209,35 @@ struct NeuToggleBackground<S: Shape>: View {
     @State var isToggled: Bool
     @ObservedObject var viewModel: NowPlayingViewModel
     var shape: S
-    var color1: Color
-    var color2: Color
+    var lighterColor: Color
+    var darkerColor: Color
     
     var body: some View {
         ZStack {
-            if viewModel.isPlaying {
+            if viewModel.whiteLevel < 0.3 {
                 shape
-                    .fill(LinearGradient(color2, color1))
-                    .overlay(shape.stroke(LinearGradient(.sysGrayFive, .sysGrayFour), lineWidth: 2))
-                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: -2, y: -2)
-                    .shadow(color: Color.white.opacity(0.1), radius: 5, x: 2, y: 2)
+                    .fill(gradient(for: viewModel.isPlaying))
+                    .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
+                    .shadow(color: Color.white.opacity(0.5), radius: 12, x: -10, y: -10)
+                    .shadow(color: Color.black.opacity(0.5), radius: 12, x: 10, y: 10)
+                    .blendMode(.overlay)
+                shape
+                    .fill(gradient(for: viewModel.isPlaying))
             } else {
                 shape
-                    .fill(LinearGradient(color1, color2))
-                    .overlay(shape.stroke(LinearGradient(.sysGrayFour, .sysGrayFive), lineWidth: 1))
-                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
-                    .shadow(color: Color.white.opacity(0.15), radius: 10, x: -3, y: -3)
+                    .fill(gradient(for: viewModel.isPlaying))
+                    .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
+                    .shadow(color: Color.white.opacity(0.9), radius: 10, x: -10, y: -10)
+                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 10, y: 10)
+                    .blendMode(.overlay)
+                shape
+                    .fill(gradient(for: viewModel.isPlaying))
             }
         }
-        .frame(width: 80, height: 80)
+        .frame(width: 90, height: 90)
+    }
+    private func gradient(for state: Bool) -> LinearGradient {
+        state ? LinearGradient(viewModel.darkerAccentColor, viewModel.lighterAccentColor) : LinearGradient(viewModel.lighterAccentColor, viewModel.darkerAccentColor)
     }
 }
 
@@ -184,7 +254,7 @@ struct ToggleButtonStyle: ToggleStyle {
             configuration.label
                 .padding(30)
                 .contentShape(Circle())
-                .background(NeuToggleBackground(isToggled: configuration.isOn, viewModel: viewModel, shape: Circle(), color1: .sysGrayFour, color2: .sysGrayFive))
+                .background(NeuToggleBackground(isToggled: configuration.isOn, viewModel: viewModel, shape: Circle(), lighterColor: viewModel.lighterAccentColor, darkerColor: viewModel.darkerAccentColor))
         }
     }
 }
@@ -199,12 +269,20 @@ struct NeuPlayPauseButton: View {
         Toggle(isOn: $isPlaying) {
             Image(systemName: viewModel.isPlaying ? "pause": "play.fill")
                 .resizable()
-                .foregroundColor(.white)
+                .foregroundColor(imageTint(isTooLight: viewModel.isTooLight))
                 .aspectRatio(contentMode: .fit)
                 .font(Font.system(.callout).weight(.black))
                 
         }
         .toggleStyle(ToggleButtonStyle(musicController: musicController, viewModel: viewModel))
+    }
+    
+    func imageTint(isTooLight: Bool) -> Color {
+        isTooLight ? Color.black : Color.white
+    }
+    
+    private func gradient(for state: Bool) -> LinearGradient {
+        state ? LinearGradient(viewModel.darkerAccentColor, viewModel.lighterAccentColor) : LinearGradient(viewModel.lighterAccentColor, viewModel.darkerAccentColor)
     }
     
     func symbolForState() -> UIImage {
@@ -241,24 +319,21 @@ struct NeuAlbumArtworkView<S: Shape>: View {
                         .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
                 .overlay(shape.stroke(LinearGradient(.sysGraySix, .black), lineWidth: 10))
                 .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
-                .shadow(color: Color.white.opacity(0.1), radius: 7, x: -3, y: -3)
-            Image(uiImage: image)
+                .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
+            Image(uiImage: viewModel.albumArtwork ?? UIImage())
                 .resizable()
-                .scaledToFit()
                 .frame(width: 315, height: 315)
-        }.onReceive(self.viewModel.didChange, perform: { receivedImage in
-            self.image = receivedImage ?? UIImage()
-        })
+                .scaledToFit()
+        }
     }
 }
 
 struct TrackProgressView: View {
     
-    @ObservedObject var song: NowPlayingViewModel
+    @ObservedObject var songViewModel: NowPlayingViewModel
     var musicController: MusicController
     @State var isDragging: Bool = false
     var newPlaybackTime: TimeInterval = 0
-    
     
     var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -278,52 +353,53 @@ struct TrackProgressView: View {
                                                                      Gradient.Stop(color: Color.black.opacity(0.7), location: 0.9)]),
                                                  startPoint: .bottom,
                                                  endPoint: .top))
-                            .frame(height: 10)
-                            .padding(.top, 1)
+                            .frame(height: 8)
+                            .padding(.top, 3)
                     }
                 }
                 GeometryReader { geo in
                     HStack {
                         RoundedRectangle(cornerRadius: 5)
-                            .fill(Color.fikeBG)
-                            .frame(width: geo.size.width * self.percentagePlayedForSong(), height: 10)
-                            .padding(.top, 1)
+                            .fill(fillGradient(whiteLevel: songViewModel.whiteLevel))
+                            .frame(width: geo.size.width * self.percentagePlayedForSong(), height: 8)
+                            .overlay(RoundedRectangle(cornerRadius: 5)
+                                        .stroke(songViewModel.darkerAccentColor, lineWidth: 1))
+                            .padding(.top, 3)
                         Spacer(minLength: 0)
                     }
                 }
                 GeometryReader { geo in
                     HStack {
                         Circle()
-                            .fill(Color.fikeBG)
-                            .frame(width: 12, height: 12)
+                            .fill(fillGradient(whiteLevel: songViewModel.whiteLevel))
+                            .frame(width: 14, height: 14)
                             .animation(nil)
-                            .scaleEffect(isDragging ? 1.5 : 1)
+                            .scaleEffect(isDragging ? 2 : 1)
                             .padding(.leading, geo.size.width * self.percentagePlayedForSong() - 7)
                             
                             .gesture(
                                 DragGesture()
                                     .onChanged({ value in
-                                        self.isDragging = true 
-                                        musicController.musicPlayer.beginSeekingForward()
-                                        self.song.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
+                                        self.isDragging = true
+                                        songViewModel.timer?.invalidate()
+                                        songViewModel.timer = nil
+                                        self.songViewModel.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
                                             
                                     })
-                                    
                                     .onEnded({ value in
                                         self.isDragging = false
                                         musicController.musicPlayer.currentPlaybackTime = self.time(for: value.location.x, in: geo.size.width)
-                                        musicController.musicPlayer.endSeeking()
                                     })
                             )
                         Spacer(minLength: 0)
                     }
                 }
                 HStack {
-                    Text(formattedTimeFor(timeInterval: song.elapsedTime))
+                    Text(formattedTimeFor(timeInterval: songViewModel.elapsedTime))
                         .font(Font.system(.headline).weight(.regular))
                         .foregroundColor(.white)
                     Spacer()
-                    Text(formattedTimeFor(timeInterval: song.duration))
+                    Text(formattedTimeFor(timeInterval: songViewModel.duration))
                         .font(Font.system(.headline).weight(.regular))
                         .foregroundColor(.white)
                 }
@@ -333,6 +409,14 @@ struct TrackProgressView: View {
         .padding(.top, 50)
     }
     
+    private func fillGradient(whiteLevel: CGFloat) -> LinearGradient {
+        if whiteLevel < 0.01 {
+            return LinearGradient(gradient: Gradient(colors: [songViewModel.darkerAccentColor, songViewModel.darkerAccentColor]), startPoint: .leading, endPoint: .trailing)
+        } else {
+            return LinearGradient(gradient: Gradient(colors: [songViewModel.lighterAccentColor, songViewModel.darkerAccentColor]), startPoint: .leading, endPoint: .trailing)
+        }
+    }
+    
     func formattedTimeFor(timeInterval: TimeInterval) -> String {
         let date = Date(timeIntervalSinceReferenceDate: timeInterval)
         return dateFormatter.string(from: date)
@@ -340,17 +424,17 @@ struct TrackProgressView: View {
 
     func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
         let percentage = location / width
-        let time = song.duration * TimeInterval(percentage)
+        let time = songViewModel.duration * TimeInterval(percentage)
         if time < 0 {
             return 0
-        } else if time > song.duration {
-            return song.duration
+        } else if time > songViewModel.duration {
+            return songViewModel.duration
         }
         return time
     }
 
     func percentagePlayedForSong() -> CGFloat {
-        let percentagePlayed = CGFloat(song.elapsedTime / song.duration)
+        let percentagePlayed = CGFloat(songViewModel.elapsedTime / songViewModel.duration)
         return percentagePlayed.isNaN ? 0.0 : percentagePlayed
     }
 }

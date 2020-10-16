@@ -20,6 +20,8 @@ struct Song: Codable, Hashable, SearchResults {
     let imageURL: URL
     var isAdded: Bool = false
     var albumArtwork: Data?
+    var accentColorHex: String
+    var textColor: String
     
     enum SongKeys: String, CodingKey {
         case name
@@ -30,6 +32,8 @@ struct Song: Codable, Hashable, SearchResults {
         case artistName
         case artwork
         case url
+        case bgColor
+        case textColor1
     }
     
     init(from decoder: Decoder) throws {
@@ -44,6 +48,8 @@ struct Song: Codable, Hashable, SearchResults {
         self.kind = try playParamsContainer.decode(String.self, forKey: .kind)
         let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "1500").replacingOccurrences(of: "{h}", with: "1500")
         self.imageURL = URL(string: stringURL)!
+        self.accentColorHex = try artworkContainer.decode(String.self, forKey: .bgColor)
+        self.textColor = try artworkContainer.decode(String.self, forKey: .textColor1)
     }
     
     init(songName: String, artistName: String, imageURL: URL) {
@@ -53,5 +59,7 @@ struct Song: Codable, Hashable, SearchResults {
         self.playID = ""
         self.kind = ""
         self.albumName = ""
+        self.accentColorHex = ""
+        self.textColor = ""
     }
 }

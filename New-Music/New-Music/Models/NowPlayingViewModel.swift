@@ -5,7 +5,7 @@
 //  Created by Michael McGrath on 10/6/20.
 //
 
-import UIKit
+import SwiftUI
 import MediaPlayer
 import Combine
 
@@ -13,16 +13,23 @@ class NowPlayingViewModel: ObservableObject {
     var musicPlayer: MPMusicPlayerController
     var didChange = PassthroughSubject<UIImage?, Never>()
     var timer: Timer?
+    var songs: [Song]
+    var nowPlayingSong: Song?
     @Published var artist: String = ""
     @Published var songTitle: String = ""
     @Published var duration: TimeInterval
     @Published var elapsedTime: TimeInterval
     @Published var isPlaying: Bool = false
-    @Published var isSeeking: Bool = false
+    @Published var whiteLevel: CGFloat = 0
+    @Published var lighterAccentColor: Color
+    @Published var darkerAccentColor: Color
+    @Published var isTooLight: Bool = false
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
-                self.didChange.send(self.albumArtwork)
+                self.updateAlbumArtwork { _ in
+                    self.didChange.send(self.albumArtwork)
+                }
             }
         }
     }
@@ -34,13 +41,16 @@ class NowPlayingViewModel: ObservableObject {
         return formatter
     }()
     
-    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage?, elapsedTime: TimeInterval = 0.0, duration: TimeInterval) {
+    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage?, elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.black.lighter()), darkerAccentColor: Color = .black) {
         self.artist = artist
         self.songTitle = songTitle
         self.albumArtwork = albumArtwork
         self.elapsedTime = elapsedTime
         self.duration = duration
         self.musicPlayer = musicPlayer
+        self.songs = songs
+        self.lighterAccentColor = lighterAccentColor
+        self.darkerAccentColor = darkerAccentColor
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
@@ -60,6 +70,16 @@ class NowPlayingViewModel: ObservableObject {
             self.duration = duration
         }
         self.elapsedTime = 0.0
+        let index = musicPlayer.indexOfNowPlayingItem
+        self.nowPlayingSong = songs[index]
+        
+        if let colors = getGradientColors() {
+            print("Lighter: \(colors.lighter.description)")
+            print("Darker: \(colors.darker.description)")
+            
+            self.lighterAccentColor = colors.lighter
+            self.darkerAccentColor = colors.darker
+        }
     }
     
     @objc func musicPlayerStateDidChange(_ notification: Notification) {
@@ -71,17 +91,93 @@ class NowPlayingViewModel: ObservableObject {
             self.timer = nil
         case .playing:
             isPlaying = true
-            let timer = Timer(timeInterval: 1, target: self, selector: #selector(updateElapsedTime(_:)), userInfo: nil, repeats: true)
-            RunLoop.current.add(timer, forMode: .common)
-            self.timer = timer
-            self.isSeeking = false 
+            if self.timer == nil {
+                self.timer = Timer(timeInterval: 1, target: self, selector: #selector(updateElapsedTime(_:)), userInfo: nil, repeats: true)
+                RunLoop.current.add(timer!, forMode: .common)
+            }
         case .seekingBackward:
-            isPlaying = true
+            isPlaying = musicPlayer.playbackState == .playing ? true : false
         case .seekingForward:
-            isPlaying = true
+            isPlaying = musicPlayer.playbackState == .playing ? true : false
         @unknown default:
             fatalError("Unknown default case for the music players playback state.")
         }
+    }
+    
+    private func updateAlbumArtwork(completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
+        if musicPlayer.playbackState == .playing && self.albumArtwork == nil {
+            if let imageURL = nowPlayingSong?.imageURL {
+                URLSession.shared.dataTask(with: imageURL) { data, _, error in
+                    if let networkError = NetworkError(data: data, response: nil, error: error) {
+                        print("Error retrieving image data: \(networkError.localizedDescription)")
+                        completion(.failure(networkError))
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.albumArtwork = UIImage(data: data!)
+                    }
+                    completion(.success(self.albumArtwork))
+                }.resume()
+            }
+        }
+    }
+    
+    private func getGradientColors() -> (lighter: Color, darker: Color)? {
+        guard let hexString = self.nowPlayingSong?.accentColorHex else { return nil }
+        
+        let apiColor = hexStringToUIColor(hex: hexString)
+        var secondColor = UIColor()
+        
+        if isLightColor(color: apiColor, threshold: 0.5) {
+            secondColor = apiColor.darker()
+            if isLightColor(color: apiColor, threshold: 0.7) && isLightColor(color: secondColor, threshold: 0.7) {
+                self.isTooLight = true
+            } else {
+                self.isTooLight = false
+            }
+            return (Color(apiColor), Color(secondColor))
+        } else {
+            if self.whiteLevel < 0.05 {
+                
+            }
+            secondColor = apiColor.lighter()
+            if isLightColor(color: apiColor, threshold: 0.7) && isLightColor(color: secondColor, threshold: 0.7) {
+                self.isTooLight = true
+            } else {
+                self.isTooLight = false
+            }
+            return (Color(secondColor), Color(apiColor))
+        }
+    }
+    
+    private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {
+        var white: CGFloat = 0.0
+        color.getWhite(&white, alpha: nil)
+        print("This is the white from the accent color: \(white)")
+        self.whiteLevel = white
+        return white >= threshold
+    }
+    
+    private func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+
+        if ((cString.count) != 6) {
+            return UIColor.gray
+        }
+
+        var rgbValue:UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
     }
     
     deinit {
