@@ -32,46 +32,49 @@ class APIController {
     let cache = URLCache(memoryCapacity: 1373714 * 100, diskCapacity: 1373714 * 100, diskPath: "ImageCache")
     
     var searchedSongs = [Song]()
+    var searchedAlbums = [Album]()
     var isPlaying = false 
     
-    func searchForSongWith(_ searchTerm: String, completion: @escaping (Result<[Song], NetworkError>) -> Void) {
+    private func makeSearchRequest(for searchTerm: String) -> URLRequest? {
         let term = searchTerm.replacingOccurrences(of: " ", with: "+")
+        print("The search term: \(searchTerm)")
         let storeURL = baseURL.appendingPathComponent("us").appendingPathComponent("search")
         var urlComponents = URLComponents(url: storeURL, resolvingAgainstBaseURL: true)
         urlComponents?.queryItems = [
             URLQueryItem(name: "term", value: term),
             URLQueryItem(name: "limit", value: "25"),
-            URLQueryItem(name: "types", value: "songs")
-//            URLQueryItem(name: "types", value: "songs,artists,albums")
+            URLQueryItem(name: "types", value: "songs,artists,albums")
         ]
-        guard let requestURL = urlComponents?.url else {
-            completion(.failure(.genericError))
-            return
-        }
-        print("Request URL: \(requestURL)")
+        guard let requestURL = urlComponents?.url else { return nil }
         var request = URLRequest(url: requestURL)
         request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(authController.developerToken)", forHTTPHeaderField: "Authorization")
         request.setValue(authController.userToken, forHTTPHeaderField: "Music-User-Token")
+
+        return request
+    }
+    
+    func searchForSongWith(_ searchTerm: String, completion: @escaping (Result<[Song], NetworkError>) -> Void) {
+        guard let request = makeSearchRequest(for: searchTerm) else {
+            completion(.failure(.genericError))
+            return
+        }
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let networkError = NetworkError(data: data, response: response, error: error) {
                 completion(.failure(networkError))
                 return
             }
-            
             do {
-                let jsonResults = try JSONSerialization.jsonObject(with: data!, options: []) as! Dictionary<String, Any>
-                if let results = Results(dictionary: jsonResults)?.songs {
-                    
-                    let songData = try JSONSerialization.data(withJSONObject: results, options: [])
-                    let songs = try JSONDecoder().decode([Song].self, from: songData)
-                    self.searchedSongs = songs
-                    print("Songs count: \(self.searchedSongs.count)")
-                    completion(.success(songs))
-                }
+                let searchResults = try JSONDecoder().decode(SearchResult.self, from: data!).results
+                let songsResults = searchResults.songs.data
+                let albumResults = searchResults.albums.data
+                self.searchedSongs = songsResults.map { $0.attributes }
+                self.searchedAlbums = albumResults.map { $0.attributes }
+                print("Searched Albums Count: \(self.searchedAlbums.count)")
+                completion(.success(self.searchedSongs))
             } catch {
-                print("Error pasing json data \(error)")
+                print("Error decoding json data \(error)")
                 completion(.failure(.decodingError(error)))
                 return
             }
@@ -85,7 +88,6 @@ class APIController {
         sessionConfig.urlCache = self.cache
         let urlRequest = URLRequest(url: url)
         if let cachedData = self.cache.cachedResponse(for: urlRequest) {
-            print("Cached data in bytes: \(cachedData.data)")
             let image = UIImage(data: cachedData.data)
             completion(.success(image))
         } else {

@@ -5,7 +5,6 @@
 //  Created by Michael McGrath on 10/3/20.
 //
 
-import Foundation
 import UIKit
 
 struct Song: Codable, Hashable, SearchResults {
@@ -34,6 +33,7 @@ struct Song: Codable, Hashable, SearchResults {
         case url
         case bgColor
         case textColor1
+        case attributes
     }
     
     init(from decoder: Decoder) throws {
@@ -63,3 +63,5 @@ struct Song: Codable, Hashable, SearchResults {
         self.textColor = ""
     }
 }
+
+

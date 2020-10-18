@@ -29,3 +29,4 @@ struct Results {
         self.songs = songsArray
     }
 }
+

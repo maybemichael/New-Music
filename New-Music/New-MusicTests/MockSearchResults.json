@@ -1,0 +1,1037 @@
+{
+  "results": {
+    "songs": {
+      "href": "/v1/catalog/us/search?limit=5&term=drake%3D25&types=songs",
+      "next": "/v1/catalog/us/search?offset=5&term=drake%3D25&types=songs",
+      "data": [
+        {
+          "id": "1418213269",
+          "type": "songs",
+          "href": "/v1/catalog/us/songs/1418213269",
+          "attributes": {
+            "previews": [
+              {
+                "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview128/v4/66/94/d3/6694d3c9-83fd-9d5b-ffcb-faf7f7d43219/mzaf_8250980818169607248.plus.aac.p.m4a"
+              }
+            ],
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music128/v4/d5/7d/47/d57d4729-3acf-e6d6-1c75-2074e9cb27ec/00602567892410.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "2c2c2c",
+              "textColor1": "ebebeb",
+              "textColor2": "cccccc",
+              "textColor3": "c5c5c5",
+              "textColor4": "acacac"
+            },
+            "artistName": "Drake",
+            "url": "https://music.apple.com/us/album/gods-plan/1418213110?i=1418213269",
+            "discNumber": 1,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "durationInMillis": 198973,
+            "releaseDate": "2018-01-19",
+            "name": "God's Plan",
+            "isrc": "USCM51800004",
+            "hasLyrics": true,
+            "albumName": "Scorpion",
+            "playParams": {
+              "id": "1418213269",
+              "kind": "song"
+            },
+            "trackNumber": 5,
+            "composerName": "Matthew Samuels, Aubrey Graham, N. Shebib, Ron Latour, Daveon Jackson & Brock Korsan",
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1384782182",
+          "type": "songs",
+          "href": "/v1/catalog/us/songs/1384782182",
+          "attributes": {
+            "previews": [
+              {
+                "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/f5/bc/9e/f5bc9e9c-d62b-332b-04c4-061018d060fc/mzaf_7200764193324270096.plus.aac.p.m4a"
+              }
+            ],
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/18/55/7b/18557b44-e741-6a70-53bc-992d8243c243/00602567713999.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "e4e4e4",
+              "textColor1": "161616",
+              "textColor2": "282828",
+              "textColor3": "3f3f3f",
+              "textColor4": "4d4d4d"
+            },
+            "artistName": "Lil Baby & Drake",
+            "url": "https://music.apple.com/us/album/yes-indeed/1384782173?i=1384782182",
+            "discNumber": 1,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "durationInMillis": 142273,
+            "releaseDate": "2018-05-15",
+            "name": "Yes Indeed",
+            "isrc": "USUM71806749",
+            "hasLyrics": true,
+            "albumName": "Harder Than Ever",
+            "playParams": {
+              "id": "1384782182",
+              "kind": "song"
+            },
+            "trackNumber": 5,
+            "composerName": "Dominique Jones, Aubrey Graham & Wesley Glass",
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1421242781",
+          "type": "songs",
+          "href": "/v1/catalog/us/songs/1421242781",
+          "attributes": {
+            "previews": [
+              {
+                "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview128/v4/95/83/ee/9583ee9b-68bb-7e91-c032-1f8805157854/mzaf_896336562892407790.plus.aac.p.m4a"
+              }
+            ],
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/72/5a/e4/725ae48d-4405-d4bd-0694-91a1b16035d6/886447227169.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "a2bad1",
+              "textColor1": "1b0300",
+              "textColor2": "082647",
+              "textColor3": "36272a",
+              "textColor4": "264463"
+            },
+            "artistName": "Travis Scott",
+            "url": "https://music.apple.com/us/album/sicko-mode/1421241217?i=1421242781",
+            "discNumber": 1,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "durationInMillis": 312820,
+            "releaseDate": "2018-08-21",
+            "name": "SICKO MODE",
+            "isrc": "USSM11806660",
+            "hasLyrics": true,
+            "albumName": "ASTROWORLD",
+            "playParams": {
+              "id": "1421242781",
+              "kind": "song"
+            },
+            "trackNumber": 3,
+            "composerName": "Jacques Webster",
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1418213383",
+          "type": "songs",
+          "href": "/v1/catalog/us/songs/1418213383",
+          "attributes": {
+            "previews": [
+              {
+                "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview128/v4/d5/76/97/d57697bf-23c1-0bdc-1220-7c6ea66157e9/mzaf_9106621240596182249.plus.aac.p.m4a"
+              }
+            ],
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music128/v4/d5/7d/47/d57d4729-3acf-e6d6-1c75-2074e9cb27ec/00602567892410.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "2c2c2c",
+              "textColor1": "ebebeb",
+              "textColor2": "cccccc",
+              "textColor3": "c5c5c5",
+              "textColor4": "acacac"
+            },
+            "artistName": "Drake",
+            "url": "https://music.apple.com/us/album/nice-for-what/1418213110?i=1418213383",
+            "discNumber": 2,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "durationInMillis": 210747,
+            "releaseDate": "2018-04-06",
+            "name": "Nice For What",
+            "isrc": "USCM51800077",
+            "hasLyrics": true,
+            "albumName": "Scorpion",
+            "playParams": {
+              "id": "1418213383",
+              "kind": "song"
+            },
+            "trackNumber": 4,
+            "composerName": "Aubrey Graham, Shane Lindstrom, Alan Bergman, Marilyn Bergman, Marvin Hamlisch, Clifford Smith, Corey Woods, Phillip Price, Jason Hunter, Robert Diggs, Byron Thomas, Lamont Jody Hawkins, Dennis Coles, Russell T. \"Old Dirty Bastard\" Jones, Lauryn Hill, Gary Grice, Birdman & Orville Erwin Hall",
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1418213266",
+          "type": "songs",
+          "href": "/v1/catalog/us/songs/1418213266",
+          "attributes": {
+            "previews": [
+              {
+                "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview118/v4/22/47/c5/2247c5ed-3d1e-09a3-66eb-bf5c81c5cf79/mzaf_2125772266550178280.plus.aac.p.m4a"
+              }
+            ],
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music128/v4/d5/7d/47/d57d4729-3acf-e6d6-1c75-2074e9cb27ec/00602567892410.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "2c2c2c",
+              "textColor1": "ebebeb",
+              "textColor2": "cccccc",
+              "textColor3": "c5c5c5",
+              "textColor4": "acacac"
+            },
+            "artistName": "Drake",
+            "url": "https://music.apple.com/us/album/nonstop/1418213110?i=1418213266",
+            "discNumber": 1,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "durationInMillis": 238613,
+            "releaseDate": "2018-06-29",
+            "name": "Nonstop",
+            "isrc": "USCM51800191",
+            "hasLyrics": true,
+            "albumName": "Scorpion",
+            "playParams": {
+              "id": "1418213266",
+              "kind": "song"
+            },
+            "trackNumber": 2,
+            "composerName": "A. Graham, B. / Chambers & D. Wilson",
+            "contentRating": "explicit"
+          }
+        }
+      ]
+    },
+    "albums": {
+      "href": "/v1/catalog/us/search?limit=5&term=drake%3D25&types=albums",
+      "next": "/v1/catalog/us/search?offset=7&term=drake%3D25&types=albums",
+      "data": [
+        {
+          "id": "1440841363",
+          "type": "albums",
+          "href": "/v1/catalog/us/albums/1440841363",
+          "attributes": {
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music124/v4/ac/6d/2b/ac6d2bdf-946f-2059-247d-96677417d28e/16UMGIM27642.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "132029",
+              "textColor1": "bfcdd5",
+              "textColor2": "d0c2b4",
+              "textColor3": "9caab3",
+              "textColor4": "aaa198"
+            },
+            "artistName": "Drake",
+            "isSingle": false,
+            "url": "https://music.apple.com/us/album/views/1440841363",
+            "isComplete": true,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "trackCount": 20,
+            "isMasteredForItunes": true,
+            "releaseDate": "2016-04-29",
+            "name": "Views",
+            "recordLabel": "Cash Money Records/Young Money Ent./Universal Rec.",
+            "copyright": "℗ 2016 Young Money Entertainment/Cash Money Records",
+            "playParams": {
+              "id": "1440841363",
+              "kind": "album"
+            },
+            "isCompilation": false,
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1440890708",
+          "type": "albums",
+          "href": "/v1/catalog/us/albums/1440890708",
+          "attributes": {
+            "artwork": {
+              "width": 2100,
+              "height": 2100,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music123/v4/30/4e/9a/304e9af5-fb7c-07a5-fe64-cf1b5a5ca1a5/17UMGIM85032.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "000000",
+              "textColor1": "e9d6bf",
+              "textColor2": "e5a26a",
+              "textColor3": "baab99",
+              "textColor4": "b78155"
+            },
+            "artistName": "Drake",
+            "isSingle": false,
+            "url": "https://music.apple.com/us/album/more-life/1440890708",
+            "isComplete": true,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "trackCount": 22,
+            "isMasteredForItunes": true,
+            "releaseDate": "2017-03-18",
+            "name": "More Life",
+            "recordLabel": "Cash Money Records/Young Money Ent./Universal Rec.",
+            "copyright": "℗ 2017 Young Money Entertainment/Cash Money Records",
+            "playParams": {
+              "id": "1440890708",
+              "kind": "album"
+            },
+            "isCompilation": false,
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1418213110",
+          "type": "albums",
+          "href": "/v1/catalog/us/albums/1418213110",
+          "attributes": {
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music128/v4/d5/7d/47/d57d4729-3acf-e6d6-1c75-2074e9cb27ec/00602567892410.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "2c2c2c",
+              "textColor1": "ebebeb",
+              "textColor2": "cccccc",
+              "textColor3": "c5c5c5",
+              "textColor4": "acacac"
+            },
+            "artistName": "Drake",
+            "isSingle": false,
+            "url": "https://music.apple.com/us/album/scorpion/1418213110",
+            "isComplete": true,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music",
+              "Rap",
+              "R&B/Soul",
+              "Contemporary R&B"
+            ],
+            "trackCount": 25,
+            "isMasteredForItunes": false,
+            "releaseDate": "2018-06-29",
+            "name": "Scorpion",
+            "recordLabel": "Cash Money/Drake LP6",
+            "copyright": "℗ 2018 Young Money/Cash Money Records",
+            "playParams": {
+              "id": "1418213110",
+              "kind": "album"
+            },
+            "editorialNotes": {
+              "standard": "I HATE WHEN DRAKE RAPS<br />DRAKE SINGS TOO MUCH<br />DRAKE IS A POP ARTIST<br />DRAKE DOESN’T EVEN WRITE HIS OWN SONGS<br />DRAKE TOOK AN L<br />DRAKE DIDN’T START FROM THE BOTTOM<br />DRAKE IS FINISHED<br />I LIKE DRAKE'S OLDER STUFF<br />DRAKE MAKES MUSIC FOR GIRLS<br />DRAKE THINKS HE’S JAMAICAN<br />DRAKE IS AN ACTOR<br />DRAKE CHANGED<br />ANYBODY ELSE &gt; DRAKE …<br /><br />YEAH YEAH WE KNOW",
+              "short": "Two sides of a story the OVO boss was born to tell."
+            },
+            "isCompilation": false,
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1511037323",
+          "type": "albums",
+          "href": "/v1/catalog/us/albums/1511037323",
+          "attributes": {
+            "artwork": {
+              "width": 3000,
+              "height": 3000,
+              "url": "https://is4-ssl.mzstatic.com/image/thumb/Music123/v4/02/32/85/02328553-ae05-1801-47bf-8f1e29871db1/20UMGIM34466.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "0f1a0a",
+              "textColor1": "fefefe",
+              "textColor2": "c9b87d",
+              "textColor3": "ced0cd",
+              "textColor4": "a49866"
+            },
+            "artistName": "Drake",
+            "isSingle": false,
+            "url": "https://music.apple.com/us/album/dark-lane-demo-tapes/1511037323",
+            "isComplete": true,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "trackCount": 14,
+            "isMasteredForItunes": true,
+            "releaseDate": "2020-05-01",
+            "name": "Dark Lane Demo Tapes",
+            "recordLabel": "OVO",
+            "copyright": "℗ 2020 OVO, under exclusive license to Republic Records, a division of UMG Recordings, Inc.",
+            "playParams": {
+              "id": "1511037323",
+              "kind": "album"
+            },
+            "editorialNotes": {
+              "standard": "When Drake released the dance-routine-ready “Toosie Slide” roughly a month ahead of his <i>Dark Lane Demo Tapes</i>, fans were near incredulous that he’d discovered yet another musical frontier in which to stake his claim. (Those who weren’t busy choreographing TikTok videos to the song, anyway.) With the release of <i>Dark Lane Demo Tapes</i>, Drake delivers a handful of additional forays into the sound of right now. The project, per Drake’s own Instagram, features music compiled by OVO cohorts Oliver El-Khatib and Noel Cadastre, and comprises “some leaks and some joints from SoundCloud and some new vibes.”<br />\nFound within are Drake-helmed masterpieces of post-regional drill music (“Demons,” “War”), linkups with Future (“Desires”) and Chris Brown (“Not You Too”), and a Pi’erre Bourne-produced Playboi Carti collaboration (“Pain 1993”), as well as the kind of hazy, regret-steeped R&amp;B that so many contemporary playlists are built on (“Time Flies”). In its approach to these familiar vibes, this particular collection of music is the most of-the-moment Drake has ever sounded—more present than his usual prescient.",
+              "short": "After “Toosie Slide,” more forays into the sound of right now."
+            },
+            "isCompilation": false,
+            "contentRating": "explicit"
+          }
+        },
+        {
+          "id": "1440642493",
+          "type": "albums",
+          "href": "/v1/catalog/us/albums/1440642493",
+          "attributes": {
+            "artwork": {
+              "width": 1500,
+              "height": 1500,
+              "url": "https://is5-ssl.mzstatic.com/image/thumb/Music128/v4/b5/3e/92/b53e92a9-54e7-2e14-6134-02dbd5e9093f/00602527899107.rgb.jpg/{w}x{h}bb.jpeg",
+              "bgColor": "070b0c",
+              "textColor1": "ffffff",
+              "textColor2": "dbbb94",
+              "textColor3": "cdcece",
+              "textColor4": "b09879"
+            },
+            "artistName": "Drake",
+            "isSingle": false,
+            "url": "https://music.apple.com/us/album/take-care-deluxe-version/1440642493",
+            "isComplete": true,
+            "genreNames": [
+              "Hip-Hop/Rap",
+              "Music"
+            ],
+            "trackCount": 20,
+            "isMasteredForItunes": false,
+            "releaseDate": "2011-11-15",
+            "name": "Take Care (Deluxe Version)",
+            "recordLabel": "Aspire Music Group, LLC",
+            "copyright": "℗ 2011 Cash Money Records Inc.",
+            "playParams": {
+              "id": "1440642493",
+              "kind": "album"
+            },
+            "editorialNotes": {
+              "standard": "Drake's still fretting about lost love, the perils of fame, and connecting with his fellow man; just look at him on the cover, staring into a golden chalice like a lonely king. These naked emotions, however, are what make <i>Take Care</i> a classic, placing Drake in a league with legendary emoters like Marvin Gaye and Al Green. \"Marvin's Room\" is one of the most sullen singles to hit the Top 100, and the winsome guitar howls of the title track, coproduced by Jamie xx, are among of the most recognizable sounds of the decade.",
+              "short": "Drizzy's naked emotions produce a brokenhearted classic. "
+            },
+            "isCompilation": false,
+            "contentRating": "explicit"
+          }
+        }
+      ]
+    },
+    "artists": {
+      "href": "/v1/catalog/us/search?limit=5&term=drake%3D25&types=artists",
+      "next": "/v1/catalog/us/search?offset=5&term=drake%3D25&types=artists",
+      "data": [
+        {
+          "id": "271256",
+          "type": "artists",
+          "href": "/v1/catalog/us/artists/271256",
+          "attributes": {
+            "url": "https://music.apple.com/us/artist/drake/271256",
+            "genreNames": [
+              "Hip-Hop/Rap"
+            ],
+            "name": "Drake"
+          },
+          "relationships": {
+            "albums": {
+              "href": "/v1/catalog/us/artists/271256/albums",
+              "next": "/v1/catalog/us/artists/271256/albums?offset=25",
+              "data": [
+                {
+                  "id": "1440841363",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440841363",
+                  "attributes": {
+                    "artwork": {
+                      "width": 3000,
+                      "height": 3000,
+                      "url": "https://is4-ssl.mzstatic.com/image/thumb/Music124/v4/ac/6d/2b/ac6d2bdf-946f-2059-247d-96677417d28e/16UMGIM27642.rgb.jpg/{w}x{h}bb.jpeg",
+                      "bgColor": "132029",
+                      "textColor1": "bfcdd5",
+                      "textColor2": "d0c2b4",
+                      "textColor3": "9caab3",
+                      "textColor4": "aaa198"
+                    },
+                    "artistName": "Drake",
+                    "isSingle": false,
+                    "url": "https://music.apple.com/us/album/views/1440841363",
+                    "isComplete": true,
+                    "genreNames": [
+                      "Hip-Hop/Rap",
+                      "Music"
+                    ],
+                    "trackCount": 20,
+                    "isMasteredForItunes": true,
+                    "releaseDate": "2016-04-29",
+                    "name": "Views",
+                    "recordLabel": "Cash Money Records/Young Money Ent./Universal Rec.",
+                    "copyright": "℗ 2016 Young Money Entertainment/Cash Money Records",
+                    "playParams": {
+                      "id": "1440841363",
+                      "kind": "album"
+                    },
+                    "isCompilation": false,
+                    "contentRating": "explicit"
+                  }
+                },
+                {
+                  "id": "1440890708",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440890708",
+                  "attributes": {
+                    "artwork": {
+                      "width": 2100,
+                      "height": 2100,
+                      "url": "https://is4-ssl.mzstatic.com/image/thumb/Music123/v4/30/4e/9a/304e9af5-fb7c-07a5-fe64-cf1b5a5ca1a5/17UMGIM85032.rgb.jpg/{w}x{h}bb.jpeg",
+                      "bgColor": "000000",
+                      "textColor1": "e9d6bf",
+                      "textColor2": "e5a26a",
+                      "textColor3": "baab99",
+                      "textColor4": "b78155"
+                    },
+                    "artistName": "Drake",
+                    "isSingle": false,
+                    "url": "https://music.apple.com/us/album/more-life/1440890708",
+                    "isComplete": true,
+                    "genreNames": [
+                      "Hip-Hop/Rap",
+                      "Music"
+                    ],
+                    "trackCount": 22,
+                    "isMasteredForItunes": true,
+                    "releaseDate": "2017-03-18",
+                    "name": "More Life",
+                    "recordLabel": "Cash Money Records/Young Money Ent./Universal Rec.",
+                    "copyright": "℗ 2017 Young Money Entertainment/Cash Money Records",
+                    "playParams": {
+                      "id": "1440890708",
+                      "kind": "album"
+                    },
+                    "isCompilation": false,
+                    "contentRating": "explicit"
+                  }
+                },
+                {
+                  "id": "1418213110",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1418213110",
+                  "attributes": {
+                    "artwork": {
+                      "width": 3000,
+                      "height": 3000,
+                      "url": "https://is4-ssl.mzstatic.com/image/thumb/Music128/v4/d5/7d/47/d57d4729-3acf-e6d6-1c75-2074e9cb27ec/00602567892410.rgb.jpg/{w}x{h}bb.jpeg",
+                      "bgColor": "2c2c2c",
+                      "textColor1": "ebebeb",
+                      "textColor2": "cccccc",
+                      "textColor3": "c5c5c5",
+                      "textColor4": "acacac"
+                    },
+                    "artistName": "Drake",
+                    "isSingle": false,
+                    "url": "https://music.apple.com/us/album/scorpion/1418213110",
+                    "isComplete": true,
+                    "genreNames": [
+                      "Hip-Hop/Rap",
+                      "Music",
+                      "Rap",
+                      "R&B/Soul",
+                      "Contemporary R&B"
+                    ],
+                    "trackCount": 25,
+                    "isMasteredForItunes": false,
+                    "releaseDate": "2018-06-29",
+                    "name": "Scorpion",
+                    "recordLabel": "Cash Money/Drake LP6",
+                    "copyright": "℗ 2018 Young Money/Cash Money Records",
+                    "playParams": {
+                      "id": "1418213110",
+                      "kind": "album"
+                    },
+                    "editorialNotes": {
+                      "standard": "I HATE WHEN DRAKE RAPS<br />DRAKE SINGS TOO MUCH<br />DRAKE IS A POP ARTIST<br />DRAKE DOESN’T EVEN WRITE HIS OWN SONGS<br />DRAKE TOOK AN L<br />DRAKE DIDN’T START FROM THE BOTTOM<br />DRAKE IS FINISHED<br />I LIKE DRAKE'S OLDER STUFF<br />DRAKE MAKES MUSIC FOR GIRLS<br />DRAKE THINKS HE’S JAMAICAN<br />DRAKE IS AN ACTOR<br />DRAKE CHANGED<br />ANYBODY ELSE &gt; DRAKE …<br /><br />YEAH YEAH WE KNOW",
+                      "short": "Two sides of a story the OVO boss was born to tell."
+                    },
+                    "isCompilation": false,
+                    "contentRating": "explicit"
+                  }
+                },
+                {
+                  "id": "1511037323",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1511037323",
+                  "attributes": {
+                    "artwork": {
+                      "width": 3000,
+                      "height": 3000,
+                      "url": "https://is4-ssl.mzstatic.com/image/thumb/Music123/v4/02/32/85/02328553-ae05-1801-47bf-8f1e29871db1/20UMGIM34466.rgb.jpg/{w}x{h}bb.jpeg",
+                      "bgColor": "0f1a0a",
+                      "textColor1": "fefefe",
+                      "textColor2": "c9b87d",
+                      "textColor3": "ced0cd",
+                      "textColor4": "a49866"
+                    },
+                    "artistName": "Drake",
+                    "isSingle": false,
+                    "url": "https://music.apple.com/us/album/dark-lane-demo-tapes/1511037323",
+                    "isComplete": true,
+                    "genreNames": [
+                      "Hip-Hop/Rap",
+                      "Music"
+                    ],
+                    "trackCount": 14,
+                    "isMasteredForItunes": true,
+                    "releaseDate": "2020-05-01",
+                    "name": "Dark Lane Demo Tapes",
+                    "recordLabel": "OVO",
+                    "copyright": "℗ 2020 OVO, under exclusive license to Republic Records, a division of UMG Recordings, Inc.",
+                    "playParams": {
+                      "id": "1511037323",
+                      "kind": "album"
+                    },
+                    "editorialNotes": {
+                      "standard": "When Drake released the dance-routine-ready “Toosie Slide” roughly a month ahead of his <i>Dark Lane Demo Tapes</i>, fans were near incredulous that he’d discovered yet another musical frontier in which to stake his claim. (Those who weren’t busy choreographing TikTok videos to the song, anyway.) With the release of <i>Dark Lane Demo Tapes</i>, Drake delivers a handful of additional forays into the sound of right now. The project, per Drake’s own Instagram, features music compiled by OVO cohorts Oliver El-Khatib and Noel Cadastre, and comprises “some leaks and some joints from SoundCloud and some new vibes.”<br />\nFound within are Drake-helmed masterpieces of post-regional drill music (“Demons,” “War”), linkups with Future (“Desires”) and Chris Brown (“Not You Too”), and a Pi’erre Bourne-produced Playboi Carti collaboration (“Pain 1993”), as well as the kind of hazy, regret-steeped R&amp;B that so many contemporary playlists are built on (“Time Flies”). In its approach to these familiar vibes, this particular collection of music is the most of-the-moment Drake has ever sounded—more present than his usual prescient.",
+                      "short": "After “Toosie Slide,” more forays into the sound of right now."
+                    },
+                    "isCompilation": false,
+                    "contentRating": "explicit"
+                  }
+                },
+                {
+                  "id": "1440642493",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440642493",
+                  "attributes": {
+                    "artwork": {
+                      "width": 1500,
+                      "height": 1500,
+                      "url": "https://is5-ssl.mzstatic.com/image/thumb/Music128/v4/b5/3e/92/b53e92a9-54e7-2e14-6134-02dbd5e9093f/00602527899107.rgb.jpg/{w}x{h}bb.jpeg",
+                      "bgColor": "070b0c",
+                      "textColor1": "ffffff",
+                      "textColor2": "dbbb94",
+                      "textColor3": "cdcece",
+                      "textColor4": "b09879"
+                    },
+                    "artistName": "Drake",
+                    "isSingle": false,
+                    "url": "https://music.apple.com/us/album/take-care-deluxe-version/1440642493",
+                    "isComplete": true,
+                    "genreNames": [
+                      "Hip-Hop/Rap",
+                      "Music"
+                    ],
+                    "trackCount": 20,
+                    "isMasteredForItunes": false,
+                    "releaseDate": "2011-11-15",
+                    "name": "Take Care (Deluxe Version)",
+                    "recordLabel": "Aspire Music Group, LLC",
+                    "copyright": "℗ 2011 Cash Money Records Inc.",
+                    "playParams": {
+                      "id": "1440642493",
+                      "kind": "album"
+                    },
+                    "editorialNotes": {
+                      "standard": "Drake's still fretting about lost love, the perils of fame, and connecting with his fellow man; just look at him on the cover, staring into a golden chalice like a lonely king. These naked emotions, however, are what make <i>Take Care</i> a classic, placing Drake in a league with legendary emoters like Marvin Gaye and Al Green. \"Marvin's Room\" is one of the most sullen singles to hit the Top 100, and the winsome guitar howls of the title track, coproduced by Jamie xx, are among of the most recognizable sounds of the decade.",
+                      "short": "Drizzy's naked emotions produce a brokenhearted classic. "
+                    },
+                    "isCompilation": false,
+                    "contentRating": "explicit"
+                  }
+                },
+                {
+                  "id": "1440842320",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440842320"
+                },
+                {
+                  "id": "1440839718",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440839718"
+                },
+                {
+                  "id": "1475177816",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1475177816"
+                },
+                {
+                  "id": "1440829462",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440829462"
+                },
+                {
+                  "id": "1440762388",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440762388"
+                },
+                {
+                  "id": "1452017773",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1452017773"
+                },
+                {
+                  "id": "1406109769",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1406109769"
+                },
+                {
+                  "id": "1440745498",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440745498"
+                },
+                {
+                  "id": "1440842556",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440842556"
+                },
+                {
+                  "id": "1440824484",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440824484"
+                },
+                {
+                  "id": "1511049637",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1511049637"
+                },
+                {
+                  "id": "1501942914",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1501942914"
+                },
+                {
+                  "id": "1440830885",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440830885"
+                },
+                {
+                  "id": "1440891750",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440891750"
+                },
+                {
+                  "id": "1440848548",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440848548"
+                },
+                {
+                  "id": "1493864494",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1493864494"
+                },
+                {
+                  "id": "1527584873",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1527584873"
+                },
+                {
+                  "id": "1440819797",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440819797"
+                },
+                {
+                  "id": "1345660760",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1345660760"
+                },
+                {
+                  "id": "1438445670",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1438445670"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "428548228",
+          "type": "artists",
+          "href": "/v1/catalog/us/artists/428548228",
+          "attributes": {
+            "url": "https://music.apple.com/us/artist/drake-white/428548228",
+            "genreNames": [
+              "Country"
+            ],
+            "name": "Drake White"
+          },
+          "relationships": {
+            "albums": {
+              "href": "/v1/catalog/us/artists/428548228/albums",
+              "data": [
+                {
+                  "id": "1440839188",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440839188"
+                },
+                {
+                  "id": "1376910426",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1376910426"
+                },
+                {
+                  "id": "1508834455",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1508834455"
+                },
+                {
+                  "id": "1446033493",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1446033493"
+                },
+                {
+                  "id": "1440835491",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440835491"
+                },
+                {
+                  "id": "1444850495",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1444850495"
+                },
+                {
+                  "id": "1514469650",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1514469650"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "1285818",
+          "type": "artists",
+          "href": "/v1/catalog/us/artists/1285818",
+          "attributes": {
+            "url": "https://music.apple.com/us/artist/nick-drake/1285818",
+            "genreNames": [
+              "Singer/Songwriter"
+            ],
+            "name": "Nick Drake"
+          },
+          "relationships": {
+            "albums": {
+              "href": "/v1/catalog/us/artists/1285818/albums",
+              "data": [
+                {
+                  "id": "1440758653",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440758653"
+                },
+                {
+                  "id": "1440723775",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440723775"
+                },
+                {
+                  "id": "1440656068",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440656068"
+                },
+                {
+                  "id": "1443930816",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1443930816"
+                },
+                {
+                  "id": "1440822546",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1440822546"
+                },
+                {
+                  "id": "1443549637",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1443549637"
+                },
+                {
+                  "id": "1443994019",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1443994019"
+                },
+                {
+                  "id": "1445301088",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1445301088"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "49635456",
+          "type": "artists",
+          "href": "/v1/catalog/us/artists/49635456",
+          "attributes": {
+            "url": "https://music.apple.com/us/artist/drake-bell/49635456",
+            "genreNames": [
+              "Pop"
+            ],
+            "name": "Drake Bell"
+          },
+          "relationships": {
+            "albums": {
+              "href": "/v1/catalog/us/artists/49635456/albums",
+              "next": "/v1/catalog/us/artists/49635456/albums?offset=25",
+              "data": [
+                {
+                  "id": "1492942496",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1492942496"
+                },
+                {
+                  "id": "1443105667",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1443105667"
+                },
+                {
+                  "id": "1518840880",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1518840880"
+                },
+                {
+                  "id": "852649878",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/852649878"
+                },
+                {
+                  "id": "1499156529",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1499156529"
+                },
+                {
+                  "id": "269886452",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/269886452"
+                },
+                {
+                  "id": "1504745727",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1504745727"
+                },
+                {
+                  "id": "1444011759",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1444011759"
+                },
+                {
+                  "id": "1518842324",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1518842324"
+                },
+                {
+                  "id": "1456313406",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1456313406"
+                },
+                {
+                  "id": "1505847068",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1505847068"
+                },
+                {
+                  "id": "1523720347",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1523720347"
+                },
+                {
+                  "id": "1454959804",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1454959804"
+                },
+                {
+                  "id": "1518844328",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1518844328"
+                },
+                {
+                  "id": "1518841428",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1518841428"
+                },
+                {
+                  "id": "1488508776",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1488508776"
+                },
+                {
+                  "id": "1135941172",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1135941172"
+                },
+                {
+                  "id": "1488155389",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1488155389"
+                },
+                {
+                  "id": "1477844992",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1477844992"
+                },
+                {
+                  "id": "1493018144",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1493018144"
+                },
+                {
+                  "id": "867920704",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/867920704"
+                },
+                {
+                  "id": "783413934",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/783413934"
+                },
+                {
+                  "id": "1349018490",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1349018490"
+                },
+                {
+                  "id": "1507277169",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1507277169"
+                },
+                {
+                  "id": "1444901430",
+                  "type": "albums",
+                  "href": "/v1/catalog/us/albums/1444901430"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "6860552",
+          "type": "artists",
+          "href": "/v1/catalog/us/artists/6860552",
+          "attributes": {
+            "url": "https://music.apple.com/us/artist/ludwig-von-drake/6860552",
+            "genreNames": [
+              "Soundtrack"
+            ],
+            "name": "Ludwig Von Drake"
+          },
+          "relationships": {
+            "albums": {
+              "href": "/v1/catalog/us/artists/6860552/albums",
+              "data": []
+            }
+          }
+        }
+      ]
+    }
+  },
+  "meta": {
+    "results": {
+      "order": [
+        "songs",
+        "albums",
+        "artists"
+      ]
+    }
+  }
+}

@@ -14,7 +14,7 @@ struct NowPlayingView: View {
    
     var body: some View {
         ZStack {
-            Color.nowPlayingBG
+            LinearGradient(.sysGrayThree, .nowPlayingBG)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
                 NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: songViewModel)
@@ -34,12 +34,12 @@ struct NowPlayingView: View {
 //                        .foregroundColor(.white)
                 }
                 .frame(minHeight: 80)
-                .padding(.bottom, 40)
+//                .padding(.bottom, 40)
                 .padding(.leading, 40)
                 .padding(.trailing, 40)
                 
                 TrackProgressView(songViewModel: songViewModel, musicController: musicController)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 12)
                 HStack(spacing: 40) {
                     Spacer()
                     TrackButton(imageName: "backward.fill", size: 60, trackDirection: .trackBackward, musicController: musicController, songViewModel: songViewModel)
@@ -109,21 +109,21 @@ struct NeuButtonBackground<S: Shape>: View {
                                 .blur(radius: 8)
                                 .offset(x: -2, y: -2)
                                 .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
-                        .overlay(shape.stroke(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)))
                         .shadow(color: Color.black.opacity(0.5), radius: 10, x: 7, y: 7)
                         .shadow(color: Color.white.opacity(0.5), radius: 10, x: -7, y: -7)
                         .blendMode(.overlay)
                     shape
                         .fill(gradient(for: isHighlighted))
+                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
                 } else {
                     shape
                         .fill(gradient(for: isHighlighted))
-                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black)))
                         .shadow(color: Color.black.opacity(0.5), radius: 10, x: 10, y: 10)
                         .shadow(color: Color.white.opacity(0.5), radius: 10, x: -10, y: -10)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor))
+                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
                 }
             } else {
                 if isHighlighted {
@@ -141,21 +141,21 @@ struct NeuButtonBackground<S: Shape>: View {
                                 .blur(radius: 8)
                                 .offset(x: -2, y: -2)
                                 .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
-                        .overlay(shape.stroke(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)))
                         .shadow(color: Color.black.opacity(0.7), radius: 8, x: 7, y: 7)
                         .shadow(color: Color.white.opacity(0.8), radius: 8, x: -7, y: -7)
                         .blendMode(.overlay)
                     shape
                         .fill(gradient(for: isHighlighted))
+                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
                 } else {
                     shape
                         .fill(gradient(for: isHighlighted))
-                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black)))
                         .shadow(color: Color.black.opacity(0.7), radius: 8, x: 10, y: 10)
                         .shadow(color: Color.white.opacity(0.8), radius: 8, x: -10, y: -10)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor))
+                        .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
                 }
             }
         }
@@ -217,21 +217,21 @@ struct NeuToggleBackground<S: Shape>: View {
             if viewModel.whiteLevel < 0.3 {
                 shape
                     .fill(gradient(for: viewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
                     .shadow(color: Color.white.opacity(0.5), radius: 12, x: -10, y: -10)
                     .shadow(color: Color.black.opacity(0.5), radius: 12, x: 10, y: 10)
                     .blendMode(.overlay)
                 shape
                     .fill(gradient(for: viewModel.isPlaying))
+                    .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
             } else {
                 shape
                     .fill(gradient(for: viewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
                     .shadow(color: Color.white.opacity(0.9), radius: 10, x: -10, y: -10)
                     .shadow(color: Color.black.opacity(0.5), radius: 10, x: 10, y: 10)
                     .blendMode(.overlay)
                 shape
                     .fill(gradient(for: viewModel.isPlaying))
+                    .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
             }
         }
         .frame(width: 90, height: 90)
@@ -349,8 +349,8 @@ struct TrackProgressView: View {
                     HStack {
                         RoundedRectangle(cornerRadius: 5)
                             .fill(LinearGradient(gradient:
-                                                    Gradient(stops: [Gradient.Stop(color: .sysGrayFour, location: 0.1),
-                                                                     Gradient.Stop(color: Color.black.opacity(0.7), location: 0.9)]),
+                                Gradient(stops: [Gradient.Stop(color: .sysGrayFour, location: 0.2),
+                                                 Gradient.Stop(color: Color.black.opacity(0.75), location: 0.9)]),
                                                  startPoint: .bottom,
                                                  endPoint: .top))
                             .frame(height: 8)
