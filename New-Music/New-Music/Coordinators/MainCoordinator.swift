@@ -5,26 +5,29 @@
 //  Created by Michael McGrath on 10/3/20.
 //
 
-import UIKit
+import SwiftUI
 
 protocol Coordinator: AnyObject {
     func start()
 }
 
-class MainCoordinator {
+class MainCoordinator: NSObject {
     private var window: UIWindow
-    private var nowPlayingVC = NowPlayingViewController()
+    private var nowPlayingBarVC = NowPlayingBarViewController()
     private var tabBarController = UITabBarController()
     private var playlistVC = PlaylistViewController()
     private var navController = UINavigationController(rootViewController: SearchViewController())
     private var musicController = MusicController()
-    var coordinator: Coordinator?
+    private var nowPlayingVC = NowPlayingViewController()
+    let interactor = Interactor()
+    weak var coordinator: Coordinator?
     
     init(window: UIWindow) {
         self.window = window
     }
     
     func start() {
+        nowPlayingBarVC.coordinator = self
         setUpAppNavViews()
         passDependencies()
         window.rootViewController = tabBarController
@@ -35,19 +38,40 @@ class MainCoordinator {
         navController.navigationBar.barStyle = .black
         navController.navigationBar.prefersLargeTitles = true
         navController.navigationBar.barTintColor = .backgroundColor
-        tabBarController.setViewControllers([navController, nowPlayingVC, playlistVC], animated: false)
+        tabBarController.setViewControllers([navController, nowPlayingBarVC, playlistVC], animated: false)
         tabBarController.tabBar.barTintColor = .backgroundColor
-        nowPlayingVC.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
+        nowPlayingBarVC.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
         navController.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
         playlistVC.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "heart.fill"), tag: 2)
         tabBarController.tabBar.tintColor = .white
     }
     
     private func passDependencies() {
-        nowPlayingVC.musicController = musicController
+        nowPlayingBarVC.musicController = musicController
         playlistVC.musicController = musicController
+        nowPlayingVC.musicController = musicController
         if let searchVC = navController.topViewController as? SearchViewController {
             searchVC.musicController = musicController
         }
+    }
+    
+    func presentFullScreenNowPlaying(fromVC: UIViewController) {
+        nowPlayingVC.transitioningDelegate = self
+        nowPlayingVC.interactor = interactor
+        nowPlayingVC.modalPresentationStyle = .custom
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.navController.pushViewController(self.nowPlayingVC, animated: true)
+//            fromVC.present(self.nowPlayingVC, animated: true, completion: nil)
+        }
+    }
+}
+
+extension MainCoordinator: UIViewControllerTransitioningDelegate {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        DismissAnimator(type: .navigation)
+    }
+    
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        return interactor.isStarted ? interactor : nil
     }
 }

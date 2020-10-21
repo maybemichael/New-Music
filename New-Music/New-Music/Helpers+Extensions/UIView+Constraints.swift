@@ -58,4 +58,10 @@ extension UIView {
         widthAnchor.constraint(equalToConstant: width).isActive = true
         heightAnchor.constraint(equalToConstant: height).isActive = true
     }
+    
+    func removeConstraints() {
+        self.constraints.forEach {
+            self.removeConstraint($0)
+        }
+    }
 }

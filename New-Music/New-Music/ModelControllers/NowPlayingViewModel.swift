@@ -23,7 +23,8 @@ class NowPlayingViewModel: ObservableObject {
     @Published var whiteLevel: CGFloat = 0
     @Published var lighterAccentColor: Color
     @Published var darkerAccentColor: Color
-    @Published var isTooLight: Bool = false
+    @Published var isTooLight = false
+    @Published var isFullScreen = false
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
@@ -41,7 +42,7 @@ class NowPlayingViewModel: ObservableObject {
         return formatter
     }()
     
-    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage?, elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.black.lighter()), darkerAccentColor: Color = .black) {
+    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(named: "Nirvana"), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.black.lighter()), darkerAccentColor: Color = .black) {
         self.artist = artist
         self.songTitle = songTitle
         self.albumArtwork = albumArtwork

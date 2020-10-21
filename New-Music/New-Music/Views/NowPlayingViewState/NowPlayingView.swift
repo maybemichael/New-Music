@@ -9,79 +9,130 @@ import SwiftUI
 import MediaPlayer
 
 struct NowPlayingView: View {
-    @ObservedObject var songViewModel: NowPlayingViewModel
-    var musicController: MusicController!
-   
+    var musicController: MusicController
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
+    @GestureState private var dragState = DragState.inactive
+    @State var position: CGFloat = 0
+    @State var isFullScreen: Bool = false
+    @State var bottomAnchor = UIScreen.main.bounds.height
+    @State var topAnchor: CGFloat = 0
+    @State var cardBottomEdgeLocation: CGFloat = UIScreen.main.bounds.height
+    @Namespace var namespace
+    var delegate: TabBarStatus
+    var drag: some Gesture {
+        let drag = DragGesture()
+            .updating($dragState) { drag, state, transaction in
+                state = .dragging(translation: drag.translation)
+            }
+            .onEnded(onDragEnded)
+        return drag
+    }
+    
+    
     var body: some View {
         ZStack {
-            LinearGradient(.sysGrayThree, .nowPlayingBG)
+            Color.nowPlayingBG
                 .edgesIgnoringSafeArea(.all)
-            VStack(spacing: 0) {
-                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, viewModel: songViewModel)
-                    .frame(width: 325, height: 325)
-                    .padding(.bottom, 20)
-                VStack {
-                    Text(songViewModel.artist)
-                        .font(Font.system(.title).weight(.light))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    Text(songViewModel.songTitle)
-                        .font(Font.system(.headline).weight(.medium))
-                        .foregroundColor(.lightTextColor)
-                        .multilineTextAlignment(.center)
-//                    Text("White Level: \(songViewModel.whiteLevel)")
-//                        .font(Font.system(.headline).weight(.medium))
-//                        .foregroundColor(.white)
-                }
-                .frame(minHeight: 80)
-//                .padding(.bottom, 40)
-                .padding(.leading, 40)
-                .padding(.trailing, 40)
-                
-                TrackProgressView(songViewModel: songViewModel, musicController: musicController)
-                    .padding(.bottom, 12)
-                HStack(spacing: 40) {
-                    Spacer()
-                    TrackButton(imageName: "backward.fill", size: 60, trackDirection: .trackBackward, musicController: musicController, songViewModel: songViewModel)
-                    NeuPlayPauseButton(viewModel: songViewModel, isPlaying: songViewModel.isPlaying, musicController: musicController, symbolConfig: .playButton)
-                        .frame(width: 90, height: 90)
-                    TrackButton(imageName: "forward.fill", size: 60, trackDirection: .trackForward, musicController: musicController, songViewModel: songViewModel)
-                    Spacer()
-                }
+            if songViewModel.isFullScreen {
+                NowPlayingViewFull(musicController: musicController, namespace: namespace)
+                    .cornerRadius(15.0)
+                    .offset(y: setOffset())
+                    .animation(self.dragState.isDragging ? nil : .interpolatingSpring(stiffness: 400.0, damping: 50.0, initialVelocity: 12))
+                    .gesture(drag)
+                    .matchedGeometryEffect(id: "NowPlayingView", in: namespace, properties: .frame, isSource: false)
+            } else {
+                NowPlayingBar(musicController: musicController, isFullScreen: false, namespace: namespace)
+                    .onTapGesture(perform: {
+                        withAnimation {
+                            songViewModel.isFullScreen = true
+                            self.delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen)
+                            self.position = CardPosition.top.offset
+                        }
+                    })
+                    .padding(.bottom, 40)
+                    .matchedGeometryEffect(id: "NowPlayingView", in: namespace, properties: .frame, isSource: true)
             }
         }
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+    }
+    
+    func getOffSet() -> CGFloat {
+        if self.songViewModel.isFullScreen {
+            let top = UIApplication.shared.windows.first?.safeAreaInsets.top ?? 20.0
+            
+            if self.position < top {
+                return top
+            }
+            return position
+        } else {
+            return self.bottomAnchor - position
+        }
+    }
+    
+    func setOffset() -> CGFloat {
+        if self.topAnchor < 0 {
+            return 0
+        }
+        if self.cardBottomEdgeLocation < UIScreen.main.bounds.height {
+            return UIScreen.main.bounds.height
+        }
+        return self.position + self.dragState.translation.height
+    }
+    
+    private func onDragEnded(drag: DragGesture.Value) {
+        let verticalDirection = drag.predictedEndLocation.y - drag.location.y
+        topAnchor = self.position + drag.translation.height
+        cardBottomEdgeLocation = self.bottomAnchor + drag.translation.height
+        let positionAbove: CGFloat = CardPosition.top.offset
+        let positionBelow: CGFloat = CardPosition.bottom.offset
+        let closestPosition: CGFloat
+        
+        
+        if topAnchor < 0 {
+            return
+        }
+        
+        if verticalDirection > 50 {
+            withAnimation {
+                songViewModel.isFullScreen = false
+            }
+        }
+
+        if (topAnchor - positionAbove) < (positionBelow - topAnchor) {
+            closestPosition = positionAbove
+        } else {
+            closestPosition = positionBelow
+        }
+        
+        if verticalDirection > 0 {
+            self.position = positionBelow
+        } else if verticalDirection < 0 {
+            self.position = positionAbove
+        } else {
+            self.position = closestPosition
+        }
+        
+        if self.position > CardPosition.middle.offset {
+            withAnimation {
+                songViewModel.isFullScreen = false
+                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen)
+                self.position = CardPosition.bottom.offset
+            }
+        } else {
+            songViewModel.isFullScreen = true
+            delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen)
+            self.position = CardPosition.top.offset
+        }
+        print("Top edge: \(topAnchor)")
     }
 }
 
 struct NowPlayingView_Previews: PreviewProvider {
+    
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingView(songViewModel: musicController.nowPlayingViewModel, musicController: musicController)
+        NowPlayingView(musicController: musicController, delegate: NowPlayingBarViewController())
         
-    }
-}
-
-struct ArtworkView: View {
-    var body: some View {
-        ZStack {
-            
-        }
-    }
-}
-
-struct Pulsation: View {
-    @State private var pulsate = false
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.green)
-                .frame(width: 165, height: 165)
-                .scaleEffect(pulsate ? 1.2 : 0.9)
-                .animation(Animation.easeInOut(duration: 1.1).repeatForever(autoreverses: true))
-                .onAppear {
-                    self.pulsate.toggle()
-            }
-        }
     }
 }
 
@@ -89,7 +140,7 @@ struct NeuButtonBackground<S: Shape>: View {
     var isHighlighted: Bool
     var shape: S
     var size: CGFloat
-    @ObservedObject var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     
     var body: some View {
         ZStack {
@@ -159,7 +210,7 @@ struct NeuButtonBackground<S: Shape>: View {
                 }
             }
         }
-        .frame(width: 60, height: 60)
+        .frame(width: size, height: size)
     }
     
     private func gradient(for state: Bool) -> LinearGradient {
@@ -168,7 +219,7 @@ struct NeuButtonBackground<S: Shape>: View {
 }
 
 struct NeuButtonStyle: ButtonStyle {
-    var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     var lighterColor: Color
     var darkerColor: Color
     var size: CGFloat
@@ -177,7 +228,7 @@ struct NeuButtonStyle: ButtonStyle {
         configuration.label
             .padding(30)
             .contentShape(Circle())
-            .background(NeuButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), size: size, songViewModel: songViewModel))
+            .background(NeuButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), size: size))
     }
 }
 
@@ -186,7 +237,7 @@ struct TrackButton: View {
     var size: CGFloat
     var trackDirection: TrackDirection
     var musicController: MusicController
-    @ObservedObject var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     
     var body: some View {
         Button(action: {
@@ -198,7 +249,7 @@ struct TrackButton: View {
                 .font(Font.system(.headline).weight(.semibold))
         }
         .frame(width: size, height: size)
-        .buttonStyle(NeuButtonStyle(songViewModel: songViewModel, lighterColor: songViewModel.lighterAccentColor, darkerColor: songViewModel.darkerAccentColor, size: size))
+        .buttonStyle(NeuButtonStyle(lighterColor: songViewModel.lighterAccentColor, darkerColor: songViewModel.darkerAccentColor, size: size))
     }
     func imageTint(isTooLight: Bool) -> Color {
         isTooLight ? Color.black : Color.white
@@ -207,99 +258,104 @@ struct TrackButton: View {
 
 struct NeuToggleBackground<S: Shape>: View {
     @State var isToggled: Bool
-    @ObservedObject var viewModel: NowPlayingViewModel
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     var shape: S
     var lighterColor: Color
     var darkerColor: Color
+    var size: CGFloat
     
     var body: some View {
         ZStack {
-            if viewModel.whiteLevel < 0.3 {
+            if songViewModel.whiteLevel < 0.3 {
                 shape
-                    .fill(gradient(for: viewModel.isPlaying))
+                    .fill(gradient(for: songViewModel.isPlaying))
                     .shadow(color: Color.white.opacity(0.5), radius: 12, x: -10, y: -10)
                     .shadow(color: Color.black.opacity(0.5), radius: 12, x: 10, y: 10)
                     .blendMode(.overlay)
                 shape
-                    .fill(gradient(for: viewModel.isPlaying))
+                    .fill(gradient(for: songViewModel.isPlaying))
                     .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
             } else {
                 shape
-                    .fill(gradient(for: viewModel.isPlaying))
+                    .fill(gradient(for: songViewModel.isPlaying))
                     .shadow(color: Color.white.opacity(0.9), radius: 10, x: -10, y: -10)
                     .shadow(color: Color.black.opacity(0.5), radius: 10, x: 10, y: 10)
                     .blendMode(.overlay)
                 shape
-                    .fill(gradient(for: viewModel.isPlaying))
+                    .fill(gradient(for: songViewModel.isPlaying))
                     .overlay(shape.stroke(LinearGradient(.blackGradient, .black), lineWidth: 2))
             }
         }
-        .frame(width: 90, height: 90)
+        .frame(width: size, height: size)
     }
     private func gradient(for state: Bool) -> LinearGradient {
-        state ? LinearGradient(viewModel.darkerAccentColor, viewModel.lighterAccentColor) : LinearGradient(viewModel.lighterAccentColor, viewModel.darkerAccentColor)
+        state ? LinearGradient(songViewModel.darkerAccentColor, songViewModel.lighterAccentColor) : LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)
     }
 }
 
 struct ToggleButtonStyle: ToggleStyle {
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     var musicController: MusicController
-    @ObservedObject var viewModel: NowPlayingViewModel
+    var size: CGFloat
+    var labelPadding: CGFloat
     
     func makeBody(configuration: Self.Configuration) -> some View {
         Button(action: {
-            viewModel.isPlaying.toggle()
-            configuration.isOn = viewModel.isPlaying ? true : false
+            songViewModel.isPlaying.toggle()
+            configuration.isOn = songViewModel.isPlaying ? true : false
             configuration.isOn ? musicController.play() : musicController.pause()
         }) {
             configuration.label
-                .padding(30)
+                .padding(labelPadding)
                 .contentShape(Circle())
-                .background(NeuToggleBackground(isToggled: configuration.isOn, viewModel: viewModel, shape: Circle(), lighterColor: viewModel.lighterAccentColor, darkerColor: viewModel.darkerAccentColor))
+                .background(NeuToggleBackground(isToggled: configuration.isOn, songViewModel: _songViewModel, shape: Circle(), lighterColor: songViewModel.lighterAccentColor, darkerColor: songViewModel.darkerAccentColor, size: size))
         }
     }
 }
 
 struct NeuPlayPauseButton: View {
-    @ObservedObject var viewModel: NowPlayingViewModel
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     @State var isPlaying: Bool
     var musicController: MusicController
     var symbolConfig: UIImage.SymbolConfiguration
+    var size: CGFloat
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
-            Image(systemName: viewModel.isPlaying ? "pause": "play.fill")
+            Image(systemName: isPlaying ? "pause": "play.fill")
                 .resizable()
-                .foregroundColor(imageTint(isTooLight: viewModel.isTooLight))
+                .foregroundColor(Color(imageTint(isTooLight: songViewModel.isTooLight)))
                 .aspectRatio(contentMode: .fit)
                 .font(Font.system(.callout).weight(.black))
                 
         }
-        .toggleStyle(ToggleButtonStyle(musicController: musicController, viewModel: viewModel))
+        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size, labelPadding: 30))
     }
     
-    func imageTint(isTooLight: Bool) -> Color {
-        isTooLight ? Color.black : Color.white
+    func imageTint(isTooLight: Bool) -> UIColor {
+        isTooLight ? UIColor.black : UIColor.white
     }
     
     private func gradient(for state: Bool) -> LinearGradient {
-        state ? LinearGradient(viewModel.darkerAccentColor, viewModel.lighterAccentColor) : LinearGradient(viewModel.lighterAccentColor, viewModel.darkerAccentColor)
+        state ? LinearGradient(songViewModel.darkerAccentColor, songViewModel.lighterAccentColor) : LinearGradient(songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)
     }
     
-    func symbolForState() -> UIImage {
+    private func symbolForState() -> UIImage {
         guard
-            let play = UIImage(systemName: "play.fill", withConfiguration: symbolConfig)?.withTintColor(.white),
-            let pause = UIImage(systemName: "pause", withConfiguration: symbolConfig)?.withTintColor(.white)
+            let play = UIImage(systemName: "play.fill", withConfiguration: symbolConfig),
+            let pause = UIImage(systemName: "pause", withConfiguration: symbolConfig)
         else { return UIImage() }
         return isPlaying ? pause : play
     }
 }
 
 struct NeuAlbumArtworkView<S: Shape>: View {
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
+    @State var image: UIImage = UIImage()
     var shape: S
     var color1: Color
     var color2: Color
-    @ObservedObject var viewModel: NowPlayingViewModel
-    @State var image: UIImage = UIImage()
+    var size: CGFloat
     
     var body: some View {
         ZStack {
@@ -317,20 +373,21 @@ struct NeuAlbumArtworkView<S: Shape>: View {
                         .blur(radius: 4)
                         .offset(x: -10, y: -10)
                         .mask(shape.fill(LinearGradient(Color.black, Color.clear))))
-                .overlay(shape.stroke(LinearGradient(.sysGraySix, .black), lineWidth: 10))
+                .overlay(shape.stroke(LinearGradient(.sysGraySix, .black), lineWidth: (size * 0.03)))
                 .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
                 .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
-            Image(uiImage: viewModel.albumArtwork ?? UIImage())
+            Image(uiImage: songViewModel.albumArtwork ?? UIImage())
                 .resizable()
-                .frame(width: 315, height: 315)
+                .frame(width: size - (size * 0.03), height: size - (size * 0.03))
                 .scaledToFit()
         }
+        .frame(width: size, height: size)
     }
 }
 
 struct TrackProgressView: View {
     
-    @ObservedObject var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
     var musicController: MusicController
     @State var isDragging: Bool = false
     var newPlaybackTime: TimeInterval = 0
@@ -436,5 +493,53 @@ struct TrackProgressView: View {
     func percentagePlayedForSong() -> CGFloat {
         let percentagePlayed = CGFloat(songViewModel.elapsedTime / songViewModel.duration)
         return percentagePlayed.isNaN ? 0.0 : percentagePlayed
+    }
+}
+
+struct NowPlayingViewFull: View {
+    var musicController: MusicController
+    @EnvironmentObject var songViewModel: NowPlayingViewModel
+    @Environment(\.presentationMode) var presentationMode
+    let namespace: Namespace.ID
+    var body: some View {
+        ZStack {
+            Color.nowPlayingBG
+                .edgesIgnoringSafeArea(.all)
+            VStack {
+                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, size: 325)
+                    .padding(.bottom, 20)
+                    .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: false)
+                VStack {
+                    Text(songViewModel.artist)
+                        .font(Font.system(.title).weight(.light))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .matchedGeometryEffect(id: "Artist", in: namespace, properties: .position, isSource: false)
+                    Text(songViewModel.songTitle)
+                        .font(Font.system(.headline).weight(.medium))
+                        .foregroundColor(.lightTextColor)
+                        .multilineTextAlignment(.center)
+                        .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .position, isSource: false)
+                }
+                .frame(minHeight: 80)
+                .padding(.leading, 40)
+                .padding(.trailing, 40)
+                
+                TrackProgressView(songViewModel: _songViewModel, musicController: musicController)
+                    .padding(.bottom, 12)
+                HStack(spacing: 40) {
+                    Spacer()
+                    TrackButton(imageName: "backward.fill", size: 60, trackDirection: .trackBackward, musicController: musicController)
+                        .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .frame, isSource: true)
+                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, symbolConfig: .playButton, size: 90)
+                        .frame(width: 90, height: 90)
+                        .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .frame, isSource: true)
+                    TrackButton(imageName: "forward.fill", size: 60, trackDirection: .trackForward, musicController: musicController)
+                        .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .frame, isSource: true)
+                    Spacer()
+                }
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .center)
     }
 }
