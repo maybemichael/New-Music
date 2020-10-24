@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MediaPlayer
 
 class NowPlayingBarViewController: UIViewController, TabBarStatus {
 
@@ -29,7 +28,9 @@ class NowPlayingBarViewController: UIViewController, TabBarStatus {
     
     private func configureContentView() {
         view.backgroundColor = .backgroundColor
-        let contentView = UIHostingController(rootView: NowPlayingView(musicController: musicController, delegate: self).environmentObject(musicController.nowPlayingViewModel))
+        let height = view.frame.size.height
+        let tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 50
+        let contentView = UIHostingController(rootView: NowPlayingView(musicController: musicController, delegate: self, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: height, tabBarHeight: tabBarHeight).environmentObject(musicController.nowPlayingViewModel))
         view.backgroundColor = .backgroundColor
         addChild(contentView)
         view.addSubview((contentView.view))

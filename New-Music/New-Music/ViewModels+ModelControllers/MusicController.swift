@@ -15,11 +15,15 @@ class MusicController: ObservableObject {
     private var timer: Timer?
     var currentPlaylist = [Song]() {
         didSet {
-            nowPlayingViewModel.songs = self.currentPlaylist
+            self.nowPlayingViewModel.songs = self.currentPlaylist
+//            nowPlayingViewModel.currentPlaylist.songs = self.currentPlaylist
         }
     }
     var searchedSongs = [Song]()
-    lazy var nowPlayingViewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", albumArtwork: UIImage(), duration: 0.0, songs: currentPlaylist)
+    lazy var nowPlayingViewModel: NowPlayingViewModel = {
+        let viewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: currentPlaylist)
+        return viewModel
+    }()
     
     func play() {
         if musicPlayer.isPreparedToPlay {
@@ -81,6 +85,14 @@ class MusicController: ObservableObject {
             fatalError("Unknown default case for the music players playback state.")
         }
     }
+    
+//    private func getCurrentPlaylist(songs: [Song]) -> [CurrentPlaylistSong] {
+//        var playlistSongs = [CurrentPlaylistSong]()
+//        songs.forEach {
+//            playlistSongs.append(CurrentPlaylistSong(song: $0))
+//        }
+//        return playlistSongs
+//    }
     
     init() {
         musicPlayer.beginGeneratingPlaybackNotifications()

@@ -32,7 +32,7 @@ enum DragState {
         case .inactive:
             return .zero
         case .dragging(let translation):
-            return translation
+            return CGSize(width: translation.width, height: max(0, translation.height))
         }
     }
     
@@ -44,4 +44,9 @@ enum DragState {
             return true
         }
     }
+}
+
+enum GradientDirection {
+    case diagonalTopToBottom
+    case leadingToTrailing
 }

@@ -7,20 +7,19 @@
 
 import UIKit
 
-struct Song: Codable, Hashable, SearchResults {
-    
-    var searchType: String = SearchType.song.rawValue
-    
+struct Song: Codable, Hashable, Identifiable {
+    let id: UUID = UUID()
     let songName: String
     let playID: String
     let kind: String
     let albumName: String
     let artistName: String
-    let imageURL: URL
     var isAdded: Bool = false
-    var albumArtwork: Data?
     var accentColorHex: String
     var textColor: String
+    var albumArtwork: Data?
+    var imageURL: URL
+    var stringURL: String
     
     enum SongKeys: String, CodingKey {
         case name
@@ -46,6 +45,7 @@ struct Song: Codable, Hashable, SearchResults {
         self.albumName = try container.decode(String.self, forKey: .albumName)
         self.playID = try playParamsContainer.decode(String.self, forKey: .id)
         self.kind = try playParamsContainer.decode(String.self, forKey: .kind)
+        self.stringURL = try artworkContainer.decode(String.self, forKey: .url)
         let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "1500").replacingOccurrences(of: "{h}", with: "1500")
         self.imageURL = URL(string: stringURL)!
         self.accentColorHex = try artworkContainer.decode(String.self, forKey: .bgColor)
@@ -61,7 +61,16 @@ struct Song: Codable, Hashable, SearchResults {
         self.albumName = ""
         self.accentColorHex = ""
         self.textColor = ""
+        self.stringURL = ""
     }
 }
 
-
+extension Song {
+    var image: UIImage? {
+        if let data = albumArtwork {
+            return UIImage(data: data)
+        } else {
+            return UIImage()
+        }
+    }
+}

@@ -14,31 +14,33 @@ struct NowPlayingBar: View {
     @State var isFullScreen: Bool
     let namespace: Namespace.ID
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.nowPlayingBG
-//            LinearGradient(.sysGrayThree, .nowPlayingBG)
-                .edgesIgnoringSafeArea(.all)
-            HStack() {
-                NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, size: 65)
-                    .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: true)
-                ZStack(alignment: .leading) {
-                    Text(songViewModel.songTitle)
-                        .font(Font.system(.headline).weight(.medium))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.leading)
-                        .frame(width: 150)
-                        .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .position, isSource: true)
-                        .matchedGeometryEffect(id: "Artist", in: namespace, properties: .position, isSource: true)
-                }
-                BarPlayButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 60, symbolConfig: .barPlayButton)
-                    .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .frame, isSource: false)
-                BarTrackButton(imageName: "forward.fill", size: 45, trackDirection: .trackForward, musicController: musicController)
-                    .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .size, isSource: true)
-                    .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .frame, isSource: true)
+        HStack(alignment: .center) {
+            NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, size: 65)
+                .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: true)
+            VStack(alignment: .leading) {
+                Text(songViewModel.songTitle)
+                    .font(Font.system(.headline).weight(.light))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.leading)
+                    .matchedGeometryEffect(id: "Artist", in: namespace, properties: .position, isSource: true)
+                Text(songViewModel.artist)
+                    .font(Font.system(.subheadline).weight(.light))
+                    .foregroundColor(.lightTextColor)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .frame(width: 150, alignment: .leading)
+                    .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .frame, isSource: true)
             }
-            .padding(20)
+            BarPlayButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 60, symbolConfig: .barPlayButton)
+                .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .size, isSource: false)
+            BarTrackButton(imageName: "forward.fill", size: 45, trackDirection: .trackForward, musicController: musicController)
+                .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .size, isSource: true)
+                .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .size, isSource: true)
         }
-//        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 12)
+        .frame(width: UIScreen.main.bounds.width, height: 100, alignment: .center)
+        //            HandleIndicator(width: UIScreen.main.bounds.width / 50, height: 6)
+        //                .matchedGeometryEffect(id: "HandleIndicator", in: namespace, properties: .size)
+        //        }
     }
 }
 
@@ -46,7 +48,7 @@ struct NowPlayingBar_Previews: PreviewProvider {
     static var previews: some View {
         let nspace = Namespace()
         let musicController = MusicController()
-        NowPlayingBar(musicController: musicController, isFullScreen: true, namespace: nspace.wrappedValue)
+        NowPlayingBar(musicController: musicController, isFullScreen: true, namespace: nspace.wrappedValue).environmentObject(musicController.nowPlayingViewModel)
     }
 }
 
@@ -59,7 +61,7 @@ struct BarPlayButton: View {
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
-            Image(systemName: isPlaying ? "pause" : "play.fill")
+            Image(systemName: songViewModel.isPlaying ? "pause" : "play.fill")
                 .resizable()
                 .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
                 .aspectRatio(contentMode: .fit)
@@ -76,9 +78,7 @@ struct BarPlayButton: View {
     private func symbolForState() -> UIImage {
         guard
             let play = UIImage(systemName: "play.fill", withConfiguration: symbolConfig),
-//                ?.withTintColor(imageTint(isTooLight: songViewModel.isTooLight)),
             let pause = UIImage(systemName: "pause", withConfiguration: symbolConfig)
-//                ?.withTintColor(imageTint(isTooLight: songViewModel.isTooLight))
         else { return UIImage() }
         return isPlaying ? pause : play
     }
@@ -110,37 +110,17 @@ struct BarTrackButton: View {
     }
 }
 
-struct ModalPopover: View {
-    @State private var isPresented = false
-    @Environment(\.presentationMode) var presentationMode
-    var musicController: MusicController
-    @EnvironmentObject var songViewModel: NowPlayingViewModel
-    @Namespace var nspace
+struct HandleIndicator: View {
+    @EnvironmentObject private var songViewModel: NowPlayingViewModel
+    var width: CGFloat
+    var height: CGFloat
+
     var body: some View {
-        NowPlayingBar(musicController: musicController, isFullScreen: false, namespace: nspace)
-            .onTapGesture(count: 1, perform: {
-                isPresented = true
-            })
-        popover(isPresented: $isPresented, content: {
-//            NowPlayingView(musicController: musicController, songViewModel: musicController.nowPlayingViewModel, delegate: self)
-        })
+        RoundedRectangle(cornerRadius: height / 2)
+            .fill(Color.white)
+            .overlay(RoundedRectangle(cornerRadius: 5)
+                .stroke(songViewModel.darkerAccentColor, lineWidth: 1))
+            .frame(width: width, height: height)
     }
 }
 
-struct FullScreenModalView: View {
-    @Environment(\.presentationMode) var presentationMode
-    var musicController: MusicController
-    @ObservedObject var songViewModel: NowPlayingViewModel
-    
-    var body: some View {
-        VStack {
-//            NowPlayingView(musicController: musicController, songViewModel: musicController.nowPlayingViewModel)
-        }
-        .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height)
-        .background(LinearGradient(.sysGrayThree, .nowPlayingBG))
-        .edgesIgnoringSafeArea(.all)
-        .onTapGesture {
-            presentationMode.wrappedValue.dismiss()
-        }
-    }
-}

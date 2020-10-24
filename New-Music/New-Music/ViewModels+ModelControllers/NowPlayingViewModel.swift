@@ -13,8 +13,9 @@ class NowPlayingViewModel: ObservableObject {
     var musicPlayer: MPMusicPlayerController
     var didChange = PassthroughSubject<UIImage?, Never>()
     var timer: Timer?
-    var songs: [Song]
     var nowPlayingSong: Song?
+    @Published var songs: [Song]
+//    @Published var currentPlaylist = CurrentPlaylist(songs: [])
     @Published var artist: String = ""
     @Published var songTitle: String = ""
     @Published var duration: TimeInterval
@@ -28,8 +29,10 @@ class NowPlayingViewModel: ObservableObject {
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
-                self.updateAlbumArtwork { _ in
-                    self.didChange.send(self.albumArtwork)
+                if self.albumArtwork == nil {
+                    self.updateAlbumArtwork { _ in
+                        self.didChange.send(self.albumArtwork)
+                    }
                 }
             }
         }
@@ -42,16 +45,16 @@ class NowPlayingViewModel: ObservableObject {
         return formatter
     }()
     
-    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(named: "Nirvana"), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.black.lighter()), darkerAccentColor: Color = .black) {
+    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.black.lighter()), darkerAccentColor: Color = .black) {
         self.artist = artist
         self.songTitle = songTitle
         self.albumArtwork = albumArtwork
         self.elapsedTime = elapsedTime
         self.duration = duration
         self.musicPlayer = musicPlayer
-        self.songs = songs
         self.lighterAccentColor = lighterAccentColor
         self.darkerAccentColor = darkerAccentColor
+        self.songs = songs
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
@@ -73,7 +76,6 @@ class NowPlayingViewModel: ObservableObject {
         self.elapsedTime = 0.0
         let index = musicPlayer.indexOfNowPlayingItem
         self.nowPlayingSong = songs[index]
-        
         if let colors = getGradientColors() {
             print("Lighter: \(colors.lighter.description)")
             print("Darker: \(colors.darker.description)")
@@ -106,7 +108,7 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     private func updateAlbumArtwork(completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
-        if musicPlayer.playbackState == .playing && self.albumArtwork == nil {
+//        if musicPlayer.playbackState == .playing && self.albumArtwork == nil {
             if let imageURL = nowPlayingSong?.imageURL {
                 URLSession.shared.dataTask(with: imageURL) { data, _, error in
                     if let networkError = NetworkError(data: data, response: nil, error: error) {
@@ -114,13 +116,14 @@ class NowPlayingViewModel: ObservableObject {
                         completion(.failure(networkError))
                         return
                     }
+//                    self.currentPlaylist.songs[self.musicPlayer.indexOfNowPlayingItem].albumArtwork = data!
                     DispatchQueue.main.async {
                         self.albumArtwork = UIImage(data: data!)
                     }
                     completion(.success(self.albumArtwork))
                 }.resume()
             }
-        }
+//        }
     }
     
     private func getGradientColors() -> (lighter: Color, darker: Color)? {
@@ -187,3 +190,4 @@ class NowPlayingViewModel: ObservableObject {
         NotificationCenter.default.removeObserver(self, name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
     }
 }
+

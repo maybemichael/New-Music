@@ -12,6 +12,7 @@ extension UIColor {
     static let systemGraySix = UIColor(named: "SystemGraySix")
     static let systemGrayThree = UIColor(named: "SystemGrayThree")
     static let nowPlayingBG = UIColor.backgroundColor?.lighter()
+    static let lightTextColor = UIColor(named: "LightTextColor")
 
     func lighter(componentDelta: CGFloat = 0.1) -> UIColor {
         return makeColor(componentDelta: componentDelta)

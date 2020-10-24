@@ -48,8 +48,8 @@ class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         }
         containerView.layer.cornerRadius = 12
         toVC.view.layer.cornerRadius = 12
-        let screenBounds = UIScreen.main.bounds
-        let bottomLeftCorner = CGPoint(x: 0, y: screenBounds.height)
+//        let screenBounds = UIScreen.main.bounds
+//        let bottomLeftCorner = CGPoint(x: 0, y: screenBounds.height)
 //        let finalFrame = CGRect(origin: bottomLeftCorner, size: screenBounds.size)
         
         

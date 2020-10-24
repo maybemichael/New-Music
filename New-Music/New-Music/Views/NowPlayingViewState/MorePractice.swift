@@ -23,7 +23,7 @@ struct MorePractice: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(.sysGrayThree, .nowPlayingBG)
+            LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .nowPlayingBG)
                 .edgesIgnoringSafeArea(.all)
             RoundedRectangle(cornerRadius: 12)
                 .frame(width: UIScreen.main.bounds.width, height: 250, alignment: .center)

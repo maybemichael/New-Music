@@ -8,8 +8,13 @@
 import SwiftUI
 
 extension LinearGradient {
-    init(_ colors: Color...) {
-        self.init(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
+    init(direction: GradientDirection, _ colors: Color...) {
+        switch direction {
+        case .diagonalTopToBottom:
+            self.init(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
+        case .leadingToTrailing:
+            self.init(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing)
+        }
     }
 }
 

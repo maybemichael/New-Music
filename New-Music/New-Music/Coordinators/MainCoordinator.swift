@@ -11,7 +11,15 @@ protocol Coordinator: AnyObject {
     func start()
 }
 
-class MainCoordinator: NSObject {
+class MainCoordinator: NSObject, TabBarStatus {
+    func toggleHidden(isFullScreen: Bool) {
+        if isFullScreen {
+            tabBarController.tabBar.isHidden = true
+        } else {
+            tabBarController.tabBar.isHidden = false
+        }
+    }
+    
     private var window: UIWindow
     private var nowPlayingBarVC = NowPlayingBarViewController()
     private var tabBarController = UITabBarController()
@@ -31,6 +39,7 @@ class MainCoordinator: NSObject {
         setUpAppNavViews()
         passDependencies()
         window.rootViewController = tabBarController
+        
         window.makeKeyAndVisible()
     }
     

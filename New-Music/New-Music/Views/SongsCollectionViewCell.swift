@@ -13,11 +13,11 @@ protocol SongsCellDelegate: AnyObject {
 
 class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     static let identifier = "SongCell"
-    
     let artist = UILabel()
     let songTitle = UILabel()
     let imageView = UIImageView()
     let addButton = UIButton(type: .custom)
+    let imageSize: CGFloat = 500
     weak var delegate: SongsCellDelegate?
     var song: Song? {
         didSet {
@@ -31,12 +31,15 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         self.song = song
         artist.text = song.artistName
         songTitle.text = song.songName
-        print("URL: \(song.imageURL)")
-        APIController.shared.fetchImage(url: song.imageURL) { result in
+        print("Image View Size: \(imageView.frame.size.width)")
+        APIController.shared.fetchImage(song: song, size: imageSize) { result in
             switch result {
-            case .success(let image):
+            case .success(let imageData):
                 DispatchQueue.main.async {
-                    self.imageView.image = image
+                    if let imageData = imageData {
+                        self.song?.albumArtwork = imageData
+                        self.imageView.image = UIImage(data: imageData)
+                    }
                 }
             case .failure(let error):
                 print("Error fetching image data: \(error.localizedDescription)")
@@ -63,7 +66,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         songTitle.numberOfLines = 0
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
-        imageView.setSize(width: UIScreen.main.bounds.width / 5, height: UIScreen.main.bounds.width / 5)
+        imageView.setSize(width: UIScreen.main.bounds.width / 5.5, height: UIScreen.main.bounds.width / 5.5)
         addButton.setImage(UIImage(systemName: "plus"), for: .normal)
         imageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         addButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)

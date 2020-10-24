@@ -81,15 +81,17 @@ class APIController {
         }.resume()
     }
     
-    func fetchImage(url: URL, completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
-        
+    func fetchImage(song: Song, size: CGFloat, completion: @escaping (Result<Data?, NetworkError>) -> Void) {
+        let stringURL = song.stringURL.replacingOccurrences(of: "{w}", with: String(Int(size))).replacingOccurrences(of: "{h}", with: String(Int(size)))
+        print("String URL: \(stringURL)")
+        let url = URL(string: stringURL)!
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.requestCachePolicy = .returnCacheDataElseLoad
         sessionConfig.urlCache = self.cache
         let urlRequest = URLRequest(url: url)
         if let cachedData = self.cache.cachedResponse(for: urlRequest) {
-            let image = UIImage(data: cachedData.data)
-            completion(.success(image))
+//            let image = UIImage(data: cachedData.data)
+            completion(.success(cachedData.data))
         } else {
             URLSession.shared.dataTask(with: url) { data, response, error in
                 if let networkError = NetworkError(data: data, response: nil, error: error) {
@@ -100,8 +102,8 @@ class APIController {
                 if let data = data, let response = response as? HTTPURLResponse {
                     let cachedData = CachedURLResponse(response: response, data: data)
                     self.cache.storeCachedResponse(cachedData, for: urlRequest)
-                    let image = UIImage(data: data)
-                    completion(.success(image))
+//                    let image = UIImage(data: data)
+                    completion(.success(data))
                 }
             }.resume()
         }
