@@ -64,7 +64,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         songTitle.textColor = .lightText
         songTitle.lineBreakMode = .byWordWrapping
         songTitle.numberOfLines = 0
-        imageView.layer.cornerRadius = 10
+        imageView.layer.cornerRadius = 7
         imageView.clipsToBounds = true
         imageView.setSize(width: UIScreen.main.bounds.width / 5.5, height: UIScreen.main.bounds.width / 5.5)
         addButton.setImage(UIImage(systemName: "plus"), for: .normal)

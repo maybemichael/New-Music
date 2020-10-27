@@ -16,7 +16,6 @@ class MusicController: ObservableObject {
     var currentPlaylist = [Song]() {
         didSet {
             self.nowPlayingViewModel.songs = self.currentPlaylist
-//            nowPlayingViewModel.currentPlaylist.songs = self.currentPlaylist
         }
     }
     var searchedSongs = [Song]()

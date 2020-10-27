@@ -76,6 +76,7 @@ class NowPlayingViewModel: ObservableObject {
         self.elapsedTime = 0.0
         let index = musicPlayer.indexOfNowPlayingItem
         self.nowPlayingSong = songs[index]
+        
         if let colors = getGradientColors() {
             print("Lighter: \(colors.lighter.description)")
             print("Darker: \(colors.darker.description)")

@@ -27,6 +27,7 @@ class MainCoordinator: NSObject, TabBarStatus {
     private var navController = UINavigationController(rootViewController: SearchViewController())
     private var musicController = MusicController()
     private var nowPlayingVC = NowPlayingViewController()
+    lazy var some = ViewControllerWrapper(viewController: NowPlayingViewController())
     let interactor = Interactor()
     weak var coordinator: Coordinator?
     
@@ -56,28 +57,28 @@ class MainCoordinator: NSObject, TabBarStatus {
     }
     
     private func passDependencies() {
+        nowPlayingVC.musicController = musicController
         nowPlayingBarVC.musicController = musicController
         playlistVC.musicController = musicController
-        nowPlayingVC.musicController = musicController
         if let searchVC = navController.topViewController as? SearchViewController {
             searchVC.musicController = musicController
         }
     }
     
-    func presentFullScreenNowPlaying(fromVC: UIViewController) {
+    func presentFullScreenNowPlaying(fromVC: UIViewController?) {
         nowPlayingVC.transitioningDelegate = self
         nowPlayingVC.interactor = interactor
         nowPlayingVC.modalPresentationStyle = .custom
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.navController.pushViewController(self.nowPlayingVC, animated: true)
-//            fromVC.present(self.nowPlayingVC, animated: true, completion: nil)
+        DispatchQueue.main.async {
+//            self.navController.pushViewController(self.nowPlayingVC, animated: true)
+            self.nowPlayingBarVC.present(self.nowPlayingVC, animated: true, completion: nil)
         }
     }
 }
 
 extension MainCoordinator: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        DismissAnimator(type: .navigation)
+        DismissAnimator(type: .modal)
     }
     
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {

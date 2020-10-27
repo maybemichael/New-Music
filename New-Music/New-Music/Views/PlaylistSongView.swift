@@ -14,32 +14,32 @@ struct PlaylistSongView: View {
     @State var artist: String
     @State var albumArtwork: Data
     var body: some View {
-//        ZStack(alignment: .leading) {
-//            Color.nowPlayingBG
-//                .edgesIgnoringSafeArea(.all)
-            HStack {
-                PlaylistAlbumArtwork(size: UIScreen.main.bounds.width / 6, image: UIImage(data: albumArtwork) ?? UIImage())
-                VStack(alignment: .leading) {
-                    Text(songTitle)
-                        .font(Font.system(.headline).weight(.light))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .frame(alignment: .leading)
-                    Text(artist)
-                        .font(Font.system(.subheadline).weight(.light))
-                        .foregroundColor(.lightTextColor)
-                        .multilineTextAlignment(.leading)
-                        .frame(alignment: .leading)
+//        VStack() {
+//        ZStack {
+                HStack {
+                    PlaylistAlbumArtwork(size: UIScreen.main.bounds.width / 7, image: UIImage(data: albumArtwork) ?? UIImage())
+                    VStack(alignment: .leading) {
+                        Text(songTitle)
+                            .font(Font.system(.headline).weight(.light))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .frame(alignment: .leading)
+                        Text(artist)
+                            .font(Font.system(.subheadline).weight(.light))
+                            .foregroundColor(.lightTextColor)
+                            .lineLimit(1)
+                            .frame(alignment: .leading)
+                    }
                 }
-            }
-//        }
+                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 12, alignment: .leading)
+//                .background(Color.nowPlayingBG)
     }
 }
 
 struct PlaylistSongView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        PlaylistSongView(songTitle: "", artist: "", albumArtwork: Data()).environmentObject(musicController.nowPlayingViewModel)
+        PlaylistSongView(songTitle: "Hold you down", artist: "DJ Khaled", albumArtwork: Data()).environmentObject(musicController.nowPlayingViewModel)
     }
 }
 

@@ -9,38 +9,52 @@ import SwiftUI
 
 struct NowPlayingBar: View {
     var musicController: MusicController
+    let full = ViewControllerWrapper(viewController: NowPlayingViewController())
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     @State var isPresented: Bool = false
     @State var isFullScreen: Bool
     let namespace: Namespace.ID
     var body: some View {
-        HStack(alignment: .center) {
-            NeuAlbumArtworkView(shape: Rectangle(), color1: .sysGraySix, color2: .black, size: 65)
-                .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: true)
-            VStack(alignment: .leading) {
-                Text(songViewModel.songTitle)
-                    .font(Font.system(.headline).weight(.light))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.leading)
-                    .matchedGeometryEffect(id: "Artist", in: namespace, properties: .position, isSource: true)
-                Text(songViewModel.artist)
-                    .font(Font.system(.subheadline).weight(.light))
-                    .foregroundColor(.lightTextColor)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
-                    .frame(width: 150, alignment: .leading)
-                    .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .frame, isSource: true)
+        
+        ZStack(alignment: .bottom) {
+            HStack(alignment: .center) {
+                NeuAlbumArtworkView(shape: Rectangle(), size: 65)
+                    .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: true)
+                VStack(alignment: .leading) {
+                    Text(songViewModel.songTitle)
+                        .font(Font.system(.headline).weight(.light))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .matchedGeometryEffect(id: "Artist", in: namespace, properties: .position, isSource: true)
+                    Text(songViewModel.artist)
+                        .font(Font.system(.subheadline).weight(.light))
+                        .foregroundColor(.lightTextColor)
+                        .lineLimit(1)
+                        .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .frame, isSource: true)
+                }
+                .frame(width: 150, alignment: .leading)
+                BarPlayButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 60, symbolConfig: .barPlayButton)
+                    .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .size, isSource: false)
+                BarTrackButton(imageName: "forward.fill", size: 45, trackDirection: .trackForward, musicController: musicController)
+                    .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .size, isSource: true)
+                    .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .size, isSource: true)
             }
-            BarPlayButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 60, symbolConfig: .barPlayButton)
-                .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .size, isSource: false)
-            BarTrackButton(imageName: "forward.fill", size: 45, trackDirection: .trackForward, musicController: musicController)
-                .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .size, isSource: true)
-                .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .size, isSource: true)
+            .frame(alignment: .bottom)
         }
-        .frame(width: UIScreen.main.bounds.width, height: 100, alignment: .center)
-        //            HandleIndicator(width: UIScreen.main.bounds.width / 50, height: 6)
-        //                .matchedGeometryEffect(id: "HandleIndicator", in: namespace, properties: .size)
-        //        }
+        .onTapGesture {
+            isPresented = true
+        }
+//        .fullScreenCover(isPresented: $isPresented, content: {
+//            ViewControllerWrapper(viewController: NowPlayingViewController())
+//            full
+//                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+//                .background(Color.nowPlayingBG)
+//        })
+//        .background(Color.nowPlayingBG)
+//        .frame(width: UIScreen.main.bounds.width, height: 100, alignment: .center)
+//                    HandleIndicator(width: UIScreen.main.bounds.width / 50, height: 6)
+//                        .matchedGeometryEffect(id: "HandleIndicator", in: namespace, properties: .size)
+//                }
     }
 }
 
@@ -103,7 +117,7 @@ struct BarTrackButton: View {
                 .frame(width: 20, height: 20)
         }
         .frame(width: size, height: size)
-        .buttonStyle(NeuButtonStyle(lighterColor: songViewModel.lighterAccentColor, darkerColor: songViewModel.darkerAccentColor, size: size))
+        .buttonStyle(NeuButtonStyle(size: size))
     }
     private func imageTint(isTooLight: Bool) -> Color {
         isTooLight ? Color.black : Color.white

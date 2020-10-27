@@ -101,7 +101,15 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     
     func addSongTapped(cell: SongsCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
-        let song = musicController.searchedSongs[indexPath.item]
+        var song = musicController.searchedSongs[indexPath.item]
+        APIController.shared.fetchImage(song: song, size: 500) { result in
+            switch result {
+            case .success(let imageData):
+                song.albumArtwork = imageData
+            case .failure(let error):
+                print("Error fetching image data: \(error)")
+            }
+        }
         musicController.addSongToPlaylist(song: song)
     }
 }

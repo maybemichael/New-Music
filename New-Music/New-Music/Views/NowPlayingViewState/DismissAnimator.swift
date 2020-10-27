@@ -39,30 +39,26 @@ class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         if self.type == .navigation {
             containerView.insertSubview(toVC.view, belowSubview: fromVC.view)
         }
-        
-        let animations = {
-            fromVC.view.frame = containerView.bounds.offsetBy(dx: 0, dy: containerView.frame.size.height)
-//            fromVC.view.transform = CGAffineTransform(scaleX: 0, y: containerView.frame.size.height)
-//            toVC.view.transform = CGAffineTransform(translationX: containerView.bounds.width, y: containerView.bounds.height)
-            toVC.view.frame = containerView.bounds
-        }
         containerView.layer.cornerRadius = 12
         toVC.view.layer.cornerRadius = 12
-//        let screenBounds = UIScreen.main.bounds
-//        let bottomLeftCorner = CGPoint(x: 0, y: screenBounds.height)
-//        let finalFrame = CGRect(origin: bottomLeftCorner, size: screenBounds.size)
+        fromVC.view.layer.cornerRadius = 12
+//        fromVC.view.frame = containerView.frame
+//        fromVC.view.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, bottom: containerView.bottomAnchor)
+        toVC.view.transform = CGAffineTransform(scaleX: 0.87, y: 0.87)
+        let animations = {
+            fromVC.view.frame = containerView.bounds.offsetBy(dx: 0, dy: containerView.frame.size.height)
+//            toVC.view.transform = CGAffineTransform(scaleX: 0, y: containerView.frame.size.height)
+//            toVC.view.transform = CGAffineTransform(translationX: containerView.bounds.width, y: containerView.bounds.height)
+            toVC.view.transform = CGAffineTransform(scaleX: 1, y: 1)
+//            toVC.view.frame = containerView.bounds
+        }
         
         
         
         UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveEaseOut, animations: animations) { _ in
-            fromVC.view.transform = CGAffineTransform.identity
+            toVC.view.transform = CGAffineTransform(scaleX: 1, y: 1)
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
-//        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveEaseIn, animations: ) {
-//            fromVC.view.frame = finalFrame
-//        } completion: { _ in
-//            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-//        }
     }
 }
 
