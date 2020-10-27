@@ -36,7 +36,8 @@ class NowPlayingBarViewController: UIViewController, TabBarStatus {
         let height = view.safeAreaLayoutGuide.layoutFrame.height
         print("This is the height: \(height)")
         guard let tabBar = tabBarController?.tabBar else { return }
-        let tabBarHeight = tabBar.frame.size.height
+        let tabBarHeight = tabBar.bounds.height
+//        guard let tabHeight = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.safeAreaInsets.bottom else { return }
 //        let contentView = UIHostingController(rootView: NowPlayingView(musicController: musicController, delegate: self, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: height, tabBarHeight: tabBarHeight).environmentObject(musicController.nowPlayingViewModel))
         guard let musicController = musicController else { return }
 //        let contentView = UIHostingController(rootView: NowPlayingBar(musicController: musicController, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, namespace: namespace).environmentObject(musicController.nowPlayingViewModel))

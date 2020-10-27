@@ -16,21 +16,38 @@ struct PlaylistSongView: View {
     var body: some View {
 //        VStack() {
 //        ZStack {
-                HStack {
-                    PlaylistAlbumArtwork(size: UIScreen.main.bounds.width / 7, image: UIImage(data: albumArtwork) ?? UIImage())
-                    VStack(alignment: .leading) {
-                        Text(songTitle)
-                            .font(Font.system(.headline).weight(.light))
-                            .foregroundColor(.white)
-                            .lineLimit(1)
-                            .frame(alignment: .leading)
-                        Text(artist)
-                            .font(Font.system(.subheadline).weight(.light))
-                            .foregroundColor(.lightTextColor)
-                            .lineLimit(1)
-                            .frame(alignment: .leading)
-                    }
-                }
+        HStack(alignment: .center) {
+            PlaylistAlbumArtwork(size: UIScreen.main.bounds.width / 7, image: UIImage(data: albumArtwork) ?? UIImage())
+            VStack(alignment: .leading) {
+                Text(songTitle)
+                    .font(Font.system(.headline).weight(.light))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .frame(alignment: .leading)
+                Text(artist)
+                    .font(Font.system(.subheadline).weight(.light))
+                    .foregroundColor(.lightTextColor)
+                    .lineLimit(1)
+                    .frame(alignment: .leading)
+            }
+            //                    .frame(minWidth: (UIScreen.main.bounds.width / 7) * 4)
+            Spacer(minLength: 20)
+            HStack(spacing: 3) {
+                Rectangle()
+                    .frame(width: 3, height: 3)
+                    .foregroundColor(.white)
+                Rectangle()
+                    .frame(width: 3, height: 3)
+                    .foregroundColor(.white)
+                Rectangle()
+                    .frame(width: 3, height: 3)
+                    .foregroundColor(.white)
+                Rectangle()
+                    .frame(width: 3, height: 3)
+                    .foregroundColor(.white)
+            }
+            Spacer()
+        }
                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 12, alignment: .leading)
 //                .background(Color.nowPlayingBG)
     }

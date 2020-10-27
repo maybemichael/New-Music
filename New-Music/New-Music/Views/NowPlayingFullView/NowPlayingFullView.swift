@@ -24,16 +24,18 @@ struct NowPlayingFullView: View {
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .frame, isSource: false)
+                .padding(.horizontal, 40)
             Text(nowPlayingViewModel.artist)
                 .font(Font.system(.headline).weight(.medium))
                 .foregroundColor(.lightTextColor)
                 .multilineTextAlignment(.center)
                 .matchedGeometryEffect(id: "Artist", in: namespace, properties: .frame, isSource: false)
+                .padding(.horizontal, 40)
             TrackProgressBarView(musicController: musicController)
             MusicControlsView(musicController: musicController, namespace: namespace)
         }
         
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 10, alignment: .center)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 20, alignment: .center)
 //        .cornerRadius(20)
         //        .background(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .nowPlayingBG))
     }

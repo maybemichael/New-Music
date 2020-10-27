@@ -11,8 +11,8 @@ struct NowPlayingView2: View {
     @EnvironmentObject private var nowPlayingViewModel: NowPlayingViewModel
     @Namespace var namespace
     @GestureState private var dragState = DragState.inactive
-    @State private var position: CGFloat = 0
-    @State private var topAnchor: CGFloat = 0
+    @State private var position: CGFloat = 10
+    @State private var topAnchor: CGFloat = 10
     var musicController: MusicController
     var delegate: TabBarStatus
     var tabBarHeight: CGFloat
@@ -30,16 +30,18 @@ struct NowPlayingView2: View {
     
     
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack(alignment: .bottom) {
+            Color.nowPlayingBG
+                .edgesIgnoringSafeArea(.all)
             VStack {
-                Color.nowPlayingBG
-                    .edgesIgnoringSafeArea(.all)
                 List {
                     ForEach(nowPlayingViewModel.songs) { song in
                         PlaylistSongView(songTitle: song.songName, artist: song.artistName, albumArtwork: song.albumArtwork ?? Data())
                     }.listRowBackground(Color.nowPlayingBG)
                 }
-                .frame(width: UIScreen.main.bounds.width, height: getPlaylistHeight(), alignment: .top)
+                .frame(width: UIScreen.main.bounds.width, height: getPlaylistHeight(), alignment: .center)
+//                .offset(.init(width: 0, height: tabBarHeight))
+//                .frame(alignment: .top)
                 .onAppear {
                     UITableView.appearance().separatorStyle = .singleLine
                     UITableView.appearance().backgroundColor = UIColor.backgroundColor
@@ -50,16 +52,17 @@ struct NowPlayingView2: View {
                 
                 
                 if !nowPlayingViewModel.isFullScreen {
-                    ZStack {
+                    ZStack(alignment: .bottom) {
                         Color.clear
+//                            .blur(radius: 5.0)
                             .edgesIgnoringSafeArea(.all)
-                        Rectangle()
-                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 10, alignment: .center)
-                            .background(Color.nowPlayingBG)
                         NowPlayingBarView(musicController: musicController, namespace: namespace)
                             
                     }
-                    .background(Color.nowPlayingBG)
+//                    .frame(height: UIScreen.main.bounds.height ,alignment: .bottom)
+                    .offset(.init(width: 0, height: -tabBarHeight))
+                    .background(Color.nowPlayingBG.opacity(0.05))
+                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 6, alignment: .bottom)
                     .onTapGesture {
                         withAnimation {
                             nowPlayingViewModel.isFullScreen = true
@@ -67,13 +70,10 @@ struct NowPlayingView2: View {
                             self.position = CardPosition.top.offset
                         }
                     }
-                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 12, alignment: .center)
-                    .background(Color.clear)
-                    .padding(.bottom, tabBarHeight)
+                    .background(Color.nowPlayingBG.opacity(0.05))
                     .matchedGeometryEffect(id: "NowPlayingView", in: namespace, properties: .frame, isSource: true)
                 }
             }
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             if nowPlayingViewModel.isFullScreen {
                 ZStack {
                     NowPlayingFullView(musicController: musicController, namespace: namespace)
@@ -85,11 +85,9 @@ struct NowPlayingView2: View {
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                     
                 }
-                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .center)
                 .matchedGeometryEffect(id: "NowPlayingView", in: namespace, properties: .frame, isSource: false)
             }
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .center)
         .background(Color.nowPlayingBG)
         .edgesIgnoringSafeArea(.all)
     }
@@ -141,7 +139,7 @@ struct NowPlayingView2: View {
     }
     
     private func getPlaylistHeight() -> CGFloat {
-        nowPlayingViewModel.isFullScreen ? (UIScreen.main.bounds.height - 250) + (UIScreen.main.bounds.height / 12) + tabBarHeight + 10 : UIScreen.main.bounds.height - 250
+        nowPlayingViewModel.isFullScreen ? (UIScreen.main.bounds.height - 225) + (UIScreen.main.bounds.height / 6) + 10 : UIScreen.main.bounds.height - 225
     }
 }
 
