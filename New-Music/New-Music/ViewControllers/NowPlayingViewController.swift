@@ -16,26 +16,23 @@ class NowPlayingViewController: UIViewController {
     }
     weak var coordinator: MainCoordinator?
     var interactor: Interactor?
-    @Namespace var namespace
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
-//        configureContentView()
+        configureContentView()
     }
     
     private func configureContentView() {
-//        let contentView = UIHostingController(rootView: NowPlayingViewFull(musicController: musicController, namespace: namespace).environmentObject(musicController.nowPlayingViewModel))
-//        view.backgroundColor = .blue
-//        view.layer.cornerRadius = 12
-//        view.layer.masksToBounds = true
-//        addChild(contentView)
-//        view.addSubview(contentView.view)
-//        contentView.view.frame = self.view.frame
-//        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
-//        contentView.view.layer.cornerRadius = 12
-//        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
-//        contentView.view.addGestureRecognizer(panGesture)
+        let contentView = UIHostingController(rootView: NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
+        view.layer.cornerRadius = 20
+        view.layer.masksToBounds = true
+        addChild(contentView)
+        contentView.didMove(toParent: self)
+        view.addSubview(contentView.view)
+        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
+        view.addGestureRecognizer(panGesture)
     }
 
     
@@ -54,17 +51,19 @@ class NowPlayingViewController: UIViewController {
         case .began:
             interactor.isStarted = true
             dismiss(animated: true, completion: nil)
+            print("Sender state .began: \(sender.state)")
         case .changed:
             interactor.shouldFinish = progress > percentThreshold
             interactor.update(progress)
+            print("Sender state .changed: \(sender.state)")
         case .cancelled:
             interactor.isStarted = false
             interactor.cancel()
+            print("Sender state .cancelled: \(sender.state)")
         case .ended:
             interactor.isStarted = false
-            interactor.shouldFinish
-                ? interactor.finish()
-                : interactor.cancel()
+            interactor.shouldFinish ? interactor.finish() : interactor.cancel()
+            print("Sender state .ended: \(sender.state)")
         default:
             break
         }

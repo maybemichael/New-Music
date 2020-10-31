@@ -35,6 +35,10 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         navigationItem.searchController = searchController
         self.navigationController?.navigationBar.barTintColor = .systemGray6
         navigationController?.navigationBar.topItem?.title = "Search"
+        view.layer.cornerRadius = 20
+        navigationController?.navigationBar.layer.cornerRadius = 20
+        searchController.searchBar.layer.cornerRadius = 20
+        searchController.view.layer.cornerRadius = 20
     }
     
     private func configureCollectionView() {

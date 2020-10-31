@@ -7,19 +7,24 @@
 
 import SwiftUI
 
-class NowPlayingBarViewController: UIViewController, TabBarStatus {
+class NowPlayingBarViewController: UIViewController, TabBarStatus, FullScreenNowPlaying {
+    
 
     var musicController: MusicController? {
         didSet {
 //            configureContentView()
         }
     }
+    @Environment(\.viewController) private var viewControllerHolder: UIViewController?
     @Namespace var namespace
     weak var coordinator: MainCoordinator?
+    var childVC: NowPlayingContainerViewController?
+    var contentView: UIHostingController<NowPlayingBarView>?
     let interactor = Interactor()
     override func viewDidLoad() {
         super.viewDidLoad()
         configureContentView()
+        viewControllerHolder?.transitioningDelegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -33,27 +38,21 @@ class NowPlayingBarViewController: UIViewController, TabBarStatus {
     
     private func configureContentView() {
         view.backgroundColor = .backgroundColor
-        let height = view.safeAreaLayoutGuide.layoutFrame.height
-        print("This is the height: \(height)")
-        guard let tabBar = tabBarController?.tabBar else { return }
-        let tabBarHeight = tabBar.bounds.height
-//        guard let tabHeight = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.safeAreaInsets.bottom else { return }
-//        let contentView = UIHostingController(rootView: NowPlayingView(musicController: musicController, delegate: self, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: height, tabBarHeight: tabBarHeight).environmentObject(musicController.nowPlayingViewModel))
         guard let musicController = musicController else { return }
-//        let contentView = UIHostingController(rootView: NowPlayingBar(musicController: musicController, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, namespace: namespace).environmentObject(musicController.nowPlayingViewModel))
+        let contentView = UIHostingController(rootView: NowPlayingPlaylistView().environmentObject(musicController.nowPlayingViewModel))
         
-        let contentView = UIHostingController(rootView: NowPlayingView2(musicController: musicController, delegate: self, tabBarHeight: tabBarHeight).environmentObject(musicController.nowPlayingViewModel))
         addChild(contentView)
         contentView.didMove(toParent: self)
-        view.addSubview((contentView.view))
-//        contentView.view.anchor(leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, size: CGSize(width: UIScreen.main.bounds.width, height: 100))
-        contentView.view.frame = self.view.frame
+        view.addSubview((contentView.view)!)
+        contentView.view.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+        contentView.view.layer.cornerRadius = 20
         view.backgroundColor = .backgroundColor
-        view.layer.cornerRadius = 12
+        view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
-//        contentView.view.backgroundColor = UIColor.backgroundColor
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(presentNowPlayingFull(_:)))
-//        contentView.view.addGestureRecognizer(tapGesture)
+        view.backgroundColor = .backgroundColor
+//        contentView.view.backgroundColor = .clear
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(presentNowPlayingFull(_:)))
+        contentView.view.addGestureRecognizer(tapGesture)
         self.tabBarController?.tabBar.isHidden = false
     }
     
@@ -61,18 +60,58 @@ class NowPlayingBarViewController: UIViewController, TabBarStatus {
         coordinator?.presentFullScreenNowPlaying(fromVC: self)
     }
     
-    func toggleHidden(isFullScreen: Bool) {
+    func toggleHidden(isFullScreen: Bool, viewController: UIViewController?) {
+        viewController?.transitioningDelegate = self
         if isFullScreen {
             tabBarController?.tabBar.isHidden = true
         } else {
             tabBarController?.tabBar.isHidden = false
         }
     }
+    
+    @objc func handleGesture(_ sender: UIPanGestureRecognizer) {
+        let percentThreshold:CGFloat = 0.25
+
+        // convert y-position to downward pull progress (percentage)
+        let translation = sender.translation(in: view)
+        let verticalMovement = translation.y / (view.bounds.height * 1.2)
+        let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
+        let downwardMovementPercent = fminf(downwardMovement, 1.0)
+        let progress = CGFloat(downwardMovementPercent)
+//        guard let interactor = interactor else { return }
+
+        switch sender.state {
+        case .began:
+            interactor.isStarted = true
+            dismiss(animated: true, completion: nil)
+        case .changed:
+            interactor.shouldFinish = progress > percentThreshold
+            interactor.update(progress)
+        case .cancelled:
+            interactor.isStarted = false
+            interactor.cancel()
+        case .ended:
+            interactor.isStarted = false
+            interactor.shouldFinish
+                ? interactor.finish()
+                : interactor.cancel()
+        default:
+            break
+        }
+    }
+    func presentFullScreen() {
+        coordinator?.presentFullScreenNowPlaying(fromVC: self)
+    }
+    
+    func addGestureRecognizer<Content>(viewController: UIHostingController<Content>) where Content : View {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
+        viewController.view.addGestureRecognizer(panGesture)
+    }
 }
 
 extension NowPlayingBarViewController: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        DismissAnimator(type: .modal)
+        DismissAnimator(type: .modal, interactor: interactor)
     }
     
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
@@ -81,5 +120,11 @@ extension NowPlayingBarViewController: UIViewControllerTransitioningDelegate {
 }
 
 protocol TabBarStatus {
-    func toggleHidden(isFullScreen: Bool)
+    func toggleHidden(isFullScreen: Bool, viewController: UIViewController?)
+    
+    func addGestureRecognizer<Content>(viewController: UIHostingController<Content>) where Content : View
+}
+
+protocol FullScreenNowPlaying {
+    func presentFullScreen()
 }

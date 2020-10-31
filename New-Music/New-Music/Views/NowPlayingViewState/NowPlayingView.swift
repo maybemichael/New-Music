@@ -36,7 +36,7 @@ struct NowPlayingView: View {
     
     var body: some View {
         if songViewModel.isFullScreen {
-            NowPlayingFull(musicController: musicController, namespace: namespace)
+            NowPlayingFull(musicController: musicController, namespace: namespace, isPresented: $isFullScreen)
                 .cornerRadius(15.0)
                 .offset(y: setOffset())
                 .animation(self.dragState.isDragging ? nil : .interpolatingSpring(stiffness: 400.0, damping: 50.0, initialVelocity: 7))
@@ -50,21 +50,21 @@ struct NowPlayingView: View {
                 Color.nowPlayingBG
                     .edgesIgnoringSafeArea(.all)
                 VStack {
-                    List {
-                        ForEach(songViewModel.songs) { song in
-                            PlaylistSongView(songTitle: song.songName, artist: song.artistName, albumArtwork: song.albumArtwork ?? Data())
-                        }.listRowBackground(Color.nowPlayingBG)
-                    }
-                    .frame(width: UIScreen.main.bounds.width, height: (UIScreen.main.bounds.height / 9) * 6, alignment: .leading)
+//                    List {
+//                        ForEach(songViewModel.songs) { song in
+//                            PlaylistSongView(songTitle: song.songName, artist: song.artistName, albumArtwork: song.albumArtwork ?? Data())
+//                        }.listRowBackground(Color.nowPlayingBG)
+//                    }
+//                    .frame(width: UIScreen.main.bounds.width, height: (UIScreen.main.bounds.height / 9) * 6, alignment: .leading)
                     
-                    .onAppear {
-                        UITableView.appearance().separatorStyle = .singleLine
-                        UITableView.appearance().backgroundColor = UIColor.backgroundColor
-                        UITableView.appearance().separatorColor = UIColor.white
-                        UITableViewCell.appearance().contentView.backgroundColor = UIColor.backgroundColor
-                        UITableViewCell.appearance().backgroundColor = UIColor.backgroundColor
+//                    .onAppear {
+//                        UITableView.appearance().separatorStyle = .singleLine
+//                        UITableView.appearance().backgroundColor = UIColor.backgroundColor
+//                        UITableView.appearance().separatorColor = UIColor.white
+//                        UITableViewCell.appearance().contentView.backgroundColor = UIColor.backgroundColor
+//                        UITableViewCell.appearance().backgroundColor = UIColor.backgroundColor
 //                        UITableView.appearance().tintColor = UIColor.clear
-                    }
+//                    }
 
                     ZStack {
                         Rectangle()
@@ -77,7 +77,7 @@ struct NowPlayingView: View {
                     .onTapGesture(perform: {
                         withAnimation(Animation.easeOut(duration: 0.3)) {
                             songViewModel.isFullScreen = true
-                            self.delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen)
+                            self.delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen, viewController: nil)
                             self.position = CardPosition.top.offset
                                 
                         }
@@ -129,13 +129,13 @@ struct NowPlayingView: View {
         if self.position > CardPosition.middle.offset {
             withAnimation {
                 songViewModel.isFullScreen = false
-                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen)
+                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen, viewController: nil)
                 self.position = CardPosition.bottom.offset
             }
         } else {
             withAnimation {
                 songViewModel.isFullScreen = true
-                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen)
+                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen, viewController: nil)
                 self.position = CardPosition.top.offset
             }
         }
@@ -540,7 +540,7 @@ struct NowPlayingViewFull: View {
     let namespace: Namespace.ID
     
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack(alignment: .center) {
             LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .nowPlayingBG)
                 .edgesIgnoringSafeArea(.all)
             VStack {
@@ -569,18 +569,19 @@ struct NowPlayingViewFull: View {
                     .padding(.bottom, 12)
                 HStack(spacing: 40) {
                     Spacer()
-                    TrackButton(size: 60, trackDirection: .trackBackward, musicController: musicController)
+                    NeuTrackButton(size: 60, trackDirection: .trackBackward, musicController: musicController)
                         .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .frame, isSource: true)
-                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: 90)
+                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: 90, namespace: namespace)
                         .frame(width: 90, height: 90)
                         .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .frame, isSource: true)
-                    TrackButton(size: 60, trackDirection: .trackForward, musicController: musicController)
+                    NeuTrackButton(size: 60, trackDirection: .trackForward, musicController: musicController)
                         .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .frame, isSource: true)
                     Spacer()
                 }
             }
 //            .padding(.top, (topInset ?? 20) + 20)
         }
+//        .transition(.move(edge: .bottom))
 //        .cornerRadius(12)
     }
 }

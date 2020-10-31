@@ -10,45 +10,48 @@ import SwiftUI
 struct NowPlayingBarView: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     let musicController: MusicController
-    let namespace: Namespace.ID
+//    let namespace: Namespace.ID
+    @Namespace var namespace
+//    @Binding var isPresented: Bool
+    var fullScreenDelegate: FullScreenNowPlaying?
     var body: some View {
-        HStack(spacing: 10) {
-            Spacer()
-            NeuAlbumArtworkView(shape: Rectangle(), size: UIScreen.main.bounds.width / 7)
-                .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: true)
-            VStack(alignment: .leading) {
-                Text(nowPlayingViewModel.songTitle)
-                    .font(Font.system(.headline).weight(.light))
+        ZStack {
+            Color.clear.opacity(0)
+            HStack(spacing: 10) {
+                Spacer()
+                NeuAlbumArtworkView(shape: Rectangle(), size: UIScreen.main.bounds.width / 7)
+                    .matchedGeometryEffect(id: "AlbumArtwork", in: namespace, properties: .frame, isSource: false)
+                VStack(alignment: .leading) {
+                    Text(nowPlayingViewModel.songTitle)
+                        .font(Font.system(.headline).weight(.light))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .position, isSource: false)
+                    Text(nowPlayingViewModel.artist)
+                        .font(Font.system(.subheadline).weight(.light))
+                        .foregroundColor(.lightTextColor)
+                        .lineLimit(1)
+                        .matchedGeometryEffect(id: "Artist", in: namespace, properties: .frame, isSource: false)
+                }
+                .frame(maxWidth: (UIScreen.main.bounds.width / 7) * 2.87, alignment: .leading)
+                BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, labelPadding: UIScreen.main.bounds.width / 7 / 3, size: UIScreen.main.bounds.width / 7, namespace: namespace)
                     .foregroundColor(.white)
-                    .lineLimit(1)
-                    .matchedGeometryEffect(id: "SongTitle", in: namespace, properties: .position, isSource: true)
-                Text(nowPlayingViewModel.artist)
-                    .font(Font.system(.subheadline).weight(.light))
-                    .foregroundColor(.lightTextColor)
-                    .lineLimit(1)
-                    .matchedGeometryEffect(id: "Artist", in: namespace, properties: .frame, isSource: true)
-            }
-            .frame(minWidth: 140)
-            HStack(spacing: 20) {
-                NeuPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, labelPadding: 25, size: UIScreen.main.bounds.width / 7)
-                    .foregroundColor(.white)
-                    .frame(width: UIScreen.main.bounds.width / 6, height: UIScreen.main.bounds.width / 6, alignment: .center)
+                    .frame(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7, alignment: .center)
                     .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .position, isSource: false)
-                TrackButton(size: UIScreen.main.bounds.width / 8.5, trackDirection: .trackForward, musicController: musicController)
-                    .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .position, isSource: true)
-                    .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .position, isSource: true)
+                BarTrackButton(size: UIScreen.main.bounds.width / 8.5, trackDirection: .trackForward, musicController: musicController)
+                    .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .frame, isSource: false)
+                    .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .frame, isSource: false)
             }
-            Spacer()
+            .background(Color.nowPlayingBG.opacity(0))
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 11, alignment: .center)
-        .background(Color.clear)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 11 + 20)
     }
 }
+
 
 struct NowPlayingBarView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        let namespace = Namespace()
-        NowPlayingBarView(musicController: musicController, namespace: namespace.wrappedValue).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingBarView(musicController: musicController, fullScreenDelegate: NowPlayingBarViewController()).environmentObject(musicController.nowPlayingViewModel)
     }
 }

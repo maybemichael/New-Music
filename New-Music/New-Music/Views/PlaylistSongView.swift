@@ -14,15 +14,13 @@ struct PlaylistSongView: View {
     @State var artist: String
     @State var albumArtwork: Data
     var body: some View {
-//        VStack() {
-//        ZStack {
-        HStack(alignment: .center) {
+        HStack {
             PlaylistAlbumArtwork(size: UIScreen.main.bounds.width / 7, image: UIImage(data: albumArtwork) ?? UIImage())
             VStack(alignment: .leading) {
                 Text(songTitle)
                     .font(Font.system(.headline).weight(.light))
                     .foregroundColor(.white)
-                    .lineLimit(1)
+                    .lineLimit(2)
                     .frame(alignment: .leading)
                 Text(artist)
                     .font(Font.system(.subheadline).weight(.light))
@@ -30,26 +28,10 @@ struct PlaylistSongView: View {
                     .lineLimit(1)
                     .frame(alignment: .leading)
             }
-            //                    .frame(minWidth: (UIScreen.main.bounds.width / 7) * 4)
+            .frame(maxWidth: UIScreen.main.bounds.width / 1.5, alignment: .leading)
             Spacer(minLength: 20)
-            HStack(spacing: 3) {
-                Rectangle()
-                    .frame(width: 3, height: 3)
-                    .foregroundColor(.white)
-                Rectangle()
-                    .frame(width: 3, height: 3)
-                    .foregroundColor(.white)
-                Rectangle()
-                    .frame(width: 3, height: 3)
-                    .foregroundColor(.white)
-                Rectangle()
-                    .frame(width: 3, height: 3)
-                    .foregroundColor(.white)
-            }
-            Spacer()
         }
-                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 12, alignment: .leading)
-//                .background(Color.nowPlayingBG)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 12, alignment: .leading)
     }
 }
 

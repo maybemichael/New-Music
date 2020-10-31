@@ -35,7 +35,7 @@ struct NowPlayingBar: View {
                 .frame(width: 150, alignment: .leading)
                 BarPlayButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 60, symbolConfig: .barPlayButton)
                     .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .size, isSource: false)
-                BarTrackButton(imageName: "forward.fill", size: 45, trackDirection: .trackForward, musicController: musicController)
+                BarTrackButton(size: 45, trackDirection: .trackForward, musicController: musicController)
                     .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .size, isSource: true)
                     .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .size, isSource: true)
             }
@@ -98,7 +98,7 @@ struct BarPlayButton: View {
     }
 }
 
-struct BarTrackButton: View {
+struct BarNeuTrackButton: View {
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     var imageName: String
     var size: CGFloat

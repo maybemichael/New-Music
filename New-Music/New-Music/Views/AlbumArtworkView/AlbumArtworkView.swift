@@ -31,6 +31,7 @@ struct NeuAlbumArtworkView<S: Shape>: View {
     
     var body: some View {
         ZStack {
+            Color.clear.opacity(0)
             shape
                 .fill(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black))
                 .overlay(
@@ -53,6 +54,7 @@ struct NeuAlbumArtworkView<S: Shape>: View {
                 .frame(width: size - (size * 0.03), height: size - (size * 0.03))
                 .scaledToFit()
         }
-        .frame(width: size, height: size)
+        .frame(width: size, height: size, alignment: .center)
+        .background(Color.clear)
     }
 }

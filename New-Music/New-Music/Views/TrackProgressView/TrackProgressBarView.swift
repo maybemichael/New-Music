@@ -23,7 +23,7 @@ struct TrackProgressBarView_Previews: PreviewProvider {
 }
 
 struct TrackProgressView: View {
-    @EnvironmentObject var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     @State var isDragging: Bool = false
     var musicController: MusicController
     var newPlaybackTime: TimeInterval = 0
@@ -37,7 +37,7 @@ struct TrackProgressView: View {
     
     var body: some View {
         VStack {
-            ZStack {
+            ZStack(alignment: .center) {
                 GeometryReader { geo in
                     HStack {
                         RoundedRectangle(cornerRadius: 5)
@@ -53,10 +53,10 @@ struct TrackProgressView: View {
                 GeometryReader { geo in
                     HStack {
                         RoundedRectangle(cornerRadius: 5)
-                            .fill(fillGradient(whiteLevel: songViewModel.whiteLevel))
+                            .fill(fillGradient(whiteLevel: nowPlayingViewModel.whiteLevel))
                             .frame(width: geo.size.width * self.percentagePlayedForSong(), height: 8)
                             .overlay(RoundedRectangle(cornerRadius: 5)
-                                        .stroke(songViewModel.darkerAccentColor, lineWidth: 1))
+                                        .stroke(nowPlayingViewModel.darkerAccentColor, lineWidth: 1))
                             .padding(.top, 3)
                         Spacer(minLength: 0)
                     }
@@ -64,7 +64,7 @@ struct TrackProgressView: View {
                 GeometryReader { geo in
                     HStack {
                         Circle()
-                            .fill(fillGradient(whiteLevel: songViewModel.whiteLevel))
+                            .fill(fillGradient(whiteLevel: nowPlayingViewModel.whiteLevel))
                             .frame(width: 14, height: 14)
                             .animation(nil)
                             .scaleEffect(isDragging ? 2 : 1)
@@ -74,9 +74,9 @@ struct TrackProgressView: View {
                                 DragGesture()
                                     .onChanged({ value in
                                         self.isDragging = true
-                                        songViewModel.timer?.invalidate()
-                                        songViewModel.timer = nil
-                                        self.songViewModel.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
+                                        nowPlayingViewModel.timer?.invalidate()
+                                        nowPlayingViewModel.timer = nil
+                                        self.nowPlayingViewModel.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
                                             
                                     })
                                     .onEnded({ value in
@@ -87,26 +87,25 @@ struct TrackProgressView: View {
                         Spacer(minLength: 0)
                     }
                 }
-                HStack {
-                    Text(formattedTimeFor(timeInterval: songViewModel.elapsedTime))
+                HStack(alignment: .center) {
+                    Text(formattedTimeFor(timeInterval: nowPlayingViewModel.elapsedTime))
                         .font(Font.system(.headline).weight(.regular))
                         .foregroundColor(.white)
                     Spacer()
-                    Text(formattedTimeFor(timeInterval: songViewModel.duration))
+                    Text(formattedTimeFor(timeInterval: nowPlayingViewModel.duration))
                         .font(Font.system(.headline).weight(.regular))
                         .foregroundColor(.white)
                 }
             }
         }
-        .frame(width: UIScreen.main.bounds.width - 80, height: 80)
-        .padding(.top, 50)
+        .frame(width: UIScreen.main.bounds.width - 80, height: 60, alignment: .bottom)
     }
     
     private func fillGradient(whiteLevel: CGFloat) -> LinearGradient {
         if whiteLevel < 0.01 {
-            return LinearGradient(gradient: Gradient(colors: [songViewModel.darkerAccentColor, songViewModel.darkerAccentColor]), startPoint: .leading, endPoint: .trailing)
+            return LinearGradient(gradient: Gradient(colors: [nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.darkerAccentColor]), startPoint: .leading, endPoint: .trailing)
         } else {
-            return LinearGradient(gradient: Gradient(colors: [songViewModel.lighterAccentColor, songViewModel.darkerAccentColor]), startPoint: .leading, endPoint: .trailing)
+            return LinearGradient(gradient: Gradient(colors: [nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor]), startPoint: .leading, endPoint: .trailing)
         }
     }
     
@@ -117,17 +116,17 @@ struct TrackProgressView: View {
 
     func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
         let percentage = location / width
-        let time = songViewModel.duration * TimeInterval(percentage)
+        let time = nowPlayingViewModel.duration * TimeInterval(percentage)
         if time < 0 {
             return 0
-        } else if time > songViewModel.duration {
-            return songViewModel.duration
+        } else if time > nowPlayingViewModel.duration {
+            return nowPlayingViewModel.duration
         }
         return time
     }
 
     func percentagePlayedForSong() -> CGFloat {
-        let percentagePlayed = CGFloat(songViewModel.elapsedTime / songViewModel.duration)
+        let percentagePlayed = CGFloat(nowPlayingViewModel.elapsedTime / nowPlayingViewModel.duration)
         return percentagePlayed.isNaN ? 0.0 : percentagePlayed
     }
 }
