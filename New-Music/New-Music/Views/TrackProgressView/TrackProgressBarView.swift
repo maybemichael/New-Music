@@ -56,7 +56,7 @@ struct TrackProgressView: View {
                             .fill(fillGradient(whiteLevel: nowPlayingViewModel.whiteLevel))
                             .frame(width: geo.size.width * self.percentagePlayedForSong(), height: 8)
                             .overlay(RoundedRectangle(cornerRadius: 5)
-                                        .stroke(nowPlayingViewModel.darkerAccentColor, lineWidth: 1))
+                                        .stroke(Color.black, lineWidth: 1))
                             .padding(.top, 3)
                         Spacer(minLength: 0)
                     }
@@ -74,8 +74,10 @@ struct TrackProgressView: View {
                                 DragGesture()
                                     .onChanged({ value in
                                         self.isDragging = true
-                                        nowPlayingViewModel.timer?.invalidate()
-                                        nowPlayingViewModel.timer = nil
+//                                        nowPlayingViewModel.timer?.invalidate()
+//                                        nowPlayingViewModel.timer = nil
+                                        nowPlayingViewModel.displaylink?.invalidate()
+                                        nowPlayingViewModel.displaylink = nil 
                                         self.nowPlayingViewModel.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
                                             
                                     })
@@ -89,12 +91,14 @@ struct TrackProgressView: View {
                 }
                 HStack(alignment: .center) {
                     Text(formattedTimeFor(timeInterval: nowPlayingViewModel.elapsedTime))
-                        .font(Font.system(.headline).weight(.regular))
-                        .foregroundColor(.white)
+//                        .font(Font.custom("Courier", size: 18))  // Monospaced font
+                        .font(Font.system(.body).weight(.medium))
+                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                     Spacer()
-                    Text(formattedTimeFor(timeInterval: nowPlayingViewModel.duration))
-                        .font(Font.system(.headline).weight(.regular))
-                        .foregroundColor(.white)
+                    Text("-\(formattedTimeRemainingFor(timeInterval: nowPlayingViewModel.timeRemaining))")
+//                        .font(Font.custom("Courier", size: 18)) // Monospaced font
+                        .font(Font.system(.body).weight(.medium))
+                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                 }
             }
         }
@@ -109,12 +113,17 @@ struct TrackProgressView: View {
         }
     }
     
-    func formattedTimeFor(timeInterval: TimeInterval) -> String {
+    private func formattedTimeRemainingFor(timeInterval: TimeInterval) -> String {
+        let date = Date(timeIntervalSinceReferenceDate: timeInterval)
+        return dateFormatter.string(from: date)
+    }
+    
+    private func formattedTimeFor(timeInterval: TimeInterval) -> String {
         let date = Date(timeIntervalSinceReferenceDate: timeInterval)
         return dateFormatter.string(from: date)
     }
 
-    func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
+    private func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
         let percentage = location / width
         let time = nowPlayingViewModel.duration * TimeInterval(percentage)
         if time < 0 {
@@ -125,8 +134,12 @@ struct TrackProgressView: View {
         return time
     }
 
-    func percentagePlayedForSong() -> CGFloat {
+    private func percentagePlayedForSong() -> CGFloat {
         let percentagePlayed = CGFloat(nowPlayingViewModel.elapsedTime / nowPlayingViewModel.duration)
         return percentagePlayed.isNaN ? 0.0 : percentagePlayed
+    }
+    
+    private func fontColor(isTooLight: Bool) -> Color {
+        isTooLight ? Color.black : Color.white
     }
 }

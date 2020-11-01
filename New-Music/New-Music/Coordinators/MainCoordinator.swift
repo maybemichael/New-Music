@@ -46,6 +46,7 @@ class MainCoordinator: NSObject {
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
         configureNowPlayingView()
+        configureTabBarBlurView()
     }
     
     private func setUpAppNavViews() {
@@ -53,11 +54,16 @@ class MainCoordinator: NSObject {
         navController.navigationBar.prefersLargeTitles = true
         navController.navigationBar.barTintColor = .backgroundColor
         tabBarController.setViewControllers([navController, nowPlayingBarVC, playlistVC], animated: false)
-        tabBarController.tabBar.barTintColor = .backgroundColor
+//        tabBarController.tabBar.barTintColor = .backgroundColor
+//        tabBarController.tabBar.isTranslucent = true
+//        tabBarController.tabBar.barTintColor = .clear
+//        tabBarController.view.backgroundColor = .clear
+        
         nowPlayingBarVC.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
         navController.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
         playlistVC.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "heart.fill"), tag: 2)
         tabBarController.tabBar.tintColor = .white
+        tabBarController.tabBar.unselectedItemTintColor = .lightText
     }
     
     private func passDependencies() {
@@ -71,18 +77,19 @@ class MainCoordinator: NSObject {
     }
     
     private func configureNowPlayingView() {
-        let nowPlayingView = UIVisualEffectView()
-        nowPlayingView.effect = UIBlurEffect(style: .prominent)
+        nowPlayingContainerVC.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (tabBarController.tabBar.bounds.height * 2) + 10, width: UIScreen.main.bounds.width, height: tabBarController.tabBar.bounds.height - 10)
+        let blurView = UIVisualEffectView()
+        blurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
         let contentView = UIHostingController(rootView: NowPlayingBarView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
-        nowPlayingView.contentView.addSubview(contentView.view)
+        nowPlayingContainerVC.view.addSubview(blurView)
+        blurView.contentView.addSubview(contentView.view)
+        blurView.anchor(top: nowPlayingContainerVC.view.topAnchor, leading: nowPlayingContainerVC.view.leadingAnchor, trailing: nowPlayingContainerVC.view.trailingAnchor, bottom: nowPlayingContainerVC.view.bottomAnchor)
         contentView.view.backgroundColor = .clear
-        
-        window.insertSubview(nowPlayingView, aboveSubview: tabBarController.view)
-        nowPlayingView.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (tabBarController.tabBar.bounds.height * 2) + 10, width: UIScreen.main.bounds.width, height: tabBarController.tabBar.bounds.height - 10)
-        contentView.view.anchor(top: nowPlayingView.topAnchor, leading: nowPlayingView.leadingAnchor, trailing: nowPlayingView.trailingAnchor, bottom: nowPlayingView.bottomAnchor)
-        nowPlayingView.contentView.backgroundColor = .clear
+        nowPlayingContainerVC.view.backgroundColor = .clear
+        contentView.view.anchor(top: blurView.contentView.topAnchor, leading: blurView.contentView.leadingAnchor, trailing: blurView.contentView.trailingAnchor, bottom: blurView.contentView.bottomAnchor)
+        window.insertSubview(nowPlayingContainerVC.view, aboveSubview: tabBarController.view)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(presentNowPlayingFull(_:)))
-        nowPlayingView.addGestureRecognizer(tapGesture)
+        nowPlayingContainerVC.view.addGestureRecognizer(tapGesture)
     }
     
     func presentFullScreenNowPlaying(fromVC: UIViewController?) {
@@ -92,6 +99,17 @@ class MainCoordinator: NSObject {
         DispatchQueue.main.async {
             self.nowPlayingBarVC.present(self.nowPlayingVC, animated: true, completion: nil)
         }
+    }
+    
+    private func configureTabBarBlurView() {
+        let tabBarBlurView = UIVisualEffectView()
+        tabBarBlurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        tabBarBlurView.contentView.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - tabBarController.tabBar.bounds.height, width: UIScreen.main.bounds.width, height: tabBarController.tabBar.bounds.height)
+        let tabBarBackground = UIHostingController(rootView: TabBarBackgroundView().environmentObject(musicController.nowPlayingViewModel))
+        tabBarBlurView.contentView.addSubview(tabBarBackground.view)
+        tabBarBackground.view.anchor(top: tabBarBlurView.contentView.topAnchor, leading: tabBarBlurView.contentView.leadingAnchor, trailing: tabBarBlurView.contentView.trailingAnchor, bottom: tabBarBlurView.contentView.bottomAnchor)
+        tabBarBackground.view.backgroundColor = .clear
+        tabBarController.view.insertSubview(tabBarBlurView.contentView, at: 1)
     }
     
     @objc func presentNowPlayingFull(_ sender: UITapGestureRecognizer) {

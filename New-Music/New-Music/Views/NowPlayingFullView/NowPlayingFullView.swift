@@ -14,8 +14,6 @@ struct NowPlayingFullView: View {
     @State private var topAnchor: CGFloat = 0
     @Binding var isPresented: Bool
     let musicController: MusicController
-    @Namespace var namespace
-//    let namespace: Namespace.ID?
     
     var drag: some Gesture {
         let drag = DragGesture()
@@ -28,33 +26,41 @@ struct NowPlayingFullView: View {
     }
     
     var body: some View {
+        ZStack {
+            Color.clear
+                .edgesIgnoringSafeArea(.all)
             VStack {
-                AlbumArtworkView(namespace: namespace)
+                AlbumArtworkView()
                     .padding(.bottom, 20)
+                    .scaleEffect(nowPlayingViewModel.isPlaying ? 1.0 : 0.77)
+                    .animation(.easeOut(duration: 0.3))
                 VStack {
-                    Text(nowPlayingViewModel.songTitle)
-                        .font(Font.system(.title2).weight(.medium))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
                     Text(nowPlayingViewModel.artist)
-                        .font(Font.system(.headline).weight(.medium))
-                        .foregroundColor(.lightTextColor)
+//                    Text("Fall Out Boy")
+                        .font(Font.system(.title3).weight(.medium))
+                        .foregroundColor(nowPlayingViewModel.textColor2)
+                        .multilineTextAlignment(.center)
+                    Text(nowPlayingViewModel.songTitle)
+//                    Text("Grand Theft Autumn")
+                        .font(Font.system(.title2).weight(.medium))
+                        .foregroundColor(textColorFor(isTooLight: nowPlayingViewModel.isTooLight))
                         .multilineTextAlignment(.center)
                     
                 }
-                .frame(minHeight: 80, alignment: .top)
+                .frame(minHeight: 80, alignment: .center)
                 .padding(.horizontal, 40)
                 TrackProgressBarView(musicController: musicController)
                 HStack(spacing: 40) {
                     NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackBackward, musicController: musicController)
-                    NeuPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: UIScreen.main.bounds.width / 4.7, namespace: namespace)
+                    NeuPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: UIScreen.main.bounds.width / 4.7)
                         .frame(width: UIScreen.main.bounds.width / 4.7, height: UIScreen.main.bounds.width / 4.7, alignment: .center)
                     NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackForward, musicController: musicController)
                 }
             }
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .background(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .nowPlayingBG))
-            .edgesIgnoringSafeArea(.all)
+        }
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .background(nowPlayingViewModel.lighterAccentColor.opacity(0.4))
+        .edgesIgnoringSafeArea(.all)
     }
     
     private func getTopInset() -> CGFloat {
@@ -86,7 +92,6 @@ struct NowPlayingFullView: View {
 
         if verticalDirection > 0 {
             withAnimation(Animation.easeOut(duration: 0.3)) {
-//                self.viewControllerHolder?.dismiss(animated: true, completion: nil)
                 isPresented = false
                 self.position = positionBelow
             }
@@ -99,13 +104,20 @@ struct NowPlayingFullView: View {
             self.position = closestPosition
         }
     }
+    
+    private func textColorFor(isTooLight: Bool) -> Color {
+        isTooLight ? Color.black : Color.white
+    }
+    
+    private func backgroundColorFor(isTooLight: Bool) -> Color {
+        isTooLight ? nowPlayingViewModel.darkerAccentColor : nowPlayingViewModel.lighterAccentColor
+    }
 }
 
 
 struct NowPlayingFullView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        let namespace = Namespace()
         NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel)
     }
 }

@@ -21,6 +21,7 @@ class NowPlayingBarViewController: UIViewController, TabBarStatus, FullScreenNow
     var childVC: NowPlayingContainerViewController?
     var contentView: UIHostingController<NowPlayingBarView>?
     let interactor = Interactor()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureContentView()
@@ -46,7 +47,6 @@ class NowPlayingBarViewController: UIViewController, TabBarStatus, FullScreenNow
         view.addSubview((contentView.view)!)
         contentView.view.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         contentView.view.layer.cornerRadius = 20
-        view.backgroundColor = .backgroundColor
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
         view.backgroundColor = .backgroundColor

@@ -14,6 +14,7 @@ class AppTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+
     }
     
     private func configureNowPlayingView() {

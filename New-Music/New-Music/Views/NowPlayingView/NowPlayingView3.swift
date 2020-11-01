@@ -47,7 +47,7 @@ struct NowPlayingView3: View {
                     UITableViewCell.appearance().backgroundColor = UIColor.backgroundColor
                 }
                 if !isPresented {
-                    NowPlayingBarView(musicController: musicController, namespace: _namespace)
+                    NowPlayingBarView(musicController: musicController)
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 11, alignment: .center)
                         .background(Color.nowPlayingBG)
                         .onTapGesture {
@@ -61,7 +61,7 @@ struct NowPlayingView3: View {
             .frame(alignment: .top)
             ZStack {
                 if isPresented {
-                    NowPlayingFullView(isPresented: $isPresented, musicController: musicController, namespace: _namespace)
+                    NowPlayingFullView(isPresented: $isPresented, musicController: musicController)
                         .background(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .nowPlayingBG))
                         .cornerRadius(20)
                         .edgesIgnoringSafeArea(.all)

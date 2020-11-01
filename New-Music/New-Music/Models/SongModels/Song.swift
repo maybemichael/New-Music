@@ -17,6 +17,9 @@ struct Song: Codable, Hashable, Identifiable {
     var isAdded: Bool = false
     var accentColorHex: String
     var textColor: String
+    var textColor2: String
+    var textColor3: String
+    var textColor4: String
     var albumArtwork: Data?
     var imageURL: URL
     var stringURL: String
@@ -32,6 +35,9 @@ struct Song: Codable, Hashable, Identifiable {
         case url
         case bgColor
         case textColor1
+        case textColor2
+        case textColor3
+        case textColor4
         case attributes
     }
     
@@ -50,6 +56,9 @@ struct Song: Codable, Hashable, Identifiable {
         self.imageURL = URL(string: stringURL)!
         self.accentColorHex = try artworkContainer.decode(String.self, forKey: .bgColor)
         self.textColor = try artworkContainer.decode(String.self, forKey: .textColor1)
+        self.textColor2 = try artworkContainer.decode(String.self, forKey: .textColor2)
+        self.textColor3 = try artworkContainer.decode(String.self, forKey: .textColor3)
+        self.textColor4 = try artworkContainer.decode(String.self, forKey: .textColor4)
     }
     
     init(songName: String, artistName: String, imageURL: URL) {
@@ -60,8 +69,11 @@ struct Song: Codable, Hashable, Identifiable {
         self.kind = ""
         self.albumName = ""
         self.accentColorHex = ""
-        self.textColor = ""
         self.stringURL = ""
+        self.textColor = ""
+        self.textColor2 = ""
+        self.textColor3 = ""
+        self.textColor4 = ""
     }
 }
 

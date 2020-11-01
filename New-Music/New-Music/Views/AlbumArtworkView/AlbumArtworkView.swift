@@ -9,7 +9,6 @@ import SwiftUI
 
 struct AlbumArtworkView: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
-    let namespace: Namespace.ID
     var body: some View {
         NeuAlbumArtworkView(shape: Rectangle(), size: UIScreen.main.bounds.width - 80)
     }
@@ -19,7 +18,7 @@ struct AlbumArtworkView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
         let namespace = Namespace()
-        AlbumArtworkView(namespace: namespace.wrappedValue).environmentObject(musicController.nowPlayingViewModel)
+        AlbumArtworkView().environmentObject(musicController.nowPlayingViewModel)
     }
 }
 
@@ -55,6 +54,5 @@ struct NeuAlbumArtworkView<S: Shape>: View {
                 .scaledToFit()
         }
         .frame(width: size, height: size, alignment: .center)
-        .background(Color.clear)
     }
 }

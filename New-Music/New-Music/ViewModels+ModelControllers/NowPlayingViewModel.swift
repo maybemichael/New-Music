@@ -12,20 +12,24 @@ import Combine
 class NowPlayingViewModel: ObservableObject {
     var musicPlayer: MPMusicPlayerController
     var didChange = PassthroughSubject<UIImage?, Never>()
-    var timer: Timer?
     var nowPlayingSong: Song?
+    var displaylink: CADisplayLink?
     @Published var songs: [Song]
-//    @Published var currentPlaylist = CurrentPlaylist(songs: [])
     @Published var artist: String = ""
     @Published var songTitle: String = ""
     @Published var duration: TimeInterval
     @Published var elapsedTime: TimeInterval
+    @Published var timeRemaining: TimeInterval
     @Published var isPlaying: Bool = false
     @Published var whiteLevel: CGFloat = 0
     @Published var lighterAccentColor: Color
     @Published var darkerAccentColor: Color
     @Published var isTooLight = false
     @Published var isFullScreen = false
+    @Published var textColor1: Color
+    @Published var textColor2: Color
+    @Published var textColor3: Color
+    @Published var textColor4: Color
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
@@ -55,14 +59,22 @@ class NowPlayingViewModel: ObservableObject {
         self.lighterAccentColor = lighterAccentColor
         self.darkerAccentColor = darkerAccentColor
         self.songs = songs
+        self.textColor1 = Color.black
+        self.textColor2 = Color.white
+        self.textColor3 = Color.lightTextColor
+        self.textColor4 = Color.black
+        self.timeRemaining = 0.0
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
     }
     
-    @objc func updateElapsedTime(_ timer: Timer) {
+    @objc func updateElapsedTime(_ displayLink: CADisplayLink) {
         if musicPlayer.playbackState == .playing {
             self.elapsedTime = musicPlayer.currentPlaybackTime
+            if let duration = musicPlayer.nowPlayingItem?.playbackDuration {
+                self.timeRemaining = duration - musicPlayer.currentPlaybackTime
+            }
         }
     }
     
@@ -84,6 +96,7 @@ class NowPlayingViewModel: ObservableObject {
             self.lighterAccentColor = colors.lighter
             self.darkerAccentColor = colors.darker
         }
+        getTextColors()
     }
     
     @objc func musicPlayerStateDidChange(_ notification: Notification) {
@@ -91,13 +104,14 @@ class NowPlayingViewModel: ObservableObject {
         switch playbackState {
         case .stopped, .paused, .interrupted:
             self.isPlaying = false
-            self.timer?.invalidate()
-            self.timer = nil
+            self.displaylink?.invalidate()
+            self.displaylink = nil
         case .playing:
             isPlaying = true
-            if self.timer == nil {
-                self.timer = Timer(timeInterval: 1, target: self, selector: #selector(updateElapsedTime(_:)), userInfo: nil, repeats: true)
-                RunLoop.current.add(timer!, forMode: .common)
+            if self.displaylink == nil {
+                self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
+                self.displaylink?.preferredFramesPerSecond = 0
+                displaylink?.add(to: .current, forMode: .common)
             }
         case .seekingBackward:
             isPlaying = musicPlayer.playbackState == .playing ? true : false
@@ -109,7 +123,6 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     private func updateAlbumArtwork(completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
-//        if musicPlayer.playbackState == .playing && self.albumArtwork == nil {
             if let imageURL = nowPlayingSong?.imageURL {
                 URLSession.shared.dataTask(with: imageURL) { data, _, error in
                     if let networkError = NetworkError(data: data, response: nil, error: error) {
@@ -117,14 +130,12 @@ class NowPlayingViewModel: ObservableObject {
                         completion(.failure(networkError))
                         return
                     }
-//                    self.currentPlaylist.songs[self.musicPlayer.indexOfNowPlayingItem].albumArtwork = data!
                     DispatchQueue.main.async {
                         self.albumArtwork = UIImage(data: data!)
                     }
                     completion(.success(self.albumArtwork))
                 }.resume()
             }
-//        }
     }
     
     private func getGradientColors() -> (lighter: Color, darker: Color)? {
@@ -154,6 +165,26 @@ class NowPlayingViewModel: ObservableObject {
             return (Color(secondColor), Color(apiColor))
         }
     }
+    
+    private func getTextColors() {
+        guard
+            let text1String = self.nowPlayingSong?.textColor,
+            let text2String = self.nowPlayingSong?.textColor2,
+            let text3String = self.nowPlayingSong?.textColor3,
+            let text4String = self.nowPlayingSong?.textColor4
+        else { return }
+        
+        let text1UIColor = hexStringToUIColor(hex: text1String)
+        let text2UIColor = hexStringToUIColor(hex: text2String)
+        let text3UIColor = hexStringToUIColor(hex: text3String)
+        let text4UIColor = hexStringToUIColor(hex: text4String)
+        
+        self.textColor1 = Color(text1UIColor)
+        self.textColor2 = Color(text2UIColor)
+        self.textColor3 = Color(text3UIColor)
+        self.textColor4 = Color(text4UIColor)
+    }
+    
     
     private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {
         var white: CGFloat = 0.0

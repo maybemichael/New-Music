@@ -56,7 +56,7 @@ struct NowPlayingFull: View {
                 HStack(spacing: 40) {
                     NeuTrackButton(size: 60, trackDirection: .trackBackward, musicController: musicController)
                         .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .frame, isSource: true)
-                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: 90, namespace: namespace)
+                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: 90)
                         .frame(width: 90, height: 90)
                         .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .frame, isSource: true)
                     NeuTrackButton(size: 60, trackDirection: .trackForward, musicController: musicController)

@@ -38,6 +38,7 @@ class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         else { return }
         let containerView = transitionContext.containerView
         containerView.isUserInteractionEnabled = true
+        containerView.backgroundColor = .clear
         if self.type == .navigation {
             containerView.insertSubview(toVC.view, belowSubview: fromVC.view)
         }

@@ -19,20 +19,27 @@ class NowPlayingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
         configureContentView()
     }
     
     private func configureContentView() {
         let contentView = UIHostingController(rootView: NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
+        let backgroundView = UIVisualEffectView()
+        backgroundView.effect = UIBlurEffect(style: .light)
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
-        addChild(contentView)
-        contentView.didMove(toParent: self)
-        view.addSubview(contentView.view)
-        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+        view.backgroundColor = .clear
+        view.addSubview(backgroundView)
+        backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+        backgroundView.contentView.addSubview(contentView.view)
+//        addChild(contentView)
+//        contentView.didMove(toParent: self)
+//        view.addSubview(contentView.view)
+        contentView.view.anchor(top: backgroundView.contentView.topAnchor, leading: backgroundView.contentView.leadingAnchor, trailing: backgroundView.contentView.trailingAnchor, bottom: backgroundView.contentView.bottomAnchor)
+        contentView.view.backgroundColor = .clear
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
         view.addGestureRecognizer(panGesture)
+        
     }
 
     

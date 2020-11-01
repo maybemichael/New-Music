@@ -46,7 +46,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         collectionView.register(SongsCollectionViewCell.self, forCellWithReuseIdentifier: SongsCollectionViewCell.identifier)
         view.addSubview(collectionView)
         collectionView.backgroundColor = .clear
-        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor)
+        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         collectionView.showsVerticalScrollIndicator = false
     }
     

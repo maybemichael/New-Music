@@ -13,7 +13,6 @@ struct NeuPlayPauseButton: View {
     var musicController: MusicController
     var labelPadding: CGFloat
     var size: CGFloat
-    let namespace: Namespace.ID
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
@@ -27,7 +26,7 @@ struct NeuPlayPauseButton: View {
         .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size, labelPadding: size / 3))
     }
     
-    func imageTint(isTooLight: Bool) -> UIColor {
+    private func imageTint(isTooLight: Bool) -> UIColor {
         isTooLight ? UIColor.black : UIColor.white
     }
     
@@ -51,30 +50,7 @@ struct ToggleButtonStyle: ToggleStyle {
             configuration.label
                 .padding(labelPadding)
                 .contentShape(Circle())
-                .background(
-                    ZStack {
-                        if nowPlayingViewModel.whiteLevel < 0.3 {
-                            Circle()
-                                .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                                .shadow(color: Color.white.opacity(0.5), radius: 10, x: -5, y: -5)
-                                .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
-                                .blendMode(.overlay)
-                            Circle()
-                                .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                                .overlay(Circle().stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
-                        } else {
-                            Circle()
-                                .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                                .shadow(color: Color.white.opacity(0.9), radius: 10, x: -5, y: -5)
-                                .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
-                                .blendMode(.overlay)
-                            Circle()
-                                .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                                .overlay(Circle().stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
-                        }
-                    }
-                    .frame(width: size, height: size)
-                )
+                .background(NeuToggleBackground(shape: Circle(), size: size))
         }
     }
     private func imageTint(isTooLight: Bool) -> UIColor {
@@ -87,41 +63,65 @@ struct ToggleButtonStyle: ToggleStyle {
 }
 
 struct NeuToggleBackground<S: Shape>: View {
-    @EnvironmentObject var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     var shape: S
-//    var lighterColor: Color
-//    var darkerColor: Color
     var size: CGFloat
     
     var body: some View {
         ZStack {
             Color.clear
                 .edgesIgnoringSafeArea(.all)
-            if songViewModel.whiteLevel < 0.3 {
+            if nowPlayingViewModel.whiteLevel < 0.4 {
                 shape
-                    .fill(gradient(for: songViewModel.isPlaying))
-                    .shadow(color: Color.white.opacity(0.5), radius: 10, x: -5, y: -5)
-                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
+                    .fill(gradient(for: nowPlayingViewModel.isPlaying))
+                    .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                    .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                     .blendMode(.overlay)
                 shape
-                    .fill(gradient(for: songViewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                    .fill(gradient(for: nowPlayingViewModel.isPlaying))
+                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
             } else {
                 shape
-                    .fill(gradient(for: songViewModel.isPlaying))
-                    .shadow(color: Color.white.opacity(0.9), radius: 10, x: -5, y: -5)
-                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
+                    .fill(gradient(for: nowPlayingViewModel.isPlaying))
+                    .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                    .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                     .blendMode(.overlay)
                 shape
-                    .fill(gradient(for: songViewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                    .fill(gradient(for: nowPlayingViewModel.isPlaying))
+                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
             }
         }
         .frame(width: size, height: size)
         .transition(.move(edge: .bottom))
     }
     private func gradient(for state: Bool) -> LinearGradient {
-        state ? LinearGradient(direction: .diagonalTopToBottom, songViewModel.darkerAccentColor, songViewModel.lighterAccentColor) : LinearGradient(direction: .diagonalTopToBottom, songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)
+        state ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
+    }
+    
+    private func darkShadowOpacity(for whiteLevel: CGFloat) -> Double {
+        switch nowPlayingViewModel.whiteLevel {
+        case 0...0.3:
+            return 0.6
+        case 0.31...0.7:
+            return 0.65
+        case 0.71...1:
+            return 0.8
+        default:
+            return 0.7
+        }
+    }
+    
+    private func lightShadowOpacity(for whiteLevel: CGFloat) -> Double {
+        switch nowPlayingViewModel.whiteLevel {
+        case 0...0.1:
+            return 0.5
+        case 0.11...0.7:
+            return 0.5
+        case 0.71...1:
+            return 0.6
+        default:
+            return 0.2
+        }
     }
 }
 
@@ -176,7 +176,7 @@ struct NeuButtonBackground<S: Shape>: View {
         ZStack {
             Color.clear
                 .edgesIgnoringSafeArea(.all)
-            if nowPlayingViewModel.whiteLevel < 0.3 {
+            if nowPlayingViewModel.whiteLevel < 0.4 {
                 if isHighlighted {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
@@ -192,24 +192,23 @@ struct NeuButtonBackground<S: Shape>: View {
                                 .blur(radius: 8)
                                 .offset(x: -2, y: -2)
                                 .mask(shape.fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                        .shadow(color: Color.black.opacity(0.5), radius: 7, x: 5, y: 5)
-                        .shadow(color: Color.white.opacity(0.5), radius: 7, x: -5, y: -5)
+                        .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                        .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
                 } else {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
-                        .shadow(color: Color.white.opacity(0.5), radius: 10, x: -5, y: -5)
+                        .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                        .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
                 }
-            }
-        else {
+            } else {
                 if isHighlighted {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
@@ -225,31 +224,56 @@ struct NeuButtonBackground<S: Shape>: View {
                                 .blur(radius: 8)
                                 .offset(x: -2, y: -2)
                                 .mask(shape.fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                        .shadow(color: Color.black.opacity(0.5), radius: 7, x: 5, y: 5)
-                        .shadow(color: Color.white.opacity(0.5), radius: 7, x: -5, y: -5)
+                        .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                        .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
                 } else {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
-                        .shadow(color: Color.white.opacity(0.5), radius: 10, x: -5, y: -5)
+                        .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                        .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
                 }
             }
         }
         .frame(width: size, height: size)
         .transition(.move(edge: .bottom))
-//        .scaleEffect(isHighlighted ? 0.95 : 1)
     }
     
     private func gradient(for state: Bool) -> LinearGradient {
         state ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor)
+    }
+    
+    private func darkShadowOpacity(for whiteLevel: CGFloat) -> Double {
+        switch nowPlayingViewModel.whiteLevel {
+        case 0...0.3:
+            return 0.6
+        case 0.31...0.7:
+            return 0.65
+        case 0.71...1:
+            return 0.8
+        default:
+            return 0.7
+        }
+    }
+    
+    private func lightShadowOpacity(for whiteLevel: CGFloat) -> Double {
+        switch nowPlayingViewModel.whiteLevel {
+        case 0...0.1:
+            return 0.5
+        case 0.11...0.7:
+            return 0.5
+        case 0.71...1:
+            return 0.6
+        default:
+            return 0.2
+        }
     }
 }
 
@@ -318,7 +342,6 @@ struct BarPlayPauseButton: View {
     var musicController: MusicController
     var labelPadding: CGFloat
     var size: CGFloat
-    let namespace: Namespace.ID
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
