@@ -12,9 +12,8 @@ class PlaylistViewController: UIViewController, TabBarStatus {
     func addGestureRecognizer<Content>(viewController: UIHostingController<Content>) where Content : View {
         
     }
-    
-
     var musicController: MusicController!
+    var interactor: Interactor?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,5 +42,20 @@ class PlaylistViewController: UIViewController, TabBarStatus {
         } else {
             tabBarController?.tabBar.isHidden = false
         }
+    }
+}
+
+extension PlaylistViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transitionAnimator(type: .modal, animationType: .dismiss, interactor: interactor)
+    }
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transitionAnimator(type: .modal, animationType: .present, interactor: interactor)
+    }
+    
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        guard let interactor = self.interactor else { return nil }
+        return interactor.isStarted ? interactor : nil
     }
 }

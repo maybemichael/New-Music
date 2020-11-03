@@ -22,6 +22,10 @@ class NowPlayingViewController: UIViewController {
         configureContentView()
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .darkContent
+    }
+    
     private func configureContentView() {
         let contentView = UIHostingController(rootView: NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
         let backgroundView = UIVisualEffectView()
@@ -38,7 +42,7 @@ class NowPlayingViewController: UIViewController {
         contentView.view.anchor(top: backgroundView.contentView.topAnchor, leading: backgroundView.contentView.leadingAnchor, trailing: backgroundView.contentView.trailingAnchor, bottom: backgroundView.contentView.bottomAnchor)
         contentView.view.backgroundColor = .clear
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
-        view.addGestureRecognizer(panGesture)
+        contentView.view.addGestureRecognizer(panGesture)
         
     }
 
@@ -64,12 +68,13 @@ class NowPlayingViewController: UIViewController {
             interactor.update(progress)
             print("Sender state .changed: \(sender.state)")
         case .cancelled:
-            interactor.isStarted = false
             interactor.cancel()
+//            interactor.contextData?.cancelInteractiveTransition()
+            interactor.isStarted = false
             print("Sender state .cancelled: \(sender.state)")
         case .ended:
-            interactor.isStarted = false
             interactor.shouldFinish ? interactor.finish() : interactor.cancel()
+            interactor.isStarted = false
             print("Sender state .ended: \(sender.state)")
         default:
             break

@@ -22,13 +22,17 @@ class NowPlayingContainerViewController: UIViewController, FullScreenNowPlaying 
 
 
     func presentFullScreen() {
-        coordinator?.presentFullScreenNowPlaying(fromVC: self)
+//        coordinator?.presentFullScreenNowPlaying(fromVC: self)
     }
 }
 
 extension NowPlayingContainerViewController: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        DismissAnimator(type: .modal, interactor: interactor)
+        transitionAnimator(type: .modal, animationType: .dismiss, interactor: interactor)
+    }
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transitionAnimator(type: .modal, animationType: .present, interactor: interactor)
     }
     
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {

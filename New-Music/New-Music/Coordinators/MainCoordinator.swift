@@ -27,9 +27,9 @@ class MainCoordinator: NSObject {
     private var navController = UINavigationController(rootViewController: SearchViewController())
     private var musicController = MusicController()
     private var nowPlayingVC = NowPlayingViewController()
-    lazy var some = ViewControllerWrapper(viewController: NowPlayingViewController())
+//    lazy var some = ViewControllerWrapper(viewController: NowPlayingViewController())
     private var nowPlayingContainerVC =  NowPlayingContainerViewController()
-    let interactor = Interactor()
+    private let interactor = Interactor()
     weak var coordinator: Coordinator?
     
     let height = UIScreen.main.bounds.height / 11
@@ -67,12 +67,19 @@ class MainCoordinator: NSObject {
     }
     
     private func passDependencies() {
+        interactor.nowPlayingVC = nowPlayingVC
         nowPlayingVC.musicController = musicController
+        nowPlayingVC.interactor = interactor
         nowPlayingBarVC.musicController = musicController
+        nowPlayingBarVC.interactor = interactor
         playlistVC.musicController = musicController
+        playlistVC.interactor = interactor
         nowPlayingBarVC.childVC = nowPlayingContainerVC
+        tabBarController.nowPlayingVC = nowPlayingVC
+        tabBarController.interactor = interactor
         if let searchVC = navController.topViewController as? SearchViewController {
             searchVC.musicController = musicController
+            searchVC.interactor = interactor
         }
     }
     
@@ -92,13 +99,18 @@ class MainCoordinator: NSObject {
         nowPlayingContainerVC.view.addGestureRecognizer(tapGesture)
     }
     
-    func presentFullScreenNowPlaying(fromVC: UIViewController?) {
-        nowPlayingVC.transitioningDelegate = self
-        nowPlayingVC.interactor = interactor
-        nowPlayingVC.modalPresentationStyle = .custom
-        DispatchQueue.main.async {
-            self.nowPlayingBarVC.present(self.nowPlayingVC, animated: true, completion: nil)
-        }
+//    func presentFullScreenNowPlaying(fromVC: UIViewController?) {
+//        nowPlayingVC.transitioningDelegate = nowPlayingContainerVC
+//        nowPlayingVC.interactor = interactor
+//        nowPlayingVC.modalPresentationStyle = .custom
+//        DispatchQueue.main.async {
+//            self.nowPlayingBarVC.present(self.nowPlayingVC, animated: true, completion: nil)
+//        }
+//    }
+    
+    
+    func dismissNowPlayingVC() {
+        tabBarController.dismiss(animated: true, completion: nil)
     }
     
     private func configureTabBarBlurView() {
@@ -113,8 +125,10 @@ class MainCoordinator: NSObject {
     }
     
     @objc func presentNowPlayingFull(_ sender: UITapGestureRecognizer) {
-        nowPlayingVC.transitioningDelegate = tabBarController
-        nowPlayingVC.interactor = tabBarController.interactor
+//        guard let presentingVC = self.tabBarController.viewControllers?[self.tabBarController.selectedIndex] else { return }
+//        print("Presenting VC: \(presentingVC.description)")
+        nowPlayingVC.transitioningDelegate = self
+        nowPlayingVC.interactor = interactor
         nowPlayingVC.modalPresentationStyle = .custom
         DispatchQueue.main.async {
             self.tabBarController.present(self.nowPlayingVC, animated: true, completion: nil)
@@ -124,10 +138,18 @@ class MainCoordinator: NSObject {
 
 extension MainCoordinator: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        DismissAnimator(type: .modal, interactor: nil)
+        transitionAnimator(type: .modal, animationType: .dismiss, interactor: interactor)
     }
-    
+
+//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        transitionAnimator(type: .modal, animationType: .present, interactor: interactor)
+//    }
+
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactor.isStarted ? interactor : nil
     }
+
+//    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+//        SlideUpPresentationController(presentedViewController: nowPlayingVC, presenting: tabBarController)
+//    }
 }

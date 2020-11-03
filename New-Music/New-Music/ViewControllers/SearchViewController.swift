@@ -5,7 +5,7 @@
 //  Created by Michael McGrath on 10/3/20.
 //
 
-import UIKit
+import SwiftUI
 
 class SearchViewController: UIViewController, SongsCellDelegate {
     
@@ -15,6 +15,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     typealias SongsSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
     var dataSource: SearchDataSource?
     var musicController: MusicController!
+    var interactor: Interactor?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +23,32 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         setUpViews()
         configureCollectionView()
         createDataSource()
+        navBarView()
+    }
+    
+    private func navBarView() {
+        navigationController?.view.layer.cornerRadius = 20
+        navigationController?.view.backgroundColor = .clear
+        navigationController?.navigationBar.backgroundColor = .clear
+        searchController.view.backgroundColor = .clear
+        searchController.searchBar.backgroundColor = .clear
+//        guard
+//            let navBar = searchController.view,
+//            let musicController = self.musicController
+//        else { return }
+//        let navBarBlurView = UIVisualEffectView()
+//        navBarBlurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+//        navBarBlurView.contentView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: navBar.bounds.height)
+//        let navBarBackground = UIHostingController(rootView: TabBarBackgroundView().environmentObject(musicController.nowPlayingViewModel))
+//        navBarBlurView.contentView.addSubview(navBarBackground.view)
+////        navBarBackground.view.frame = navigationController?.navigationBar.frame ?? <#default value#>
+//        navBarBackground.view.anchor(top: navBarBlurView.contentView.topAnchor, leading: navBarBlurView.contentView.leadingAnchor, trailing: navBarBlurView.contentView.trailingAnchor, bottom: navBarBlurView.contentView.bottomAnchor)
+//        navBarBackground.view.backgroundColor = .clear
+//        navBar.backgroundColor = .clear
+//        navBar.layer.cornerRadius = 20
+//        searchController.view.insertSubview(navBarBlurView.contentView, at: 1)
+//        navigationController?.view.insertSubview(navBarBlurView.contentView, belowSubview: navBar)
+//        navBar.insertSubview(navBarBlurView.contentView, at: 0)
     }
     
     private func setUpViews() {
@@ -115,5 +142,19 @@ class SearchViewController: UIViewController, SongsCellDelegate {
             }
         }
         musicController.addSongToPlaylist(song: song)
+    }
+}
+extension SearchViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transitionAnimator(type: .modal, animationType: .dismiss, interactor: interactor)
+    }
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transitionAnimator(type: .modal, animationType: .present, interactor: interactor)
+    }
+    
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        guard let interactor = self.interactor else { return nil }
+        return interactor.isStarted ? interactor : nil
     }
 }

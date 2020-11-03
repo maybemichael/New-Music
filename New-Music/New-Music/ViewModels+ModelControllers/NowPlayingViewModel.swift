@@ -86,6 +86,7 @@ class NowPlayingViewModel: ObservableObject {
             self.duration = duration
         }
         self.elapsedTime = 0.0
+        self.timeRemaining = 0.0
         let index = musicPlayer.indexOfNowPlayingItem
         self.nowPlayingSong = songs[index]
         
@@ -110,7 +111,7 @@ class NowPlayingViewModel: ObservableObject {
             isPlaying = true
             if self.displaylink == nil {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 0
+                self.displaylink?.preferredFramesPerSecond = 60
                 displaylink?.add(to: .current, forMode: .common)
             }
         case .seekingBackward:

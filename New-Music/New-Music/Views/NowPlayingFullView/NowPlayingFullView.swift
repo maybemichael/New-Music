@@ -59,7 +59,7 @@ struct NowPlayingFullView: View {
             }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .background(nowPlayingViewModel.lighterAccentColor.opacity(0.4))
+        .background(nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)))
         .edgesIgnoringSafeArea(.all)
     }
     
@@ -102,6 +102,19 @@ struct NowPlayingFullView: View {
             }
         } else {
             self.position = closestPosition
+        }
+    }
+    
+    private func opacity(for whiteLevel: CGFloat) -> Double {
+        switch whiteLevel {
+        case 0...0.3:
+            return 0.7
+        case 0.31...7:
+            return 0.25
+        case 0.71...1:
+            return 0.1
+        default:
+            return 0.35
         }
     }
     

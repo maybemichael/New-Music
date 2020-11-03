@@ -50,3 +50,13 @@ enum GradientDirection {
     case diagonalTopToBottom
     case leadingToTrailing
 }
+
+enum AnimationType {
+    case present
+    case dismiss
+}
+
+enum TransitionType {
+    case navigation
+    case modal
+}
