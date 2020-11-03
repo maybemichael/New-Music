@@ -1,83 +1,80 @@
 //
-//  MusicPlayerControlsViewController.swift
+//  NowPlayingViewController.swift
 //  New-Music
 //
-//  Created by Michael McGrath on 10/19/20.
+//  Created by Michael McGrath on 10/3/20.
 //
 
 import SwiftUI
 
 class NowPlayingViewController: UIViewController {
+    
 
-    var musicController: MusicController! {
+    var musicController: MusicController? {
         didSet {
-            configureContentView()
+//            configureContentView()
         }
     }
+    @Environment(\.viewController) private var viewControllerHolder: UIViewController?
+    @Namespace var namespace
     weak var coordinator: MainCoordinator?
-    var interactor: Interactor?
+    var contentView: UIHostingController<NowPlayingBarView>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureContentView()
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .darkContent
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
+    
+    private func navBarView() {
+        guard
+            let navBar = navigationController?.navigationBar,
+            let musicController = self.musicController
+        else { return }
+        let navBarBlurView = UIVisualEffectView()
+        navBarBlurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        navBarBlurView.contentView.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - navBar.bounds.height, width: UIScreen.main.bounds.width, height: navBar.bounds.height)
+        let navBarBackground = UIHostingController(rootView: TabBarBackgroundView().environmentObject(musicController.nowPlayingViewModel))
+        navBarBlurView.contentView.addSubview(navBarBackground.view)
+        navBarBackground.view.anchor(top: navBarBlurView.contentView.topAnchor, leading: navBarBlurView.contentView.leadingAnchor, trailing: navBarBlurView.contentView.trailingAnchor, bottom: navBarBlurView.contentView.bottomAnchor)
+        navBarBackground.view.backgroundColor = .clear
+        navBar.layer.cornerRadius = 20
+        navBar.insertSubview(navBarBlurView.contentView, at: 1)
+    }
+    
     
     private func configureContentView() {
-        let contentView = UIHostingController(rootView: NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
-        let backgroundView = UIVisualEffectView()
-        backgroundView.effect = UIBlurEffect(style: .light)
+        view.backgroundColor = .backgroundColor
+        navigationController?.view.layer.cornerRadius = 20
+        guard let musicController = musicController else { return }
+        let contentView = UIHostingController(rootView: NowPlayingPlaylistView().environmentObject(musicController.nowPlayingViewModel))
+        
+        addChild(contentView)
+        contentView.didMove(toParent: self)
+        view.addSubview((contentView.view)!)
+        contentView.view.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 50, left: 0, bottom: 0, right: 0))
+        contentView.view.layer.cornerRadius = 20
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
-        view.backgroundColor = .clear
-        view.addSubview(backgroundView)
-        backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
-        backgroundView.contentView.addSubview(contentView.view)
-//        addChild(contentView)
-//        contentView.didMove(toParent: self)
-//        view.addSubview(contentView.view)
-        contentView.view.anchor(top: backgroundView.contentView.topAnchor, leading: backgroundView.contentView.leadingAnchor, trailing: backgroundView.contentView.trailingAnchor, bottom: backgroundView.contentView.bottomAnchor)
-        contentView.view.backgroundColor = .clear
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
-        contentView.view.addGestureRecognizer(panGesture)
-        
+        view.backgroundColor = .backgroundColor
+//        contentView.view.backgroundColor = .clear
     }
+}
 
+protocol TabBarStatus {
+    func toggleHidden(isFullScreen: Bool, viewController: UIViewController?)
     
-    @objc func handleGesture(_ sender: UIPanGestureRecognizer) {
-        let percentThreshold:CGFloat = 0.25
+    func addGestureRecognizer<Content>(viewController: UIHostingController<Content>) where Content : View
+}
 
-        // convert y-position to downward pull progress (percentage)
-        let translation = sender.translation(in: view)
-        let verticalMovement = translation.y / (view.bounds.height * 1.2)
-        let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
-        let downwardMovementPercent = fminf(downwardMovement, 1.0)
-        let progress = CGFloat(downwardMovementPercent)
-        guard let interactor = interactor else { return }
-
-        switch sender.state {
-        case .began:
-            interactor.isStarted = true
-            dismiss(animated: true, completion: nil)
-            print("Sender state .began: \(sender.state)")
-        case .changed:
-            interactor.shouldFinish = progress > percentThreshold
-            interactor.update(progress)
-            print("Sender state .changed: \(sender.state)")
-        case .cancelled:
-            interactor.cancel()
-//            interactor.contextData?.cancelInteractiveTransition()
-            interactor.isStarted = false
-            print("Sender state .cancelled: \(sender.state)")
-        case .ended:
-            interactor.shouldFinish ? interactor.finish() : interactor.cancel()
-            interactor.isStarted = false
-            print("Sender state .ended: \(sender.state)")
-        default:
-            break
-        }
-    }
+protocol FullScreenNowPlaying {
+    func presentFullScreen()
 }

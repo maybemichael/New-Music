@@ -8,70 +8,57 @@
 import UIKit
 
 class Interactor: UIPercentDrivenInteractiveTransition {
-    var isStarted = false
+    let fromVC: UIViewController?
+    let toVC: UIViewController?
+    var isTransitionInProgress = false
     var shouldFinish = false
-    var contextData: UIViewControllerContextTransitioning?
-    var panGesture: UIPanGestureRecognizer?
-    weak var nowPlayingVC: NowPlayingViewController?
+    private let threshold: CGFloat = 0.3
+    private lazy var panGesture: UIPanGestureRecognizer = {
+        let gesture = UIPanGestureRecognizer()
+        gesture.addTarget(self, action: #selector(handleGesture(_:)))
+        return gesture
+    }()
 
+    init(fromVC: UIViewController?, toVC: UIViewController?) {
+        self.fromVC = fromVC
+        self.toVC = toVC
+        super.init()
+        self.panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
+        fromVC?.view.addGestureRecognizer(panGesture)
+        completionSpeed = 0.6
+    }
     
-//    override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
-        
-//        let container = transitionContext.containerView
-//        self.contextData = transitionContext
-//        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
-//        self.panGesture = panGesture
-//        container.addGestureRecognizer(panGesture)
-//        nowPlayingVC?.view.addGestureRecognizer(panGesture)
-//    }
+    deinit {
+        panGesture.view?.removeGestureRecognizer(panGesture)
+    }
     
     @objc func handleGesture(_ sender: UIPanGestureRecognizer) {
-        let percentThreshold:CGFloat = 0.25
-//        guard let container = self.contextData?.containerView else { return }
-//         convert y-position to downward pull progress (percentage)
-        let translation = sender.translation(in: nowPlayingVC?.view)
-        let verticalMovement = translation.y / (nowPlayingVC?.view.bounds.height ?? 896 * 1.2)
-        let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
-        let downwardMovementPercent = fminf(downwardMovement, 1.0)
+        let translation = sender.translation(in: self.panGesture.view?.superview)
+        let verticalMovement = translation.y / (fromVC?.view.bounds.height ?? 896 * 1.2)
+        let downwardMovement = fmax(Float(verticalMovement), 0.0)
+        let downwardMovementPercent = fmin(downwardMovement, 1.0)
         let progress = CGFloat(downwardMovementPercent)
-        
-//        let translation = sender.translation(in: container)
-//        let percentage = abs(translation.y / container.bounds.height)
 
         switch sender.state {
         case .began:
-            self.isStarted = true
-//            sender.setTranslation(CGPoint(x: 0, y: 0), in: container)
-            nowPlayingVC?.dismiss(animated: true, completion: nil)
+            isTransitionInProgress = true
+            fromVC?.dismiss(animated: true, completion: nil)
             print("Sender state .began: \(sender.state)")
         case .changed:
-            self.shouldFinish = progress > percentThreshold
-            self.update(progress)
+            isTransitionInProgress = true
+            shouldFinish = progress > threshold
+            update(progress)
             print("Sender state .changed: \(sender.state)")
         case .cancelled:
-            self.cancel()
-            contextData?.cancelInteractiveTransition()
-            contextData?.completeTransition(false)
-//            present(self, animated: false, completion: nil)
-            self.isStarted = false
+            cancel()
+            isTransitionInProgress = false
             print("Sender state .cancelled: \(sender.state)")
         case .ended:
-//            self.shouldFinish ? self.finish() : self.cancel()
-            if self.shouldFinish {
-                contextData?.finishInteractiveTransition()
-                contextData?.completeTransition(true)
-                nowPlayingVC?.view.removeGestureRecognizer(sender)
-                self.finish()
-            } else {
-                contextData?.cancelInteractiveTransition()
-                contextData?.completeTransition(false)
-                nowPlayingVC?.view.removeGestureRecognizer(sender)
-                self.cancel()
-            }
-            self.isStarted = false
+            shouldFinish ? finish() : cancel()
+            isTransitionInProgress = false
             print("Sender state .ended: \(sender.state)")
         default:
-            break
+            isTransitionInProgress = false
         }
     }
 }

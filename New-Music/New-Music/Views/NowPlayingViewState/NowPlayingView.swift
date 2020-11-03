@@ -18,7 +18,6 @@ struct NowPlayingView: View {
     @State var topAnchor: CGFloat = 0
     @State var cardBottomEdgeLocation: CGFloat = UIScreen.main.bounds.height
     @Namespace var namespace
-    var delegate: TabBarStatus
     let topInset = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.top
     let bottomInset = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.bottom
     let height: CGFloat
@@ -27,8 +26,6 @@ struct NowPlayingView: View {
         let drag = DragGesture()
             .updating($dragState) { drag, state, transaction in
                 state = .dragging(translation: drag.translation)
-                
-                
             }
             .onEnded(onDragEnded)
         return drag
@@ -77,7 +74,6 @@ struct NowPlayingView: View {
                     .onTapGesture(perform: {
                         withAnimation(Animation.easeOut(duration: 0.3)) {
                             songViewModel.isFullScreen = true
-                            self.delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen, viewController: nil)
                             self.position = CardPosition.top.offset
                                 
                         }
@@ -129,13 +125,11 @@ struct NowPlayingView: View {
         if self.position > CardPosition.middle.offset {
             withAnimation {
                 songViewModel.isFullScreen = false
-                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen, viewController: nil)
                 self.position = CardPosition.bottom.offset
             }
         } else {
             withAnimation {
                 songViewModel.isFullScreen = true
-                delegate.toggleHidden(isFullScreen: songViewModel.isFullScreen, viewController: nil)
                 self.position = CardPosition.top.offset
             }
         }
@@ -149,9 +143,8 @@ struct NowPlayingView: View {
         return self.height - (topInset + bottomInset)
     }
     
-    init(musicController: MusicController, delegate: TabBarStatus, isFullScreen: Bool, height: CGFloat, tabBarHeight: CGFloat) {
+    init(musicController: MusicController, isFullScreen: Bool, height: CGFloat, tabBarHeight: CGFloat) {
         self.musicController = musicController
-        self.delegate = delegate
 //        self.isFullScreen = false
         self.height = height
         self.tabBarHeight = tabBarHeight
@@ -533,7 +526,7 @@ struct NowPlayingView: View {
 //}
 
 struct NowPlayingViewFull: View {
-    let full = ViewControllerWrapper(viewController: NowPlayingViewController())
+    let full = ViewControllerWrapper(viewController: NowPlayingFullViewController())
     var musicController: MusicController
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     let topInset = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.top
@@ -579,10 +572,7 @@ struct NowPlayingViewFull: View {
                     Spacer()
                 }
             }
-//            .padding(.top, (topInset ?? 20) + 20)
         }
-//        .transition(.move(edge: .bottom))
-//        .cornerRadius(12)
     }
 }
 
@@ -619,6 +609,6 @@ struct BottomSheet<SheetContent: View>: ViewModifier {
 struct NowPlayingView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingView(musicController: musicController, delegate: NowPlayingBarViewController(), isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: UIScreen.main.bounds.height - 120, tabBarHeight: 50).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingView(musicController: musicController, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: UIScreen.main.bounds.height - 120, tabBarHeight: 50).environmentObject(musicController.nowPlayingViewModel)
     }
 }

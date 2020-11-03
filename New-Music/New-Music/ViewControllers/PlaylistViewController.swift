@@ -7,18 +7,16 @@
 
 import SwiftUI
 
-class PlaylistViewController: UIViewController, TabBarStatus {
-    
-    func addGestureRecognizer<Content>(viewController: UIHostingController<Content>) where Content : View {
-        
-    }
-    var musicController: MusicController!
-    var interactor: Interactor?
+class PlaylistViewController: UIViewController {
 
+    var musicController: MusicController!
+    weak var coordinator: MainCoordinator?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .backgroundColor
+        navigationController?.view.layer.cornerRadius = 20
         configureContentView()
     }
     
@@ -35,27 +33,5 @@ class PlaylistViewController: UIViewController, TabBarStatus {
 //        view.addSubview((contentView.view))
 //        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         view.layer.cornerRadius = 20
-    }
-    func toggleHidden(isFullScreen: Bool, viewController: UIViewController?) {
-        if isFullScreen {
-            tabBarController?.tabBar.isHidden = true
-        } else {
-            tabBarController?.tabBar.isHidden = false
-        }
-    }
-}
-
-extension PlaylistViewController: UIViewControllerTransitioningDelegate {
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        transitionAnimator(type: .modal, animationType: .dismiss, interactor: interactor)
-    }
-    
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        transitionAnimator(type: .modal, animationType: .present, interactor: interactor)
-    }
-    
-    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        guard let interactor = self.interactor else { return nil }
-        return interactor.isStarted ? interactor : nil
     }
 }

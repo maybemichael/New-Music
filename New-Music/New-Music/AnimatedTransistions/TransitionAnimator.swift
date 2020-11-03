@@ -7,17 +7,16 @@
 
 import UIKit
 
-class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+class TransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     let transitionType: TransitionType
     let animationType: AnimationType
     let duration: TimeInterval
-    weak var interactor: Interactor?
+    var finalFrame: CGRect?
     
-    init(type: TransitionType, animationType: AnimationType, duration: TimeInterval = 0.6, interactor: Interactor?) {
+    init(type: TransitionType, animationType: AnimationType, duration: TimeInterval = 0.6) {
         self.transitionType = type
         self.duration = duration
-        self.interactor = interactor
         self.animationType = animationType
         super.init()
     }
@@ -59,14 +58,15 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             toVC.view.transform = .identity
             fromVC.view.transform = .identity
             if transitionContext.transitionWasCancelled {
-                transitionContext.cancelInteractiveTransition()
-                transitionContext.completeTransition(false)
+                fromVC.view.layoutIfNeeded()
+//                transitionContext.cancelInteractiveTransition()
+//                transitionContext.completeTransition(false)
             } else {
                 fromVC.view.removeFromSuperview()
                 //                transitionContext.completeTransition(true)
-                transitionContext.finishInteractiveTransition()
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+//                transitionContext.finishInteractiveTransition()
             }
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }
 }

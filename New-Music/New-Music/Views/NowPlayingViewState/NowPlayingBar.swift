@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NowPlayingBar: View {
     var musicController: MusicController
-    let full = ViewControllerWrapper(viewController: NowPlayingViewController())
+    let full = ViewControllerWrapper(viewController: NowPlayingFullViewController())
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     @State var isPresented: Bool = false
     @State var isFullScreen: Bool

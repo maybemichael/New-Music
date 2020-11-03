@@ -50,7 +50,7 @@ struct NowPlayingBarView: View {
 struct NowPlayingBarView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingBarView(musicController: musicController, fullScreenDelegate: NowPlayingBarViewController()).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingBarView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel)
     }
 }
 

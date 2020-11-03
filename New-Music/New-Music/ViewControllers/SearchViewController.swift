@@ -15,7 +15,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     typealias SongsSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
     var dataSource: SearchDataSource?
     var musicController: MusicController!
-    var interactor: Interactor?
+    weak var coordinator: MainCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +30,6 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         navigationController?.view.layer.cornerRadius = 20
         navigationController?.view.backgroundColor = .clear
         navigationController?.navigationBar.backgroundColor = .clear
-        searchController.view.backgroundColor = .clear
-        searchController.searchBar.backgroundColor = .clear
 //        guard
 //            let navBar = searchController.view,
 //            let musicController = self.musicController
@@ -59,7 +57,10 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         searchController.searchBar.barStyle = .black
         searchController.searchBar.delegate = self
         searchController.searchBar.sizeToFit()
+        searchController.view.backgroundColor = .clear
+        searchController.searchBar.backgroundColor = .clear
         navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         self.navigationController?.navigationBar.barTintColor = .systemGray6
         navigationController?.navigationBar.topItem?.title = "Search"
         view.layer.cornerRadius = 20
@@ -142,19 +143,5 @@ class SearchViewController: UIViewController, SongsCellDelegate {
             }
         }
         musicController.addSongToPlaylist(song: song)
-    }
-}
-extension SearchViewController: UIViewControllerTransitioningDelegate {
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        transitionAnimator(type: .modal, animationType: .dismiss, interactor: interactor)
-    }
-    
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        transitionAnimator(type: .modal, animationType: .present, interactor: interactor)
-    }
-    
-    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        guard let interactor = self.interactor else { return nil }
-        return interactor.isStarted ? interactor : nil
     }
 }

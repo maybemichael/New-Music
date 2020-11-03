@@ -14,11 +14,9 @@ struct NowPlayingView2: View {
     @State private var position: CGFloat = 10
     @State private var topAnchor: CGFloat = 10
     var musicController: MusicController
-    var delegate: TabBarStatus
     var tabBarHeight: CGFloat
 //    var safeAreaHeight: CGFloat
     @State var justToBuild = false
-    var fullScreenDelegate: FullScreenNowPlaying
     
     var drag: some Gesture {
         let drag = DragGesture()
@@ -118,13 +116,11 @@ struct NowPlayingView2: View {
         if self.position > CardPosition.middle.offset {
             withAnimation(Animation.easeIn) {
                 nowPlayingViewModel.isFullScreen = false
-                delegate.toggleHidden(isFullScreen: nowPlayingViewModel.isFullScreen, viewController: nil)
                 self.position = CardPosition.bottom.offset
             }
         } else {
             withAnimation(Animation.easeOut) {
                 nowPlayingViewModel.isFullScreen = true
-                delegate.toggleHidden(isFullScreen: nowPlayingViewModel.isFullScreen, viewController: nil)
                 self.position = CardPosition.top.offset
             }
         }
@@ -138,6 +134,6 @@ struct NowPlayingView2: View {
 struct NowPlayingView2_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingView2(musicController: musicController, delegate: NowPlayingBarViewController(), tabBarHeight: 60, fullScreenDelegate: NowPlayingBarViewController()).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingView2(musicController: musicController, tabBarHeight: 60).environmentObject(musicController.nowPlayingViewModel)
     }
 }

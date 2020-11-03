@@ -16,7 +16,6 @@ struct NowPlayingView3: View {
     @State private var position: CGFloat = 0
     @State private var topAnchor: CGFloat = 0
     let tabBarHeight: CGFloat
-    var delegate: TabBarStatus
     
     var drag: some Gesture {
         let drag = DragGesture()
@@ -53,7 +52,6 @@ struct NowPlayingView3: View {
                         .onTapGesture {
                             withAnimation(.easeOut(duration: 0.3)) {
                                 isPresented = true
-                                delegate.toggleHidden(isFullScreen: isPresented, viewController: nil)
                             }
                         }
                 }
@@ -108,14 +106,12 @@ struct NowPlayingView3: View {
 //            self.position = closestPosition
 //            withAnimation(.easeIn(duration: 0.05)) {
                 isPresented = false
-                delegate.toggleHidden(isFullScreen: isPresented, viewController: nil)
                 
 //            }
         } else if verticalDirection < 0 {
             withAnimation(.linear(duration: 0.2)) {
                 isPresented = true
 //                self.position = closestPosition
-                delegate.toggleHidden(isFullScreen: isPresented, viewController: nil)
             }
         }
     }
@@ -133,6 +129,6 @@ struct NowPlayingView3_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
         
-        NowPlayingView3(musicController: musicController, tabBarHeight: 0, delegate: NowPlayingBarViewController()).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingView3(musicController: musicController, tabBarHeight: 0).environmentObject(musicController.nowPlayingViewModel)
     }
 }
