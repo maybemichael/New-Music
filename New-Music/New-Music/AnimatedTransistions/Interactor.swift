@@ -23,9 +23,8 @@ class Interactor: UIPercentDrivenInteractiveTransition {
         self.fromVC = fromVC
         self.toVC = toVC
         super.init()
-        self.panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
         fromVC?.view.addGestureRecognizer(panGesture)
-        completionSpeed = 0.6
+//        completionSpeed = 0.6
     }
     
     deinit {
@@ -33,21 +32,50 @@ class Interactor: UIPercentDrivenInteractiveTransition {
     }
     
     @objc func handleGesture(_ sender: UIPanGestureRecognizer) {
-        let translation = sender.translation(in: self.panGesture.view?.superview)
-        let verticalMovement = translation.y / (fromVC?.view.bounds.height ?? 896 * 1.2)
-        let downwardMovement = fmax(Float(verticalMovement), 0.0)
-        let downwardMovementPercent = fmin(downwardMovement, 1.0)
-        let progress = CGFloat(downwardMovementPercent)
+        guard let containerView = self.panGesture.view?.superview else { return }
+        let verticalMovement = sender.translation(in: self.panGesture.view?.superview).y
+        let percentage = verticalMovement / containerView.bounds.height
+//        let translation = sender.translation(in: self.panGesture.view?.superview)
+//        let verticalMovement = translation.y / (fromVC?.view.bounds.height ?? 896 * 1.2)
+//        let downwardMovement = fmax(Float(verticalMovement), 0.0)
+//        let downwardMovementPercent = fmin(downwardMovement, 1.0)
+//        let progress = CGFloat(downwardMovementPercent)
 
+//        switch sender.state {
+//        case .began:
+//            isTransitionInProgress = true
+//            fromVC?.dismiss(animated: true, completion: nil)
+//            print("Sender state .began: \(sender.state)")
+//        case .changed:
+//            isTransitionInProgress = true
+//            shouldFinish = progress > threshold
+//            update(progress)
+//            print("Sender state .changed: \(sender.state)")
+//        case .cancelled:
+//            cancel()
+//            isTransitionInProgress = false
+//            print("Sender state .cancelled: \(sender.state)")
+//        case .ended:
+//            shouldFinish ? finish() : cancel()
+//            isTransitionInProgress = false
+//            print("Sender state .ended: \(sender.state)")
+//        default:
+//            isTransitionInProgress = false
+//        }
+        
         switch sender.state {
         case .began:
+            if verticalMovement <= 0 { return }
             isTransitionInProgress = true
+            sender.setTranslation(.zero, in: containerView)
             fromVC?.dismiss(animated: true, completion: nil)
             print("Sender state .began: \(sender.state)")
         case .changed:
+            if !isTransitionInProgress { return }
             isTransitionInProgress = true
-            shouldFinish = progress > threshold
-            update(progress)
+            shouldFinish = percentage > threshold
+            print("Percentage: \(percentage)")
+            update(percentage)
             print("Sender state .changed: \(sender.state)")
         case .cancelled:
             cancel()

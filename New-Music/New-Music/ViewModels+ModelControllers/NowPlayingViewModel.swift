@@ -30,6 +30,7 @@ class NowPlayingViewModel: ObservableObject {
     @Published var textColor2: Color
     @Published var textColor3: Color
     @Published var textColor4: Color
+    @Published var lighterUIColor: UIColor
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
@@ -64,6 +65,7 @@ class NowPlayingViewModel: ObservableObject {
         self.textColor3 = Color.lightTextColor
         self.textColor4 = Color.black
         self.timeRemaining = 0.0
+        self.lighterUIColor = .backgroundColor ?? .black
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
@@ -124,19 +126,19 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     private func updateAlbumArtwork(completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
-            if let imageURL = nowPlayingSong?.imageURL {
-                URLSession.shared.dataTask(with: imageURL) { data, _, error in
-                    if let networkError = NetworkError(data: data, response: nil, error: error) {
-                        print("Error retrieving image data: \(networkError.localizedDescription)")
-                        completion(.failure(networkError))
-                        return
-                    }
-                    DispatchQueue.main.async {
-                        self.albumArtwork = UIImage(data: data!)
-                    }
-                    completion(.success(self.albumArtwork))
-                }.resume()
-            }
+        if let imageURL = nowPlayingSong?.imageURL {
+            URLSession.shared.dataTask(with: imageURL) { data, _, error in
+                if let networkError = NetworkError(data: data, response: nil, error: error) {
+                    print("Error retrieving image data: \(networkError.localizedDescription)")
+                    completion(.failure(networkError))
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.albumArtwork = UIImage(data: data!)
+                }
+                completion(.success(self.albumArtwork))
+            }.resume()
+        }
     }
     
     private func getGradientColors() -> (lighter: Color, darker: Color)? {
@@ -152,6 +154,7 @@ class NowPlayingViewModel: ObservableObject {
             } else {
                 self.isTooLight = false
             }
+            self.lighterUIColor = apiColor
             return (Color(apiColor), Color(secondColor))
         } else {
             if self.whiteLevel < 0.05 {
@@ -163,6 +166,7 @@ class NowPlayingViewModel: ObservableObject {
             } else {
                 self.isTooLight = false
             }
+            self.lighterUIColor = secondColor
             return (Color(secondColor), Color(apiColor))
         }
     }

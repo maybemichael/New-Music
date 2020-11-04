@@ -12,13 +12,6 @@ protocol Coordinator: AnyObject {
 }
 
 class MainCoordinator: NSObject {
-    func toggleHidden(isFullScreen: Bool) {
-        if isFullScreen {
-            tabBarController.tabBar.isHidden = true
-        } else {
-            tabBarController.tabBar.isHidden = false
-        }
-    }
     
     private var window: UIWindow
     private var nowPlayingNav = UINavigationController(rootViewController: NowPlayingViewController())
@@ -49,13 +42,7 @@ class MainCoordinator: NSObject {
     private func setUpAppNavViews() {
         searchNav.navigationBar.barStyle = .black
         searchNav.navigationBar.prefersLargeTitles = true
-//        searchNav.navigationBar.barTintColor = .backgroundColor
         tabBarController.setViewControllers([searchNav, nowPlayingNav, playlistNav], animated: false)
-//        tabBarController.tabBar.barTintColor = .backgroundColor
-//        tabBarController.tabBar.isTranslucent = true
-//        tabBarController.tabBar.barTintColor = .clear
-//        tabBarController.view.backgroundColor = .clear
-        
         nowPlayingNav.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
         searchNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
         playlistNav.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "heart.fill"), tag: 2)
@@ -99,7 +86,7 @@ class MainCoordinator: NSObject {
             let presentingVC = navController.topViewController
         else { return }
         print("Presenting VC: \(presentingVC.description)")
-        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: presentingVC)
+        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: presentingVC, finalFrame: nowPlayingBarVC.view.frame)
         DispatchQueue.main.async {
             presentingVC.present(self.nowPlayingFullVC, animated: true, completion: nil)
         }
@@ -118,17 +105,5 @@ class MainCoordinator: NSObject {
         tabBarBackground.view.anchor(top: tabBarBlurView.contentView.topAnchor, leading: tabBarBlurView.contentView.leadingAnchor, trailing: tabBarBlurView.contentView.trailingAnchor, bottom: tabBarBlurView.contentView.bottomAnchor)
         tabBarBackground.view.backgroundColor = .clear
         tabBarController.view.insertSubview(tabBarBlurView.contentView, at: 1)
-    }
-    
-    @objc func presentNowPlayingFull(_ sender: UITapGestureRecognizer) {
-        guard
-            let navController = self.tabBarController.viewControllers?[self.tabBarController.selectedIndex] as? UINavigationController,
-            let presentingVC = navController.topViewController
-        else { return }
-        print("Presenting VC: \(presentingVC.description)")
-        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: presentingVC)
-        DispatchQueue.main.async {
-            presentingVC.present(self.nowPlayingFullVC, animated: true, completion: nil)
-        }
     }
 }

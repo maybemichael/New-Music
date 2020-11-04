@@ -5,7 +5,8 @@
 //  Created by Michael McGrath on 10/3/20.
 //
 
-import SwiftUI
+import UIKit
+import Combine
 
 class SearchViewController: UIViewController, SongsCellDelegate {
     
@@ -16,6 +17,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     var dataSource: SearchDataSource?
     var musicController: MusicController!
     weak var coordinator: MainCoordinator?
+    var cancellable = [AnyCancellable]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,12 +26,38 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         configureCollectionView()
         createDataSource()
         navBarView()
+        setupSearchBarListeners()
+    }
+    
+    func setupSearchBarListeners() {
+        let publisher = NotificationCenter.default.publisher(for: UISearchTextField.textDidChangeNotification, object: searchController.searchBar.searchTextField)
+        publisher.map({
+            ($0.object as! UISearchTextField).text
+        })
+        .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+        .removeDuplicates()
+        .sink(receiveValue: { searchTerm in
+            DispatchQueue.global(qos: .userInteractive).async {
+                APIController.shared.searchForSongWith(searchTerm ?? "") { result in
+                    switch result {
+                    case .success(let songs):
+                        self.musicController?.searchedSongs = songs
+                        DispatchQueue.main.async {
+                            self.reloadData()
+                        }
+                    case .failure(let error):
+                        print("Error fetching songs for searchTerm: \(error.localizedDescription)")
+                    }
+                }
+            }
+        })
+        .store(in: &cancellable)
     }
     
     private func navBarView() {
         navigationController?.view.layer.cornerRadius = 20
-        navigationController?.view.backgroundColor = .clear
-        navigationController?.navigationBar.backgroundColor = .clear
+        navigationController?.view.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.45)
+        navigationController?.navigationBar.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.45)
 //        guard
 //            let navBar = searchController.view,
 //            let musicController = self.musicController
@@ -51,23 +79,20 @@ class SearchViewController: UIViewController, SongsCellDelegate {
     
     private func setUpViews() {
         view.backgroundColor = .backgroundColor
-        searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search Albums, Artists, or Songs"
         searchController.searchBar.barStyle = .black
-        searchController.searchBar.delegate = self
         searchController.searchBar.sizeToFit()
         searchController.view.backgroundColor = .clear
         searchController.searchBar.backgroundColor = .clear
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-        self.navigationController?.navigationBar.barTintColor = .systemGray6
         navigationController?.navigationBar.topItem?.title = "Search"
         view.layer.cornerRadius = 20
         navigationController?.navigationBar.layer.cornerRadius = 20
-        searchController.searchBar.layer.cornerRadius = 20
-        searchController.view.layer.cornerRadius = 20
     }
+    
+
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createCompLayout())
