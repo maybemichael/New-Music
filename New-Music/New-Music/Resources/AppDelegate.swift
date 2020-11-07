@@ -13,9 +13,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-//        UITabBar.appearance().barTintColor = .backgroundColor
-//        UITabBar.appearance().isTranslucent = true
-//        UITabBar.appearance().backgroundImage = UIImage()
+        UINavigationBarAppearance().configureWithTransparentBackground()
+        UINavigationBarAppearance().backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        UINavigationBarAppearance().backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        UINavigationBarAppearance().backgroundImage = UIImage()
+        UITabBarAppearance().configureWithTransparentBackground()
+        UITabBarAppearance().backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        UITabBarAppearance().backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        UITabBarAppearance().backgroundImage = UIImage()
+        UIBarAppearance().configureWithTransparentBackground()
+        UIBarAppearance().backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        UIBarAppearance().backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        UIBarAppearance().backgroundImage = UIImage()
+        UISearchBar.appearance().barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        UISearchBar.appearance().backgroundImage = UIImage()
         return true
     }
 

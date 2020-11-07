@@ -30,10 +30,13 @@ struct NowPlayingFullView: View {
             Color.clear
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                AlbumArtworkView()
+//                AlbumArtworkView()
+                Rectangle()
+                    .foregroundColor(.clear)
                     .padding(.bottom, 20)
                     .scaleEffect(nowPlayingViewModel.isPlaying ? 1.0 : 0.77)
                     .animation(.easeOut(duration: 0.3))
+                    .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
                 VStack {
                     Text(nowPlayingViewModel.artist)
 //                    Text("Fall Out Boy")
@@ -59,7 +62,8 @@ struct NowPlayingFullView: View {
             }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .background(nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)))
+//        .background(nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)))
+        .background(nowPlayingStateBackground(isFullScreen: nowPlayingViewModel.isFullScreen))
         .edgesIgnoringSafeArea(.all)
     }
     
@@ -108,22 +112,30 @@ struct NowPlayingFullView: View {
     private func opacity(for whiteLevel: CGFloat) -> Double {
         switch whiteLevel {
         case 0...0.3:
-            return 0.7
+            return 0.8
         case 0.31...7:
-            return 0.25
+            return 0.6
         case 0.71...1:
-            return 0.1
+            return 0.2
         default:
-            return 0.35
+            return 1.0
         }
     }
     
     private func textColorFor(isTooLight: Bool) -> Color {
-        isTooLight ? Color.black : Color.white
+        return isTooLight ? Color.black : Color.white
+    }
+    
+    private func nowPlayingStateBackground(isFullScreen: Bool) -> Color {
+        if isFullScreen {
+            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+        } else {
+            return Color.nowPlayingBG.opacity(0.4)
+        }
     }
     
     private func backgroundColorFor(isTooLight: Bool) -> Color {
-        isTooLight ? nowPlayingViewModel.darkerAccentColor : nowPlayingViewModel.lighterAccentColor
+        return isTooLight ? nowPlayingViewModel.darkerAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)) : nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel))
     }
 }
 

@@ -12,6 +12,7 @@
 		4C04E8AD253E5C11001C0039 /* NowPlayingFullViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04E8AC253E5C11001C0039 /* NowPlayingFullViewController.swift */; };
 		4C06DE60254F9D8A00897208 /* Interactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04E8B7253E6083001C0039 /* Interactor.swift */; };
 		4C0744B1254AA01E002CA9AD /* NowPlayingView3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0744B0254AA01E002CA9AD /* NowPlayingView3.swift */; };
+		4C07BE1B25555CF000A2D85A /* InstantPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */; };
 		4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8DC252AB79E003AA808 /* MusicController.swift */; };
 		4C0FD8E2252ADFC1003AA808 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */; };
 		4C0FD8E7252AF62E003AA808 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E6252AF62E003AA808 /* Colors.swift */; };
@@ -100,6 +101,7 @@
 		4C04E8AC253E5C11001C0039 /* NowPlayingFullViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingFullViewController.swift; sourceTree = "<group>"; };
 		4C04E8B7253E6083001C0039 /* Interactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interactor.swift; sourceTree = "<group>"; };
 		4C0744B0254AA01E002CA9AD /* NowPlayingView3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView3.swift; sourceTree = "<group>"; };
+		4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstantPanGestureRecognizer.swift; sourceTree = "<group>"; };
 		4C0FD8DC252AB79E003AA808 /* MusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicController.swift; sourceTree = "<group>"; };
 		4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		4C0FD8E6252AF62E003AA808 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 				4C87CE8B252DB578001B9935 /* Notifications.swift */,
 				4C2AE15E25310BAE009164B8 /* Constants.swift */,
 				4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */,
+				4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */,
 			);
 			path = "Helpers+Extensions";
 			sourceTree = "<group>";
@@ -618,6 +621,7 @@
 				4C0744B1254AA01E002CA9AD /* NowPlayingView3.swift in Sources */,
 				4C646B8C2529726600B05D8A /* AlbumsCollectionViewCell.swift in Sources */,
 				4C1E460C254D01A900E49F17 /* AppTabBarViewController.swift in Sources */,
+				4C07BE1B25555CF000A2D85A /* InstantPanGestureRecognizer.swift in Sources */,
 				4C3D1CFC2547FCEC0067F57E /* NowPlayingFullView.swift in Sources */,
 				4C646B6E25296E0B00B05D8A /* PlaylistViewController.swift in Sources */,
 				4C27C3C22542BC600005BD01 /* PlaylistSongView.swift in Sources */,

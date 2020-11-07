@@ -22,7 +22,7 @@ class MainCoordinator: NSObject {
     private var nowPlayingFullVC = NowPlayingFullViewController()
     private var transitionCoordinator = NowPlayingTransitionCoordinator()
     private var nowPlayingBarVC =  NowPlayingBarViewController()
-    
+    private var transitionAnimator: UIViewPropertyAnimator?
     let height = UIScreen.main.bounds.height / 11
     
     init(window: UIWindow) {
@@ -32,15 +32,12 @@ class MainCoordinator: NSObject {
     func start() {
         setUpAppNavViews()
         passDependencies()
-        
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
         configureNowPlayingView()
-        configureTabBarBlurView()
     }
     
     private func setUpAppNavViews() {
-        searchNav.navigationBar.barStyle = .black
         searchNav.navigationBar.prefersLargeTitles = true
         tabBarController.setViewControllers([searchNav, nowPlayingNav, playlistNav], animated: false)
         nowPlayingNav.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
@@ -63,20 +60,14 @@ class MainCoordinator: NSObject {
         playlistVC.coordinator = self
         searchVC.musicController = musicController
         searchVC.coordinator = self
+        nowPlayingBarVC.musicController = musicController
         nowPlayingBarVC.coordinator = self
     }
     
     private func configureNowPlayingView() {
         nowPlayingBarVC.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (tabBarController.tabBar.bounds.height * 2) + 10, width: UIScreen.main.bounds.width, height: tabBarController.tabBar.bounds.height - 10)
-        let blurView = UIVisualEffectView()
-        blurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        let contentView = UIHostingController(rootView: NowPlayingBarView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
-        nowPlayingBarVC.view.addSubview(blurView)
-        blurView.contentView.addSubview(contentView.view)
-        blurView.anchor(top: nowPlayingBarVC.view.topAnchor, leading: nowPlayingBarVC.view.leadingAnchor, trailing: nowPlayingBarVC.view.trailingAnchor, bottom: nowPlayingBarVC.view.bottomAnchor)
-        contentView.view.backgroundColor = .clear
+        nowPlayingBarVC.tabBarHeight = tabBarController.tabBar.bounds.height
         nowPlayingBarVC.view.backgroundColor = .clear
-        contentView.view.anchor(top: blurView.contentView.topAnchor, leading: blurView.contentView.leadingAnchor, trailing: blurView.contentView.trailingAnchor, bottom: blurView.contentView.bottomAnchor)
         window.insertSubview(nowPlayingBarVC.view, aboveSubview: tabBarController.view)
     }
     
@@ -96,14 +87,17 @@ class MainCoordinator: NSObject {
         tabBarController.dismiss(animated: true, completion: nil)
     }
     
-    private func configureTabBarBlurView() {
-        let tabBarBlurView = UIVisualEffectView()
-        tabBarBlurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        tabBarBlurView.contentView.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - tabBarController.tabBar.bounds.height, width: UIScreen.main.bounds.width, height: tabBarController.tabBar.bounds.height)
-        let tabBarBackground = UIHostingController(rootView: TabBarBackgroundView().environmentObject(musicController.nowPlayingViewModel))
-        tabBarBlurView.contentView.addSubview(tabBarBackground.view)
-        tabBarBackground.view.anchor(top: tabBarBlurView.contentView.topAnchor, leading: tabBarBlurView.contentView.leadingAnchor, trailing: tabBarBlurView.contentView.trailingAnchor, bottom: tabBarBlurView.contentView.bottomAnchor)
-        tabBarBackground.view.backgroundColor = .clear
-        tabBarController.view.insertSubview(tabBarBlurView.contentView, at: 1)
+    func passTabBarSelectedView() {
+        guard
+            let navController = self.tabBarController.viewControllers?[self.tabBarController.selectedIndex] as? UINavigationController
+//            let presentingVC = navController.topViewController
+        else { return }
+        nowPlayingBarVC.tabBarSelectedView = navController.view
+    }
+
+    func updateProgress(progress: CGFloat) {
+        if transitionAnimator != nil && transitionAnimator!.isRunning {
+            transitionAnimator?.fractionComplete = progress
+        }
     }
 }

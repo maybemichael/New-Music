@@ -25,7 +25,6 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         setUpViews()
         configureCollectionView()
         createDataSource()
-        navBarView()
         setupSearchBarListeners()
     }
     
@@ -53,43 +52,29 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         })
         .store(in: &cancellable)
     }
-    
-    private func navBarView() {
-        navigationController?.view.layer.cornerRadius = 20
-        navigationController?.view.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.45)
-        navigationController?.navigationBar.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.45)
-//        guard
-//            let navBar = searchController.view,
-//            let musicController = self.musicController
-//        else { return }
-//        let navBarBlurView = UIVisualEffectView()
-//        navBarBlurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-//        navBarBlurView.contentView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: navBar.bounds.height)
-//        let navBarBackground = UIHostingController(rootView: TabBarBackgroundView().environmentObject(musicController.nowPlayingViewModel))
-//        navBarBlurView.contentView.addSubview(navBarBackground.view)
-////        navBarBackground.view.frame = navigationController?.navigationBar.frame ?? <#default value#>
-//        navBarBackground.view.anchor(top: navBarBlurView.contentView.topAnchor, leading: navBarBlurView.contentView.leadingAnchor, trailing: navBarBlurView.contentView.trailingAnchor, bottom: navBarBlurView.contentView.bottomAnchor)
-//        navBarBackground.view.backgroundColor = .clear
-//        navBar.backgroundColor = .clear
-//        navBar.layer.cornerRadius = 20
-//        searchController.view.insertSubview(navBarBlurView.contentView, at: 1)
-//        navigationController?.view.insertSubview(navBarBlurView.contentView, belowSubview: navBar)
-//        navBar.insertSubview(navBarBlurView.contentView, at: 0)
-    }
+  
     
     private func setUpViews() {
         view.backgroundColor = .backgroundColor
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search Albums, Artists, or Songs"
-        searchController.searchBar.barStyle = .black
-        searchController.searchBar.sizeToFit()
+//        searchController.searchBar.sizeToFit()
+        searchController.searchBar.barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        navigationItem.searchController = searchController
         searchController.view.backgroundColor = .clear
         searchController.searchBar.backgroundColor = .clear
-        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.topItem?.title = "Search"
         view.layer.cornerRadius = 20
-        navigationController?.navigationBar.layer.cornerRadius = 20
+        navigationController?.navigationBar.layer.cornerRadius = 25
+        searchController.searchBar.isTranslucent = true
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        navigationController?.view.backgroundColor = .clear
+        searchController.searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        searchController.searchBar.backgroundImage = UIImage()
+        searchController.searchBar.scopeBarBackgroundImage = UIImage()
     }
     
 

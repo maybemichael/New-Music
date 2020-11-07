@@ -114,7 +114,7 @@ struct NeuToggleBackground<S: Shape>: View {
     private func lightShadowOpacity(for whiteLevel: CGFloat) -> Double {
         switch nowPlayingViewModel.whiteLevel {
         case 0...0.1:
-            return 0.5
+            return 0.4
         case 0.11...0.7:
             return 0.5
         case 0.71...1:
