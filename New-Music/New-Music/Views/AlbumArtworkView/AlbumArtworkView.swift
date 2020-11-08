@@ -17,7 +17,6 @@ struct AlbumArtworkView: View {
 struct AlbumArtworkView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        let namespace = Namespace()
         AlbumArtworkView().environmentObject(musicController.nowPlayingViewModel)
     }
 }

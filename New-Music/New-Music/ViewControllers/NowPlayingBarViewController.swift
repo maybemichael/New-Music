@@ -125,6 +125,7 @@ class NowPlayingBarViewController: UIViewController {
     
     private func expandNowPlayingBar() {
         self.blurView.effect = UIBlurEffect(style: .light)
+        self.childVCs[2].view.alpha = 0
         let transitionAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1.0) {
             self.view.frame = self.fullFrame
             self.view.layer.cornerRadius = 25
@@ -132,7 +133,6 @@ class NowPlayingBarViewController: UIViewController {
             self.childVCs[1].view.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor)
             self.musicController.nowPlayingViewModel.isFullScreen = true
             self.view.layer.cornerRadius = 25
-            self.childVCs[2].view.alpha = 0
             self.view.layoutIfNeeded()
         }
         transitionAnimator.addCompletion { position in
@@ -152,7 +152,7 @@ class NowPlayingBarViewController: UIViewController {
     
     private func animateToBarView() {
         self.blurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        let transitionAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1.0) { 
+        let transitionAnimator = UIViewPropertyAnimator(duration: 0.4, curve: .linear) { 
             self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (self.tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: self.tabBarHeight - 10)
             self.view.layer.cornerRadius = 0
             self.blurView.contentView.frame = self.minimizedFrame
@@ -178,7 +178,7 @@ class NowPlayingBarViewController: UIViewController {
     }
     
     private func bounceBackFull() {
-        let transitionAnimator = UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
+        let transitionAnimator = UIViewPropertyAnimator(duration: 0.1, dampingRatio: 1.0) {
             self.view.frame = self.fullFrame
             self.view.layoutIfNeeded()
         }
@@ -200,7 +200,7 @@ class NowPlayingBarViewController: UIViewController {
                 }
                 let translation = recognizer.translation(in: recognizer.view).y
                 view.frame = view.bounds.offsetBy(dx: 0, dy: max(translation, 0))
-                var percentage =  translation / (UIScreen.main.bounds.height / 3)
+                var percentage =  translation / (UIScreen.main.bounds.height)
                 percentage = min(percentage, 0.999)
                 percentage = max(percentage, 0.001)
                 self.transitionAnimator?.fractionComplete = percentage
