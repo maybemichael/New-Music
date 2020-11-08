@@ -58,7 +58,7 @@ struct NowPlayingFullView: View {
                 }
             }
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+//        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .background(nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)))
         .edgesIgnoringSafeArea(.all)
     }

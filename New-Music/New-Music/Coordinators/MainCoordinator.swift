@@ -82,13 +82,15 @@ class MainCoordinator: NSObject {
     
     func presentNowPlayingFullVC() {
         guard
-            let navController = self.tabBarController.viewControllers?[self.tabBarController.selectedIndex] as? UINavigationController,
-            let presentingVC = navController.topViewController
+            let navController = self.tabBarController.viewControllers?[self.tabBarController.selectedIndex] as? UINavigationController
+//            let presentingVC = navController.topViewController
         else { return }
-        print("Presenting VC: \(presentingVC.description)")
-        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: presentingVC, finalFrame: nowPlayingBarVC.view.frame)
+//        print("Presenting VC: \(presentingVC.description)")
+        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: navController, finalFrame: nowPlayingBarVC.view.frame, centerPoint: nowPlayingBarVC.view.center)
+//        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: presentingVC, finalFrame: nowPlayingBarVC.view.frame)
         DispatchQueue.main.async {
-            presentingVC.present(self.nowPlayingFullVC, animated: true, completion: nil)
+            navController.present(self.nowPlayingFullVC, animated: true, completion: nil)
+//            presentingVC.present(self.nowPlayingFullVC, animated: true, completion: nil)
         }
     }
     
