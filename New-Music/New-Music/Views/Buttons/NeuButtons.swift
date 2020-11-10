@@ -136,13 +136,13 @@ struct NeuTrackButton: View {
             trackDirection == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
             Image(systemName: getImageName())
-                .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
+                .resizable()
                 .aspectRatio(contentMode: .fit)
-                .font(Font.system(.headline).weight(.semibold))
+                .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
+                .font(Font.system(.callout).weight(.black))
         }
         .buttonStyle(NeuButtonStyle(size: size))
 //        .frame(width: size, height: size)
-        .transition(.move(edge: .bottom))
     }
     private func imageTint(isTooLight: Bool) -> Color {
         isTooLight ? Color.black : Color.white
@@ -159,7 +159,7 @@ struct NeuButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .padding(30)
+            .padding(size / 3)
             .contentShape(Circle())
             .background(NeuButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), size: size))
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
@@ -340,7 +340,7 @@ struct BarPlayPauseButton: View {
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     @State var isPlaying: Bool
     var musicController: MusicController
-    var labelPadding: CGFloat
+//    var labelPadding: CGFloat
     var size: CGFloat
     
     var body: some View {
@@ -349,10 +349,10 @@ struct BarPlayPauseButton: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(Color(imageTint(isTooLight: songViewModel.isTooLight)))
-                .font(Font.system(.callout).weight(.black))
+                .font(Font.system(.callout).weight(.bold))
                 
         }
-        .toggleStyle(BarToggleButtonStyle(musicController: musicController, size: size, labelPadding: labelPadding))
+        .toggleStyle(BarToggleButtonStyle(musicController: musicController, size: size, labelPadding: size / 3))
     }
     
     func imageTint(isTooLight: Bool) -> UIColor {
@@ -377,7 +377,7 @@ struct BarTrackButton: View {
             Image(systemName: getImageName())
                 .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
                 .aspectRatio(contentMode: .fit)
-                .font(Font.system(.headline).weight(.semibold))
+                .font(Font.system(.callout).weight(.bold))
         }
         .buttonStyle(BarTrackButtonStyle(size: size))
     }

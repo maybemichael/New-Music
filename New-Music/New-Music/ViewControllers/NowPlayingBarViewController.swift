@@ -28,6 +28,13 @@ class NowPlayingBarViewController: UIViewController {
             }
         }
     }
+    let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        return view
+    }()
     var musicController: MusicController!
     lazy var panGesture: UIPanGestureRecognizer = {
         let gesture = UIPanGestureRecognizer()
@@ -50,6 +57,17 @@ class NowPlayingBarViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .darkContent
     }
+    
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesBegan(touches, with: event)
+//        if !musicController.nowPlayingViewModel.isFullScreen {
+//            UIView.animate(withDuration: 0.2, delay: 0, options: .curveLinear) {
+//                self.view.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+//            } completion: { _ in
+//                self.view.backgroundColor = .clear
+//            }
+//        }
+//    }
     
     private func configureSubviews() {
         minimizedFrame = CGRect(x: 0, y: UIScreen.main.bounds.midY + (tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: tabBarHeight - 10)
@@ -102,7 +120,6 @@ class NowPlayingBarViewController: UIViewController {
         artworkView.view.backgroundColor = .clear
         artworkView.view.frame = CGRect(x: 20, y: view.bounds.minY + 8, width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
         self.artworkViewFrame = artworkView.view.frame
-        artworkView.view.clipsToBounds = true
         fullPlayerView.view.backgroundColor = .clear
         childVCs.append(fullPlayerView)
         
@@ -113,36 +130,40 @@ class NowPlayingBarViewController: UIViewController {
         view.addSubview(minimizedNowPlayingView.view)
         minimizedNowPlayingView.view.backgroundColor = .clear
         childVCs.append(minimizedNowPlayingView)
-        minimizedNowPlayingView.view.frame = CGRect(x: artworkView.view.frame.maxX, y: artworkView.view.frame.minY, width: UIScreen.main.bounds.width - (artworkView.view.frame.width + 20), height: UIScreen.main.bounds.width / 7)
+        minimizedNowPlayingView.view.frame = CGRect(x: artworkView.view.frame.maxX + 8, y: artworkView.view.frame.minY, width: (UIScreen.main.bounds.width / 7) * 5.5, height: UIScreen.main.bounds.width / 7)
         self.minimizedNowPlayingFrame = minimizedNowPlayingView.view.frame
         
+        // MARK: - Separator View
+//        view.addSubview(separatorView)
+//        separatorView.anchor(leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
     }
     
     @objc func presentFullScreenNowPlaying(_ sender: UITapGestureRecognizer) {
 //        coordinator?.presentNowPlayingFullVC()
+        
         expandNowPlayingBar()
     }
     
     private func expandNowPlayingBar() {
         self.blurView.effect = UIBlurEffect(style: .light)
         self.childVCs[2].view.alpha = 0
-        let transitionAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1.0) {
+        self.childVCs[1].view.alpha = 1
+        separatorView.isHidden = true
+        let transitionAnimator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.87) {
             self.view.frame = self.fullFrame
-            self.view.layer.cornerRadius = 25
+            self.view.layer.cornerRadius = 20
             self.childVCs[0].view.frame = CGRect(x: self.view.safeAreaInsets.left + 40, y: self.view.safeAreaInsets.top + 140, width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
             self.childVCs[1].view.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor)
             self.musicController.nowPlayingViewModel.isFullScreen = true
-            self.view.layer.cornerRadius = 25
+            self.view.layer.cornerRadius = 20
             self.view.layoutIfNeeded()
         }
         transitionAnimator.addCompletion { position in
             switch position {
             case .start:
                 self.currentState = .minimized
-                self.musicController.nowPlayingViewModel.isFullScreen = false
             case .end:
                 self.currentState = .full
-                self.musicController.nowPlayingViewModel.isFullScreen = true
             default:
                 break
             }
@@ -152,7 +173,9 @@ class NowPlayingBarViewController: UIViewController {
     
     private func animateToBarView() {
         self.blurView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        let transitionAnimator = UIViewPropertyAnimator(duration: 0.4, curve: .linear) { 
+        self.childVCs[1].view.alpha = 0
+       
+        let transitionAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
             self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (self.tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: self.tabBarHeight - 10)
             self.view.layer.cornerRadius = 0
             self.blurView.contentView.frame = self.minimizedFrame
@@ -166,10 +189,8 @@ class NowPlayingBarViewController: UIViewController {
             switch position {
             case .start:
                 self.currentState = .full
-                self.musicController.nowPlayingViewModel.isFullScreen = true
             case .end:
                 self.currentState = .minimized
-                self.musicController.nowPlayingViewModel.isFullScreen = false
             default:
                 break
             }
@@ -178,11 +199,19 @@ class NowPlayingBarViewController: UIViewController {
     }
     
     private func bounceBackFull() {
-        let transitionAnimator = UIViewPropertyAnimator(duration: 0.1, dampingRatio: 1.0) {
+        let transitionAnimator = UIViewPropertyAnimator(duration: 0.25, curve: .linear) {
             self.view.frame = self.fullFrame
             self.view.layoutIfNeeded()
         }
-        transitionAnimator.addCompletion { _ in
+        transitionAnimator.addCompletion { position in
+            switch position {
+            case .start:
+                self.currentState = .minimized
+            case .end:
+                self.currentState = .full
+            default:
+                break
+            }
             self.currentState = .full
         }
         transitionAnimator.startAnimation()
@@ -206,11 +235,9 @@ class NowPlayingBarViewController: UIViewController {
                 self.transitionAnimator?.fractionComplete = percentage
                 view.layoutIfNeeded()
             case .ended:
-                self.transitionAnimator?.fractionComplete = 1.0
-                transitionAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 0)
-                self.transitionAnimator = nil
+                transitionAnimator?.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .linear), durationFactor: 0.7)
                 let yVelocity = recognizer.velocity(in: view).y
-                if yVelocity > 400 || view.frame.minY > UIScreen.main.bounds.height / 3 {
+                if yVelocity > 400 || view.frame.minY > UIScreen.main.bounds.height / 2 {
                     animateToBarView()
                 } else {
                     bounceBackFull()

@@ -76,15 +76,13 @@ struct ArtworkView: View {
                         .blur(radius: 4)
                         .offset(x: -10, y: -10)
                         .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: nowPlayingViewModel.isFullScreen ? (UIScreen.main.bounds.width - 80) * 0.07 : (UIScreen.main.bounds.width / 7) * 0.07))
-                .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
-                .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
+                .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: nowPlayingViewModel.isFullScreen ? (UIScreen.main.bounds.width - 80) * 0.03 : (UIScreen.main.bounds.width / 7) * 0.03))
+                .shadow(color: Color.black.opacity(0.9), radius: 10, x: nowPlayingViewModel.isFullScreen ? 5 : 2, y: nowPlayingViewModel.isFullScreen ? 5 : 2)
+                .shadow(color: Color.white.opacity(0.1), radius: 10, x: nowPlayingViewModel.isFullScreen ? -3 : -1, y: nowPlayingViewModel.isFullScreen ? -3 : -1)
             Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
                 .resizable()
-                .frame(width: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.07), height: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.07))
-//                .aspectRatio(contentMode: .fit)
+                .frame(width: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.03), height: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.03))
                 .scaledToFit()
-//                .padding(nowPlayingViewModel.isFullScreen ? (UIScreen.main.bounds.width - 80) * 0.05 : (UIScreen.main.bounds.width / 7) * 0.05)
         }
     }
     

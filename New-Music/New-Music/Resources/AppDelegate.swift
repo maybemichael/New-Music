@@ -13,20 +13,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        UINavigationBarAppearance().configureWithTransparentBackground()
-        UINavigationBarAppearance().backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        UINavigationBarAppearance().backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
-        UINavigationBarAppearance().backgroundImage = UIImage()
-        UITabBarAppearance().configureWithTransparentBackground()
-        UITabBarAppearance().backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        UITabBarAppearance().backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
-        UITabBarAppearance().backgroundImage = UIImage()
-        UIBarAppearance().configureWithTransparentBackground()
-        UIBarAppearance().backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        UIBarAppearance().backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
-        UIBarAppearance().backgroundImage = UIImage()
-        UISearchBar.appearance().barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
-        UISearchBar.appearance().backgroundImage = UIImage()
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithTransparentBackground()
+        navAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        navAppearance.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        navAppearance.backgroundImage = UIImage()
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithTransparentBackground()
+        tabBarAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        tabBarAppearance.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        tabBarAppearance.backgroundImage = UIImage()
+        let barAppearance = UIBarAppearance()
+        barAppearance.configureWithTransparentBackground()
+        barAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        barAppearance.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        barAppearance.backgroundImage = UIImage()
+        let toolBarAppearance = UIToolbarAppearance()
+        toolBarAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        toolBarAppearance.configureWithTransparentBackground()
+        toolBarAppearance.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        toolBarAppearance.backgroundImage = UIImage()
+        let searchBarAppearance = UISearchBar.appearance()
+        searchBarAppearance.barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        searchBarAppearance.backgroundImage = UIImage()
+        searchBarAppearance.searchBarStyle = .minimal
+        searchBarAppearance.backgroundColor = .clear
         return true
     }
 

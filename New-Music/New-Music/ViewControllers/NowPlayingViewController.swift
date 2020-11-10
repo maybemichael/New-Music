@@ -9,14 +9,30 @@ import SwiftUI
 
 class NowPlayingViewController: UIViewController {
     
-
-    var musicController: MusicController? {
-        didSet {
-//            configureContentView()
-        }
-    }
+    typealias CurrentPlaylistDataSource = UICollectionViewDiffableDataSource<Int, Song>
+    typealias CurrentPlaylistSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
+    var musicController: MusicController?
     weak var coordinator: MainCoordinator?
     var contentView: UIHostingController<NowPlayingBarView>?
+    
+    lazy var collectionView: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
+        cv.register(CurrentPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier)
+        cv.backgroundColor = .clear
+        return cv
+    }()
+    
+    lazy var dataSource: CurrentPlaylistDataSource = {
+        let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { collectionView, indexPath, song -> UICollectionViewCell? in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier, for: indexPath) as! CurrentPlaylistCollectionViewCell
+            let song = self.musicController?.currentPlaylist[indexPath.item]
+            cell.song = song
+            
+            return cell
+        }
+        return dataSource
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +41,7 @@ class NowPlayingViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        reloadData()
 
     }
     
@@ -32,32 +49,43 @@ class NowPlayingViewController: UIViewController {
         .lightContent
     }
     
+    
+    private func createCompLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 0, trailing: 12)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.95), heightDimension: .absolute(UIScreen.main.bounds.width / 4.5))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        let layout = UICollectionViewCompositionalLayout(section: layoutSection)
+        return layout
+    }
+    
     private func configureContentView() {
         view.backgroundColor = .backgroundColor
-        navigationController?.view.layer.cornerRadius = 25
+        navigationController?.view.layer.cornerRadius = 20
         navigationController?.navigationBar.prefersLargeTitles = true
-        guard let musicController = musicController else { return }
-        let contentView = UIHostingController(rootView: NowPlayingPlaylistView().environmentObject(musicController.nowPlayingViewModel))
-        
-        addChild(contentView)
-        contentView.didMove(toParent: self)
-        view.addSubview((contentView.view)!)
-        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
-        contentView.view.layer.cornerRadius = 25
-        view.layer.cornerRadius = 25
-        view.layer.masksToBounds = true
+//        guard let musicController = musicController else { return }
+//        let contentView = UIHostingController(rootView: NowPlayingPlaylistView().environmentObject(musicController.nowPlayingViewModel))
+//        addChild(contentView)
+//        contentView.didMove(toParent: self)
+//        view.addSubview((contentView.view)!)
+//        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
+        view.addSubview(collectionView)
+        collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
+//        contentView.view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 20
+//        view.layer.masksToBounds = true
         view.backgroundColor = .backgroundColor
         title = "Now Playing"
 //        contentView.view.backgroundColor = .clear
     }
-}
-
-protocol TabBarStatus {
-    func toggleHidden(isFullScreen: Bool, viewController: UIViewController?)
     
-    func addGestureRecognizer<Content>(viewController: UIHostingController<Content>) where Content : View
-}
-
-protocol FullScreenNowPlaying {
-    func presentFullScreen()
+    private func reloadData() {
+//        guard let currentPlaylist = musicController?.currentPlaylist else { return }
+        var snapshot = CurrentPlaylistSnapshot()
+        snapshot.appendSections([0])
+        snapshot.appendItems(musicController?.currentPlaylist ?? [])
+        dataSource.apply(snapshot)
+    }
 }

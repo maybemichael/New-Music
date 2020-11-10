@@ -134,21 +134,21 @@ struct BarToggleBackground<S: Shape>: View {
             if nowPlayingViewModel.whiteLevel < 0.3 {
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                    .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
-                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
+//                    .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
+//                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
                     .blendMode(.overlay)
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 1))
             } else {
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                    .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
-                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
+//                    .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
+//                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
                     .blendMode(.overlay)
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 1))
             }
         }
         .frame(width: size, height: size)
@@ -165,7 +165,7 @@ struct BarTrackButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .padding(30)
+            .padding(size / 4)
             .contentShape(Circle())
             .background(BarTrackButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), size: size))
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
@@ -198,21 +198,21 @@ struct BarTrackButtonBackground<S: Shape>: View {
                                 .blur(radius: 8)
                                 .offset(x: -2, y: -2)
                                 .mask(shape.fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                        .shadow(color: Color.white.opacity(0.15), radius: 7, x: -2, y: -2)
-                        .shadow(color: Color.black.opacity(0.5), radius: 7, x: 2, y: 2)
+//                        .shadow(color: Color.white.opacity(0.15), radius: 7, x: -2, y: -2)
+//                        .shadow(color: Color.black.opacity(0.5), radius: 7, x: 2, y: 2)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 1))
                 } else {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
-                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
+//                        .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
+//                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 1))
                 }
             } else {
                 if isHighlighted {
@@ -230,26 +230,24 @@ struct BarTrackButtonBackground<S: Shape>: View {
                                 .blur(radius: 8)
                                 .offset(x: -2, y: -2)
                                 .mask(shape.fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                        .shadow(color: Color.black.opacity(0.5), radius: 7, x: 2, y: 2)
-                        .shadow(color: Color.white.opacity(0.15), radius: 7, x: -2, y: -2)
+//                        .shadow(color: Color.black.opacity(0.5), radius: 7, x: 2, y: 2)
+//                        .shadow(color: Color.white.opacity(0.15), radius: 7, x: -2, y: -2)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 1))
                 } else {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
-                        .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
+//                        .shadow(color: Color.black.opacity(0.5), radius: 10, x: 2, y: 2)
+//                        .shadow(color: Color.white.opacity(0.15), radius: 10, x: -2, y: -2)
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .blackGradient, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 1))
                 }
             }
         }
         .frame(width: size, height: size)
-        .transition(.move(edge: .bottom))
-
     }
 }

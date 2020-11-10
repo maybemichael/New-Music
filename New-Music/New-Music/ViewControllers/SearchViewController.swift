@@ -28,7 +28,7 @@ class SearchViewController: UIViewController, SongsCellDelegate {
         setupSearchBarListeners()
     }
     
-    func setupSearchBarListeners() {
+    private func setupSearchBarListeners() {
         let publisher = NotificationCenter.default.publisher(for: UISearchTextField.textDidChangeNotification, object: searchController.searchBar.searchTextField)
         publisher.map({
             ($0.object as! UISearchTextField).text
@@ -61,20 +61,32 @@ class SearchViewController: UIViewController, SongsCellDelegate {
 //        searchController.searchBar.sizeToFit()
         searchController.searchBar.barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
         navigationItem.searchController = searchController
+        navigationItem.searchController?.searchBar.backgroundColor = .clear
+        navigationItem.searchController?.view.backgroundColor = .clear
+        navigationItem.searchController?.view.layer.cornerRadius = 20
+        navigationItem.searchController?.searchResultsController?.view.backgroundColor = .clear
+        navigationItem.searchController?.searchResultsController?.view.layer.cornerRadius = 20
+        navigationItem.searchController?.searchBar.layer.cornerRadius = 20
+        navigationItem.searchController?.searchBar.barTintColor = .clear
+        navigationItem.searchController?.searchBar.searchBarStyle = .minimal
+        navigationItem.searchController?.searchBar.barTintColor = .clear
+        UINavigationItem()
+//            UIColor.backgroundColor?.withAlphaComponent(0.4)
         searchController.view.backgroundColor = .clear
         searchController.searchBar.backgroundColor = .clear
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.topItem?.title = "Search"
         view.layer.cornerRadius = 20
-        navigationController?.navigationBar.layer.cornerRadius = 25
-        searchController.searchBar.isTranslucent = true
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
+        navigationController?.navigationBar.layer.cornerRadius = 20
+        navigationController?.navigationBar.layer.cornerRadius = 20
+        searchController.view.layer.cornerRadius = 20
+        searchController.searchBar.layer.cornerRadius = 20
+//        navigationController?.navigationBar.barTintColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
         navigationController?.view.backgroundColor = .clear
         searchController.searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         searchController.searchBar.backgroundImage = UIImage()
-        searchController.searchBar.scopeBarBackgroundImage = UIImage()
+//        searchController.searchBar.scopeBarBackgroundImage = UIImage()
     }
     
 

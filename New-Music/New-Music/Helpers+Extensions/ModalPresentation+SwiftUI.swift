@@ -25,14 +25,13 @@ extension EnvironmentValues {
 }
 
 extension UIViewController {
-    func present<Content: View>(style: UIModalPresentationStyle = .automatic, delegate: TabBarStatus, @ViewBuilder builder: () -> Content) {
+    func present<Content: View>(style: UIModalPresentationStyle = .automatic, @ViewBuilder builder: () -> Content) {
         let toPresent = UIHostingController(rootView: AnyView(EmptyView()))
         toPresent.modalPresentationStyle = style
         toPresent.rootView = AnyView(
             builder()
                 .environment(\.viewController, toPresent)
         )
-        delegate.addGestureRecognizer(viewController: toPresent)
         self.present(toPresent, animated: true, completion: nil)
 
     }

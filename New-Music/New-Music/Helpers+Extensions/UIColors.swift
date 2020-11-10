@@ -26,6 +26,8 @@ extension UIColor {
         return max(0, min(1, toComponent + value))
     }
     
+    
+    
     private func makeColor(componentDelta: CGFloat) -> UIColor {
         var red: CGFloat = 0
         var blue: CGFloat = 0
@@ -37,7 +39,7 @@ extension UIColor {
             blue: &blue,
             alpha: &alpha
         )
-
+        
         return UIColor(
             red: add(componentDelta, toComponent: red),
             green: add(componentDelta, toComponent: green),
