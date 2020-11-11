@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ResourceType: Codable {
+struct ResourceType: Decodable {
     let songs: SongResource
     let albums: AlbumResource
 }

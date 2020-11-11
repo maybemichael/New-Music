@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SongData: Codable {
+struct SongData: Decodable {
     let id: String
     let type: String
     let attributes: Song

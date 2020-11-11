@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SearchResult: Codable {
+struct SearchResult: Decodable {
     let results: ResourceType
 }
 

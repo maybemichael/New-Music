@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SongResource: Codable {
+struct SongResource: Decodable {
     let href: String?
     let next: String?
     let data: [SongData]

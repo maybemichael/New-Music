@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct Album: Codable {
+struct Album: Decodable, Hashable, MediaItem {
+    var stringURL: String
+    
+    var mediaType: MediaType = .album
+    let id = UUID().uuidString
     let imageURL: String
     let imageWidth: Int
     let imageHeight: Int
@@ -24,6 +28,7 @@ struct Album: Codable {
     let kind: String
     let isCompilation: Bool
     let contentRating: String?
+    var albumArtwork: Data?
     
     enum AlbumKeys: CodingKey {
         case artwork
@@ -72,5 +77,6 @@ struct Album: Codable {
         self.copyright = try container.decode(String.self, forKey: .copyright)
         self.isCompilation = try container.decode(Bool.self, forKey: .isCompilation)
         self.contentRating = try container.decodeIfPresent(String.self, forKey: .contentRating)
+        self.stringURL = try artworkContainer.decode(String.self, forKey: .url)
     }
 }

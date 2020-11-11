@@ -54,7 +54,7 @@ class APIController {
         return request
     }
     
-    func searchForSongWith(_ searchTerm: String, completion: @escaping (Result<[Song], NetworkError>) -> Void) {
+    func searchForMedia(with searchTerm: String, completion: @escaping (Result<(songs:[Song], albums: [Album]), NetworkError>) -> Void) {
         guard let request = makeSearchRequest(for: searchTerm) else {
             completion(.failure(.genericError))
             return
@@ -72,7 +72,7 @@ class APIController {
                 self.searchedSongs = songsResults.map { $0.attributes }
                 self.searchedAlbums = albumResults.map { $0.attributes }
                 print("Searched Albums Count: \(self.searchedAlbums.count)")
-                completion(.success(self.searchedSongs))
+                completion(.success((songs: self.searchedSongs, albums: self.searchedAlbums)))
             } catch {
                 print("Error decoding json data \(error)")
                 completion(.failure(.decodingError(error)))
@@ -81,9 +81,9 @@ class APIController {
         }.resume()
     }
     
-    func fetchImage(song: Song, size: CGFloat, completion: @escaping (Result<Data?, NetworkError>) -> Void) {
-        let stringURL = song.stringURL.replacingOccurrences(of: "{w}", with: String(Int(size))).replacingOccurrences(of: "{h}", with: String(Int(size)))
-        print("String URL: \(stringURL)")
+    func fetchImage(mediaItem: MediaItem, size: CGFloat, completion: @escaping (Result<Data?, NetworkError>) -> Void) {
+        let stringURL = mediaItem.stringURL.replacingOccurrences(of: "{w}", with: String(Int(size))).replacingOccurrences(of: "{h}", with: String(Int(size)))
+//        print("String URL: \(stringURL)")
         let url = URL(string: stringURL)!
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.requestCachePolicy = .returnCacheDataElseLoad

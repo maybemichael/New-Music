@@ -9,6 +9,12 @@ import Foundation
 
 protocol SelfConfiguringCell {
     static var identifier: String { get }
-    var delegate: SongsCellDelegate? { get set }
-    func configure(with song: Song)
+    var delegate: SearchCellDelegate? { get set }
+    func configure(with mediaItem: Media)
 }
+
+protocol MediaItem {
+    var mediaType: MediaType { get }
+    var stringURL: String { get set }
+}
+

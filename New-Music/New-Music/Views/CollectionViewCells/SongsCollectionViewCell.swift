@@ -7,11 +7,12 @@
 
 import UIKit
 
-protocol SongsCellDelegate: AnyObject {
+protocol SearchCellDelegate: AnyObject {
     func addSongTapped(cell: SongsCollectionViewCell)
 }
 
 class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
+    
     static let identifier = "SongCell"
     let artistLabel: UILabel = {
         let label = UILabel()
@@ -29,12 +30,11 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     }()
     let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 7
         imageView.clipsToBounds = true
         imageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        imageView.setSize(width: UIScreen.main.bounds.width / 5.5, height: UIScreen.main.bounds.width / 5.5)
+        imageView.setSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
         return imageView
     }()
     
@@ -54,7 +54,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     }()
 //    let addButton = UIButton(type: .custom)
     let imageSize: CGFloat = 500
-    weak var delegate: SongsCellDelegate?
+    weak var delegate: SearchCellDelegate?
     var song: Song? {
         didSet {
             let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
@@ -63,12 +63,44 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         }
     }
     
-    func configure(with song: Song) {
+//    func configure(with mediaItem: Song) {
+//        self.song = song
+//        artistLabel.text = song.artistName
+//        songTitleLabel.text = song.songName
+//        print("Image View Size: \(imageView.frame.size.width)")
+//        APIController.shared.fetchImage(song: song, size: imageSize) { result in
+//            switch result {
+//            case .success(let imageData):
+//                DispatchQueue.main.async {
+//                    if let imageData = imageData {
+//                        self.song?.albumArtwork = imageData
+//                        self.imageView.image = UIImage(data: imageData)
+//                    }
+//                }
+//            case .failure(let error):
+//                print("Error fetching image data: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+    
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpViews()
+        imageView.setSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("No storyboards...")
+    }
+    
+    func configure(with mediaItem: Media) {
+        guard let song = mediaItem.media as? Song else { return }
         self.song = song
         artistLabel.text = song.artistName
         songTitleLabel.text = song.songName
         print("Image View Size: \(imageView.frame.size.width)")
-        APIController.shared.fetchImage(song: song, size: imageSize) { result in
+        APIController.shared.fetchImage(mediaItem: song, size: imageSize) { result in
             switch result {
             case .success(let imageData):
                 DispatchQueue.main.async {
@@ -82,17 +114,6 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
             }
         }
     }
-    
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setUpViews()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("No storyboards...")
-    }
-    
     private func setUpViews() {
         addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
         let innerStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])

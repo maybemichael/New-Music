@@ -18,7 +18,19 @@ class MusicController: ObservableObject {
             self.nowPlayingViewModel.songs = self.currentPlaylist
         }
     }
-    var searchedSongs = [Song]()
+    var searchedSongs = [Media]() {
+        didSet {
+            print("Searched Songs: \(self.searchedSongs.count)")
+        }
+    }
+    var searchedAlbums = [Media]() {
+        didSet {
+            print("Searched Albums: \(self.searchedAlbums.count)")
+        }
+    }
+    
+    var searchedMedia = [Media]()
+    
     lazy var nowPlayingViewModel: NowPlayingViewModel = {
         let viewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: currentPlaylist)
         return viewModel
