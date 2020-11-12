@@ -34,8 +34,6 @@ struct NowPlayingFullView: View {
                 Rectangle()
                     .foregroundColor(.clear)
                     .padding(.bottom, 20)
-                    .scaleEffect(nowPlayingViewModel.isPlaying ? 1.0 : 0.77)
-                    .animation(.easeOut(duration: 0.3))
                     .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
                 VStack {
                     Text(nowPlayingViewModel.artist)
@@ -64,7 +62,6 @@ struct NowPlayingFullView: View {
             }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-//        .background(nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)))
         .background(nowPlayingStateBackground(isFullScreen: nowPlayingViewModel.isFullScreen))
         .edgesIgnoringSafeArea(.all)
     }
@@ -140,7 +137,6 @@ struct NowPlayingFullView: View {
         return isTooLight ? nowPlayingViewModel.darkerAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)) : nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel))
     }
 }
-
 
 struct NowPlayingFullView_Previews: PreviewProvider {
     static var previews: some View {

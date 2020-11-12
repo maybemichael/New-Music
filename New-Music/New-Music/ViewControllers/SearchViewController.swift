@@ -11,7 +11,7 @@ import Combine
 class SearchViewController: UIViewController, SearchCellDelegate {
     
     var collectionView: UICollectionView!
-    let searchController = UISearchController(searchResultsController: nil)
+    lazy var searchController = UISearchController(searchResultsController: nil)
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Section, Media>
     typealias SearchSnapshot = NSDiffableDataSourceSnapshot<Section, Media>
     var dataSource: SearchDataSource?
@@ -20,14 +20,16 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     var cancellable = [AnyCancellable]()
     var sections = [Section]()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setUpViews()
         configureCollectionView()
         createDataSource()
         setupSearchBarListeners()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
     }
     
     private func setupSearchBarListeners() {
@@ -60,7 +62,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
                         self.musicController?.searchedMedia = mediaFromSearch
                         self.musicController.searchedSongs = songsArray
                         self.musicController.searchedAlbums = albumsArray
-                        print("Searched Media Count: \(self.musicController.searchedMedia.count)")
                         DispatchQueue.main.async {
                             self.reloadData()
                         }
@@ -73,7 +74,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         .store(in: &cancellable)
     }
   
-    
     private func setUpViews() {
         view.backgroundColor = .backgroundColor
         searchController.obscuresBackgroundDuringPresentation = false
@@ -104,9 +104,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         navigationController?.navigationBar.shadowImage = UIImage()
         searchController.searchBar.backgroundImage = UIImage()
     }
-    
 
-    
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createCompLayout())
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
@@ -116,6 +114,8 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.backgroundColor = .clear
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.layer.cornerRadius = 20
+        collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     }
     
     private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath) -> T {
@@ -148,7 +148,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             guard let section = self?.dataSource?.snapshot().sectionIdentifier(containingItem: media) else { return nil }
 
             sectionHeader.titleLabel.text = section.mediaType.rawValue
-//            sectionHeader.subtitle.text = section.subtitlemedi
             return sectionHeader
         }
     }
@@ -179,24 +178,22 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     private func createSongsSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 0, trailing: 12)
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.95), heightDimension: .absolute(UIScreen.main.bounds.width / 5.01))
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(2.5))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
-//        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0)
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.93), heightDimension: .fractionalWidth(0.12))
         let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: laytoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
-//        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         return layoutSection
     }
     
     private func createAlbumSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width / 2), heightDimension: .absolute(UIScreen.main.bounds.width / 1.7))
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width / 2), heightDimension: .fractionalWidth(0.5))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
-        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 0, bottom: 0, trailing: 0)
         let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.93), heightDimension: .fractionalWidth(0.12))
         let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: laytoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)

@@ -24,8 +24,7 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.textColor = .white
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
     
@@ -38,11 +37,8 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         return imageView
     }()
     
-    
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        albumImageView.setSize(width: UIScreen.main.bounds.width / 2.5, height: UIScreen.main.bounds.width / 2.5)
         setUpViews()
     }
     
@@ -68,7 +64,6 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
                 print("Error fetching image data: \(error.localizedDescription)")
             }
         }
-        
     }
     
     private func setUpViews() {
@@ -77,13 +72,19 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
 //        textStackView.alignment = .center
 //        textStackView.distribution = .fill
 //        textStackView.spacing = 0
-        let stackView = UIStackView(arrangedSubviews: [albumImageView, artistLabel, albumTitleLabel])
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .fill
-        stackView.spacing = 5
-        contentView.addSubview(stackView)
-        stackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, bottom: contentView.bottomAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
-        albumTitleLabel.preferredMaxLayoutWidth = self.albumImageView.bounds.width
+//        let stackView = UIStackView(arrangedSubviews: [albumImageView, artistLabel, albumTitleLabel])
+//        stackView.axis = .vertical
+//        stackView.alignment = .center
+//        stackView.distribution = .fill
+//        stackView.spacing = 5
+//        contentView.addSubview(stackView)
+//        stackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, bottom: contentView.bottomAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
+//        albumTitleLabel.preferredMaxLayoutWidth = self.albumImageView.bounds.width
+        addSubview(albumImageView)
+        addSubview(artistLabel)
+        addSubview(albumTitleLabel)
+        albumImageView.anchor(top: contentView.topAnchor, centerX: contentView.centerXAnchor, size: .init(width: contentView.bounds.width, height: contentView.bounds.width))
+        artistLabel.anchor(top: albumImageView.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
+        albumTitleLabel.anchor(top: artistLabel.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
 }

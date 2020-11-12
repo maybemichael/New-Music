@@ -190,7 +190,6 @@ class NowPlayingViewModel: ObservableObject {
         self.textColor4 = Color(text4UIColor)
     }
     
-    
     private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {
         var white: CGFloat = 0.0
         color.getWhite(&white, alpha: nil)
