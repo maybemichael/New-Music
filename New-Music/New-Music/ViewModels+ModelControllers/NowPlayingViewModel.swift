@@ -115,6 +115,12 @@ class NowPlayingViewModel: ObservableObject {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
                 self.displaylink?.preferredFramesPerSecond = 12
                 displaylink?.add(to: .current, forMode: .common)
+            } else {
+                self.displaylink?.invalidate()
+                self.displaylink = nil
+                self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
+                self.displaylink?.preferredFramesPerSecond = 12
+                displaylink?.add(to: .current, forMode: .common)
             }
         case .seekingBackward:
             isPlaying = musicPlayer.playbackState == .playing ? true : false

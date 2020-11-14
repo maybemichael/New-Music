@@ -23,7 +23,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     
     let songTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
         label.textColor = .white
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0

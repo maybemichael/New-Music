@@ -12,7 +12,7 @@ class MusicController: ObservableObject {
 
     let musicPlayer = MPMusicPlayerController.applicationMusicPlayer
     private var currentQueue = MPMusicPlayerStoreQueueDescriptor(storeIDs: [])
-    private var timer: Timer?
+    private var songsAdded = false
     var currentPlaylist = [Song]() {
         didSet {
             self.nowPlayingViewModel.songs = self.currentPlaylist
@@ -41,7 +41,7 @@ class MusicController: ObservableObject {
             musicPlayer.play()
         } else {
             musicPlayer.prepareToPlay()
-            musicPlayer.play()
+            self.musicPlayer.play()
         }
     }
     
@@ -50,11 +50,36 @@ class MusicController: ObservableObject {
     }
     
     func nextTrack() {
-        musicPlayer.skipToNextItem()
+//        musicPlayer.prepareToPlay()
+//        musicPlayer.skipToNextItem()
+//        musicPlayer.play()
+        if musicPlayer.playbackState == .playing {
+            if songsAdded {
+                musicPlayer.prepareToPlay()
+                musicPlayer.skipToNextItem()
+                musicPlayer.play()
+                songsAdded = false
+            } else {
+                musicPlayer.skipToNextItem()
+            }
+        } else {
+            musicPlayer.skipToNextItem()
+        }
     }
     
     func previousTrack() {
-        musicPlayer.skipToPreviousItem()
+        if musicPlayer.playbackState == .playing {
+            if songsAdded {
+                musicPlayer.prepareToPlay()
+                musicPlayer.skipToPreviousItem()
+                musicPlayer.play()
+                songsAdded = false
+            } else {
+                musicPlayer.skipToPreviousItem()
+            }
+        } else {
+            musicPlayer.skipToPreviousItem()
+        }
     }
     
     func removeSongFromPlaylist(song: Song) {
@@ -65,8 +90,10 @@ class MusicController: ObservableObject {
     
     func addSongToPlaylist(song: Song) {
         currentPlaylist.append(song)
+//        let playIDs = currentPlaylist.map { $0.playID }
         currentQueue.storeIDs?.append(song.playID)
         musicPlayer.setQueue(with: currentQueue)
+        songsAdded = true
     }
     
     @objc func updateElapsedTime(_ timer: Timer) {
@@ -97,21 +124,12 @@ class MusicController: ObservableObject {
         }
     }
     
-//    private func getCurrentPlaylist(songs: [Song]) -> [CurrentPlaylistSong] {
-//        var playlistSongs = [CurrentPlaylistSong]()
-//        songs.forEach {
-//            playlistSongs.append(CurrentPlaylistSong(song: $0))
-//        }
-//        return playlistSongs
-//    }
-    
     init() {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
     }
     
     deinit {
-        timer?.invalidate()
         musicPlayer.endGeneratingPlaybackNotifications()
         NotificationCenter.default.removeObserver(self, name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
     }

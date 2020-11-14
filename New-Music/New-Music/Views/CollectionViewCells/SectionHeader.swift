@@ -21,6 +21,7 @@ class SectionHeader: UICollectionReusableView {
         let view = UIView()
         view.backgroundColor = .systemGrayThree
         view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+//        view.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 40).isActive = true
         return view
     }()
     
@@ -39,7 +40,7 @@ class SectionHeader: UICollectionReusableView {
         stackView.alignment = .fill
 
         addSubview(stackView)
-        stackView.anchor(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, bottom: bottomAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
+        stackView.anchor(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, bottom: bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
     
     required init?(coder: NSCoder) {
