@@ -24,7 +24,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     }()
     let songTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
         label.textColor = .white
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
@@ -80,7 +80,9 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         guard let song = self.song else { return }
         artistLabel.text = song.artistName
         songTitleLabel.text = song.songName
-        imageView.image = UIImage(data: song.albumArtwork!)
+        if let imageData = song.albumArtwork {
+            imageView.image = UIImage(data: imageData)
+        }
 //        APIController.shared.fetchImage(song: song, size: 500) { result in
 //            switch result {
 //            case .success(let imageData):

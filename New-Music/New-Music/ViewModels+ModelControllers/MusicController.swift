@@ -13,6 +13,10 @@ class MusicController: ObservableObject {
     let musicPlayer = MPMusicPlayerController.applicationMusicPlayer
     private var currentQueue = MPMusicPlayerStoreQueueDescriptor(storeIDs: [])
     private var songsAdded = false
+    private let library = MPMediaLibrary()
+    private var indexOfSongAdded = Int()
+    private var isSearchedSong = false 
+    
     var currentPlaylist = [Song]() {
         didSet {
             self.nowPlayingViewModel.songs = self.currentPlaylist
@@ -20,12 +24,12 @@ class MusicController: ObservableObject {
     }
     var searchedSongs = [Media]() {
         didSet {
-            print("Searched Songs: \(self.searchedSongs.count)")
+
         }
     }
     var searchedAlbums = [Media]() {
         didSet {
-            print("Searched Albums: \(self.searchedAlbums.count)")
+
         }
     }
     
@@ -37,12 +41,16 @@ class MusicController: ObservableObject {
     }()
     
     func play() {
-        if musicPlayer.isPreparedToPlay {
-            musicPlayer.play()
-        } else {
-            musicPlayer.prepareToPlay()
-            self.musicPlayer.play()
-        }
+        musicPlayer.prepareToPlay()
+        musicPlayer.play()
+    
+
+//        if musicPlayer.isPreparedToPlay {
+//            musicPlayer.play()
+//        } else {
+//            musicPlayer.prepareToPlay()
+//            self.musicPlayer.play()
+//        }
     }
     
     func pause() {
@@ -50,36 +58,11 @@ class MusicController: ObservableObject {
     }
     
     func nextTrack() {
-//        musicPlayer.prepareToPlay()
-//        musicPlayer.skipToNextItem()
-//        musicPlayer.play()
-        if musicPlayer.playbackState == .playing {
-            if songsAdded {
-                musicPlayer.prepareToPlay()
-                musicPlayer.skipToNextItem()
-                musicPlayer.play()
-                songsAdded = false
-            } else {
-                musicPlayer.skipToNextItem()
-            }
-        } else {
-            musicPlayer.skipToNextItem()
-        }
+        musicPlayer.skipToNextItem()
     }
     
     func previousTrack() {
-        if musicPlayer.playbackState == .playing {
-            if songsAdded {
-                musicPlayer.prepareToPlay()
-                musicPlayer.skipToPreviousItem()
-                musicPlayer.play()
-                songsAdded = false
-            } else {
-                musicPlayer.skipToPreviousItem()
-            }
-        } else {
-            musicPlayer.skipToPreviousItem()
-        }
+        musicPlayer.skipToPreviousItem()
     }
     
     func removeSongFromPlaylist(song: Song) {
@@ -89,9 +72,15 @@ class MusicController: ObservableObject {
     }
     
     func addSongToPlaylist(song: Song) {
+        if musicPlayer.playbackState == .playing {
+            if !songsAdded {
+                guard !currentPlaylist.isEmpty else { return }
+                self.indexOfSongAdded = currentPlaylist.count - 1
+            }
+        }
         currentPlaylist.append(song)
-//        let playIDs = currentPlaylist.map { $0.playID }
         currentQueue.storeIDs?.append(song.playID)
+        nowPlayingViewModel.playingMediaType = .playlist
         musicPlayer.setQueue(with: currentQueue)
         songsAdded = true
     }
@@ -104,10 +93,39 @@ class MusicController: ObservableObject {
         }
     }
     
+    private func updateCurrentQueue() {
+        guard
+            let currentQueue = currentQueue.storeIDs,
+            !currentQueue.isEmpty
+        else { return }
+
+        let indexOfNowPlaying = musicPlayer.indexOfNowPlayingItem
+        let nextSong = currentPlaylist[indexOfNowPlaying + 1]
+        let songTitle = MPMediaPropertyPredicate(value: nextSong.songName, forProperty: MPMediaItemPropertyTitle)
+        let artist = MPMediaPropertyPredicate(value: nextSong.artistName, forProperty: MPMediaItemPropertyArtist)
+        let filterSet = Set([songTitle, artist])
+        let query: MPMediaQuery = MPMediaQuery(filterPredicates: filterSet)
+        let song = query.items?.first
+        musicPlayer.nowPlayingItem = song
+        musicPlayer.setQueue(with: currentQueue)
+    }
+    
+    func playlistSongTapped(index: Int) {
+        musicPlayer.stop()
+        currentQueue.storeIDs = []
+        currentQueue.storeIDs = currentPlaylist.map { $0.playID }
+        currentQueue.startItemID = currentPlaylist[index].playID
+        musicPlayer.setQueue(with: currentQueue)
+        nowPlayingViewModel.playingMediaType = .playlist
+        musicPlayer.prepareToPlay()
+        musicPlayer.play()
+    }
+    
     @objc func playbackStateDidChange(_ notification: Notification) {
         let playbackState = musicPlayer.playbackState
         switch playbackState {
         case .stopped:
+            
             print("Music Player Playback State is Stopped.")
         case .paused:
             print("Music Player Playback State is Paused.")

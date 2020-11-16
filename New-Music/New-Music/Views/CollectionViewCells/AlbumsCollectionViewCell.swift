@@ -84,9 +84,9 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         addSubview(artistLabel)
         addSubview(albumTitleLabel)
 //        albumImageView.anchor(top: contentView.topAnchor, centerX: contentView.centerXAnchor,  padding: .init(top: 0, left: 0, bottom: 0, right: 0), size: .init(width: contentView.bounds.width, height: contentView.bounds.width))
-        albumImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
+        albumImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         albumImageView.heightAnchor.constraint(equalTo: albumImageView.widthAnchor).isActive = true
-        artistLabel.anchor(top: albumImageView.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 8, bottom: 0, right: -8))
-        albumTitleLabel.anchor(top: artistLabel.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
+        artistLabel.anchor(top: albumImageView.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
+        albumTitleLabel.anchor(top: artistLabel.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
 }

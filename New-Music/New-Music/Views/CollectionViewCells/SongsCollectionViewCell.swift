@@ -30,9 +30,9 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         return label
     }()
     
-    let imageView: UIImageView = {
+    let songImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleToFill
         imageView.layer.cornerRadius = 7
         imageView.clipsToBounds = true
         imageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -68,7 +68,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
-        imageView.setSize(width: UIScreen.main.bounds.width / 6, height: UIScreen.main.bounds.width / 6)
+        songImageView.setSize(width: UIScreen.main.bounds.width / 6, height: UIScreen.main.bounds.width / 6)
     }
     
     required init?(coder: NSCoder) {
@@ -80,14 +80,14 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         self.song = song
         artistLabel.text = song.artistName
         songTitleLabel.text = song.songName
-        print("Image View Size: \(imageView.frame.size.width)")
+        print("Image View Size: \(songImageView.frame.size.width)")
         APIController.shared.fetchImage(mediaItem: song, size: imageSize) { result in
             switch result {
             case .success(let imageData):
                 DispatchQueue.main.async {
                     if let imageData = imageData {
                         self.song?.albumArtwork = imageData
-                        self.imageView.image = UIImage(data: imageData)
+                        self.songImageView.image = UIImage(data: imageData)
                     }
                 }
             case .failure(let error):
@@ -99,16 +99,16 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
         let innerStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
         innerStackView.axis = .vertical
-        let outerStackView = UIStackView(arrangedSubviews: [imageView, innerStackView, addButton])
+        let outerStackView = UIStackView(arrangedSubviews: [songImageView, innerStackView, addButton])
         outerStackView.alignment = .center
         outerStackView.distribution = .fill
         outerStackView.spacing = 8
         let mainStackView = UIStackView(arrangedSubviews: [outerStackView, separatorView])
         mainStackView.axis = .vertical
         mainStackView.distribution = .equalCentering
-        mainStackView.spacing = 8
+        mainStackView.spacing = 6
         contentView.addSubview(mainStackView)
-        mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
+        mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
     
     @objc func addSong(_ sender: UIButton) {

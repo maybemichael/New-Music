@@ -43,9 +43,10 @@ struct NowPlayingFullView: View {
                         .multilineTextAlignment(.center)
                     Text(nowPlayingViewModel.songTitle)
 //                    Text("Grand Theft Autumn")
-                        .font(Font.system(.title2).weight(.medium))
+                        .font(Font.system(.title3).weight(.medium))
                         .foregroundColor(textColorFor(isTooLight: nowPlayingViewModel.isTooLight))
                         .multilineTextAlignment(.center)
+                        .lineLimit(2)
                     
                 }
                 .frame(minHeight: 80, alignment: .center)
@@ -122,7 +123,7 @@ struct NowPlayingFullView: View {
     }
     
     private func textColorFor(isTooLight: Bool) -> Color {
-        return isTooLight ? Color.black : Color.white
+        return isTooLight ? nowPlayingViewModel.textColor1 : Color.white
     }
     
     private func nowPlayingStateBackground(isFullScreen: Bool) -> Color {

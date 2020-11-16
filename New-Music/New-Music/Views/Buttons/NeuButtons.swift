@@ -79,7 +79,7 @@ struct NeuToggleBackground<S: Shape>: View {
                     .blendMode(.overlay)
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
+                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 2))
             } else {
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
@@ -88,7 +88,7 @@ struct NeuToggleBackground<S: Shape>: View {
                     .blendMode(.overlay)
                 shape
                     .fill(gradient(for: nowPlayingViewModel.isPlaying))
-                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
+                    .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 2))
             }
         }
         .frame(width: size, height: size)
@@ -197,7 +197,7 @@ struct NeuButtonBackground<S: Shape>: View {
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 2))
                 } else {
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
@@ -206,7 +206,7 @@ struct NeuButtonBackground<S: Shape>: View {
                         .blendMode(.overlay)
                     shape
                         .fill(LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor))
-                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black), lineWidth: 2))
+                        .overlay(shape.stroke(LinearGradient(direction: .diagonalTopToBottom, .black, .black), lineWidth: 2))
                 }
             } else {
                 if isHighlighted {

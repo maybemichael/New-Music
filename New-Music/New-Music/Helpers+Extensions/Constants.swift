@@ -60,3 +60,9 @@ enum TransitionType {
     case navigation
     case modal
 }
+
+enum PlayingMediaType {
+    case singleSong
+    case playlist
+    case album
+}

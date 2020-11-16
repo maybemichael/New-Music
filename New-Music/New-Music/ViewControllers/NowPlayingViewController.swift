@@ -65,20 +65,12 @@ class NowPlayingViewController: UIViewController {
         view.backgroundColor = .backgroundColor
         navigationController?.view.layer.cornerRadius = 20
         navigationController?.navigationBar.prefersLargeTitles = true
-//        guard let musicController = musicController else { return }
-//        let contentView = UIHostingController(rootView: NowPlayingPlaylistView().environmentObject(musicController.nowPlayingViewModel))
-//        addChild(contentView)
-//        contentView.didMove(toParent: self)
-//        view.addSubview((contentView.view)!)
-//        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         view.addSubview(collectionView)
         collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
-//        contentView.view.layer.cornerRadius = 20
         view.layer.cornerRadius = 20
-//        view.layer.masksToBounds = true
         view.backgroundColor = .backgroundColor
         title = "Now Playing"
-//        contentView.view.backgroundColor = .clear
+        collectionView.delegate = self
     }
     
     private func reloadData() {
@@ -87,5 +79,11 @@ class NowPlayingViewController: UIViewController {
         snapshot.appendSections([0])
         snapshot.appendItems(musicController?.currentPlaylist ?? [])
         dataSource.apply(snapshot)
+    }
+}
+
+extension NowPlayingViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        musicController?.playlistSongTapped(index: indexPath.item)
     }
 }

@@ -14,6 +14,9 @@ class NowPlayingViewModel: ObservableObject {
     var didChange = PassthroughSubject<UIImage?, Never>()
     var nowPlayingSong: Song?
     var displaylink: CADisplayLink?
+    var isPlaylistSong = true
+    var playingMediaType: PlayingMediaType = .playlist
+    var searchedSong: Song?
     @Published var songs: [Song]
     @Published var artist: String = ""
     @Published var songTitle: String = ""
@@ -89,8 +92,10 @@ class NowPlayingViewModel: ObservableObject {
         }
         self.elapsedTime = 0.0
         self.timeRemaining = 0.0
-        let index = musicPlayer.indexOfNowPlayingItem
-        self.nowPlayingSong = songs[index]
+        if playingMediaType != .singleSong {
+            let index = musicPlayer.indexOfNowPlayingItem
+            self.nowPlayingSong = songs[index]
+        }
         
         if let colors = getGradientColors() {
             print("Lighter: \(colors.lighter.description)")

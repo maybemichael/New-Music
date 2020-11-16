@@ -116,6 +116,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.layer.cornerRadius = 20
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        collectionView.delegate = self
     }
     
     private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath) -> T {
@@ -178,26 +179,28 @@ class SearchViewController: UIViewController, SearchCellDelegate {
 //    private func createSongsSection() -> NSCollectionLayoutSection {
 //        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.33))
 //        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-//        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
-//        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.93), heightDimension: .fractionalWidth(0.55))
+//        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0)
+//        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width - 40), heightDimension: .fractionalWidth(0.6))
 //        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
 //        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-//        let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.93), heightDimension: .fractionalWidth(0.12))
+//        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 70, trailing: 20)
+//        layoutSection.interGroupSpacing = 8
+//        let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width - 40), heightDimension: .fractionalWidth(0.12))
 //        let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: laytoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
-//        layoutSection.orthogonalScrollingBehavior = .groupPagingCentered
+//        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
 //        layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
 //        return layoutSection
 //    }
     
     private func createSongsSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(2.5))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width - 40), heightDimension: .fractionalWidth(0.12))
         let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: laytoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20)
         layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
         return layoutSection
     }
@@ -219,13 +222,13 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     private func createAlbumSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.45), heightDimension: .fractionalWidth(0.5))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute((UIScreen.main.bounds.width - 48) / 2), heightDimension: .fractionalWidth(0.55))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
         let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width - 40), heightDimension: .fractionalWidth(0.12))
         let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: laytoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        layoutSection.interGroupSpacing = 8
         layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         return layoutSection
@@ -271,5 +274,31 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             }
         }
         musicController.addSongToPlaylist(song: song)
+    }
+}
+
+extension SearchViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch indexPath.section {
+        case 1:
+            musicController.musicPlayer.stop()
+            let media = musicController.searchedSongs[indexPath.item]
+            if var song = media.media as? Song {
+                APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+                    switch result {
+                    case .success(let imageData):
+                        song.albumArtwork = imageData
+                        self.musicController.musicPlayer.setQueue(with: [song.playID])
+                        self.musicController.nowPlayingViewModel.searchedSong = song
+                        self.musicController.play()
+                        self.musicController.nowPlayingViewModel.playingMediaType = .singleSong
+                    case .failure(let error):
+                        print("Error fetching image data: \(error)")
+                    }
+                }
+            }
+        default:
+            break
+        }
     }
 }
