@@ -34,6 +34,7 @@ class NowPlayingViewModel: ObservableObject {
     @Published var textColor3: Color
     @Published var textColor4: Color
     @Published var lighterUIColor: UIColor
+    @Published var beatsPerMinute: Int
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
@@ -69,6 +70,7 @@ class NowPlayingViewModel: ObservableObject {
         self.textColor4 = Color.black
         self.timeRemaining = 0.0
         self.lighterUIColor = .backgroundColor ?? .black
+        self.beatsPerMinute = 90
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
@@ -95,6 +97,9 @@ class NowPlayingViewModel: ObservableObject {
         if playingMediaType != .singleSong {
             let index = musicPlayer.indexOfNowPlayingItem
             self.nowPlayingSong = songs[index]
+        }
+        if let bpm = musicPlayer.nowPlayingItem?.beatsPerMinute {
+            self.beatsPerMinute = bpm
         }
         
         if let colors = getGradientColors() {

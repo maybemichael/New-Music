@@ -14,6 +14,8 @@ extension LinearGradient {
             self.init(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
         case .leadingToTrailing:
             self.init(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing)
+        case .topTrailingBottomLeading:
+            self.init(gradient: Gradient(colors: colors), startPoint: .topTrailing, endPoint: .bottomLeading)
         }
     }
 }

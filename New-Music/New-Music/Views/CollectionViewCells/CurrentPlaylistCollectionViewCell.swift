@@ -5,17 +5,31 @@
 //  Created by Michael McGrath on 11/8/20.
 //
 
-import UIKit
+import SwiftUI
 
 class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     static let identifier = "CurrentPlaylistCell"
-    
-    var song: Song? {
+    weak var hostedView: UIView? {
         didSet {
-            updateViews()
+            if let oldValue = oldValue {
+                if oldValue.isDescendant(of: self) {
+                    oldValue.removeFromSuperview()
+                }
+            }
+            if let hostedView = hostedView {
+//                hostedView.frame = contentView.bounds
+                contentView.addSubview(hostedView)
+                hostedView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, bottom: contentView.bottomAnchor)
+            }
         }
     }
-    
+    var song: Song? {
+        didSet {
+//            updateViews()
+            
+        }
+    }
+
     let artistLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -51,7 +65,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpViews()
+//        setUpViews()
     }
     
     required init?(coder: NSCoder) {
@@ -69,11 +83,8 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         mainStackView.axis = .vertical
         mainStackView.distribution = .equalCentering
         mainStackView.spacing = 7.5
-//        contentView.addSubview(outerStackView)
         contentView.addSubview(mainStackView)
-//        imageView.setSize(width: UIScreen.main.bounds.width / 5.5, height: UIScreen.main.bounds.width / 5.5)
         mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
-//        outerStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
     }
     
     private func updateViews() {
@@ -96,5 +107,11 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
 //                print("Error fetching image data: \(error.localizedDescription)")
 //            }
 //        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        hostedView?.removeFromSuperview()
+        hostedView = nil
     }
 }

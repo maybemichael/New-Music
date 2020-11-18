@@ -24,6 +24,7 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
     var albumArtwork: Data?
     var imageURL: URL
     var stringURL: String
+    var isPlaying = false 
     
     enum SongKeys: String, CodingKey {
         case name

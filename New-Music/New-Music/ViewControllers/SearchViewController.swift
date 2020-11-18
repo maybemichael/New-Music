@@ -5,7 +5,7 @@
 //  Created by Michael McGrath on 10/3/20.
 //
 
-import UIKit
+import SwiftUI
 import Combine
 
 class SearchViewController: UIViewController, SearchCellDelegate {
@@ -124,7 +124,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             fatalError("Unable to dequeue cell: \(cellType)")
         }
         cell.configure(with: media)
-       
         cell.delegate = self
         return cell
     }
@@ -269,11 +268,11 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             switch result {
             case .success(let imageData):
                 song.albumArtwork = imageData
+                self.musicController.addSongToPlaylist(song: song)
             case .failure(let error):
                 print("Error fetching image data: \(error)")
             }
         }
-        musicController.addSongToPlaylist(song: song)
     }
 }
 
@@ -289,7 +288,7 @@ extension SearchViewController: UICollectionViewDelegate {
                     case .success(let imageData):
                         song.albumArtwork = imageData
                         self.musicController.musicPlayer.setQueue(with: [song.playID])
-                        self.musicController.nowPlayingViewModel.searchedSong = song
+                        self.musicController.nowPlayingViewModel.nowPlayingSong = song
                         self.musicController.play()
                         self.musicController.nowPlayingViewModel.playingMediaType = .singleSong
                     case .failure(let error):

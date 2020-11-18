@@ -23,6 +23,7 @@ class MainCoordinator: NSObject {
     private var transitionCoordinator = NowPlayingTransitionCoordinator()
     private var nowPlayingBarVC =  NowPlayingBarViewController()
     private var transitionAnimator: UIViewPropertyAnimator?
+    var childVCCoordinator = ChildVCCoordinator()
     let height = UIScreen.main.bounds.height / 11
     
     init(window: UIWindow) {
@@ -99,5 +100,15 @@ class MainCoordinator: NSObject {
         if transitionAnimator != nil && transitionAnimator!.isRunning {
             transitionAnimator?.fractionComplete = progress
         }
+    }
+    
+    func getPlaylistCellView(for indexPath: IndexPath, moveTo parent: UIViewController) -> UIViewController {
+        childVCCoordinator.addChild(parent: parent, indexPath: indexPath, musicController: musicController)
+//        if let childVC = childVCCoordinator.getVC(for: indexPath, musicController: self.musicController) as? CurrentPlaylistCellViewController {
+//            childVC.song = song
+//            return childVC
+//        } else {
+//           return CurrentPlaylistCellViewController(musicController: musicController)
+//        }
     }
 }

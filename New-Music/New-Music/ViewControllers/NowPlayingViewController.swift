@@ -14,6 +14,7 @@ class NowPlayingViewController: UIViewController {
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
     var contentView: UIHostingController<NowPlayingBarView>?
+    var childVCCoordinator = ChildVCCoordinator()
     
     lazy var collectionView: UICollectionView = {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
@@ -25,9 +26,14 @@ class NowPlayingViewController: UIViewController {
     lazy var dataSource: CurrentPlaylistDataSource = {
         let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { collectionView, indexPath, song -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier, for: indexPath) as! CurrentPlaylistCollectionViewCell
-            let song = self.musicController?.currentPlaylist[indexPath.item]
+            guard
+                let song = self.musicController?.currentPlaylist[indexPath.item],
+                let viewController = self.coordinator?.getPlaylistCellView(for: indexPath, moveTo: self) as? CurrentPlaylistCellViewController
+            else { fatalError("fatal error in NowPlayingViewController data source for collection view") }
+            cell.hostedView = viewController.view
             cell.song = song
-            
+            viewController.song = song
+        
             return cell
         }
         return dataSource
@@ -51,12 +57,13 @@ class NowPlayingViewController: UIViewController {
     
     
     private func createCompLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(UIScreen.main.bounds.width / 5))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 0, trailing: 12)
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.95), heightDimension: .absolute(UIScreen.main.bounds.width / 4.5))
+//        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 0, trailing: 12)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(UIScreen.main.bounds.width / 4.5))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         let layout = UICollectionViewCompositionalLayout(section: layoutSection)
         return layout
     }
@@ -74,7 +81,6 @@ class NowPlayingViewController: UIViewController {
     }
     
     private func reloadData() {
-//        guard let currentPlaylist = musicController?.currentPlaylist else { return }
         var snapshot = CurrentPlaylistSnapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(musicController?.currentPlaylist ?? [])
@@ -85,5 +91,15 @@ class NowPlayingViewController: UIViewController {
 extension NowPlayingViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         musicController?.playlistSongTapped(index: indexPath.item)
+    }
+    
+//    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        guard let musicController = musicController else { return }
+//        let song = musicController.currentPlaylist[indexPath.item]
+//        childVCCoordinator.addChild(parent: self, indexPath: indexPath, musicController: musicController)
+//    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        childVCCoordinator.remove(at: indexPath)
     }
 }

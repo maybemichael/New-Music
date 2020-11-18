@@ -43,14 +43,6 @@ class MusicController: ObservableObject {
     func play() {
         musicPlayer.prepareToPlay()
         musicPlayer.play()
-    
-
-//        if musicPlayer.isPreparedToPlay {
-//            musicPlayer.play()
-//        } else {
-//            musicPlayer.prepareToPlay()
-//            self.musicPlayer.play()
-//        }
     }
     
     func pause() {
@@ -72,16 +64,16 @@ class MusicController: ObservableObject {
     }
     
     func addSongToPlaylist(song: Song) {
-        if musicPlayer.playbackState == .playing {
-            if !songsAdded {
-                guard !currentPlaylist.isEmpty else { return }
-                self.indexOfSongAdded = currentPlaylist.count - 1
-            }
-        }
+//        if musicPlayer.playbackState == .playing {
+//            if !songsAdded {
+//                guard !currentPlaylist.isEmpty else { return }
+//                self.indexOfSongAdded = currentPlaylist.count - 1
+//            }
+//        }
         currentPlaylist.append(song)
         currentQueue.storeIDs?.append(song.playID)
         nowPlayingViewModel.playingMediaType = .playlist
-        musicPlayer.setQueue(with: currentQueue)
+//        musicPlayer.setQueue(with: currentQueue)
         songsAdded = true
     }
     
@@ -112,9 +104,10 @@ class MusicController: ObservableObject {
     
     func playlistSongTapped(index: Int) {
         musicPlayer.stop()
-        currentQueue.storeIDs = []
+        currentQueue.storeIDs?.removeAll()
         currentQueue.storeIDs = currentPlaylist.map { $0.playID }
         currentQueue.startItemID = currentPlaylist[index].playID
+        currentPlaylist[index].isPlaying = true
         musicPlayer.setQueue(with: currentQueue)
         nowPlayingViewModel.playingMediaType = .playlist
         musicPlayer.prepareToPlay()

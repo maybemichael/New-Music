@@ -49,11 +49,17 @@ enum DragState {
 enum GradientDirection {
     case diagonalTopToBottom
     case leadingToTrailing
+    case topTrailingBottomLeading
 }
 
 enum AnimationType {
     case present
     case dismiss
+}
+
+enum NowPlayingViewState {
+    case minimized
+    case full
 }
 
 enum TransitionType {

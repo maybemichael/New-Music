@@ -5,15 +5,17 @@
 //  Created by Michael McGrath on 10/3/20.
 //
 
-import UIKit
+import SwiftUI
 
-protocol SearchCellDelegate: AnyObject {
-    func addSongTapped(cell: SongsCollectionViewCell)
-}
+//protocol SearchCellDelegate: AnyObject {
+//    func addSongTapped(cell: SongsCollectionViewCell)
+//}
 
 class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     static let identifier = "SongCell"
-    
+    let imageSize: CGFloat = 500
+    weak var delegate: SearchCellDelegate?
+
     let artistLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -55,8 +57,6 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         return button
     }()
     
-    let imageSize: CGFloat = 500
-    weak var delegate: SearchCellDelegate?
     var song: Song? {
         didSet {
             let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
