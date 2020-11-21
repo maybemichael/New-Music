@@ -64,42 +64,10 @@ class MusicController: ObservableObject {
     }
     
     func addSongToPlaylist(song: Song) {
-//        if musicPlayer.playbackState == .playing {
-//            if !songsAdded {
-//                guard !currentPlaylist.isEmpty else { return }
-//                self.indexOfSongAdded = currentPlaylist.count - 1
-//            }
-//        }
         currentPlaylist.append(song)
         currentQueue.storeIDs?.append(song.playID)
         nowPlayingViewModel.playingMediaType = .playlist
-//        musicPlayer.setQueue(with: currentQueue)
         songsAdded = true
-    }
-    
-    @objc func updateElapsedTime(_ timer: Timer) {
-        if musicPlayer.playbackState == .playing {
-            let elapsedTime = musicPlayer.currentPlaybackTime
-            let elapsedTimeDictionary: [String: TimeInterval] = ["elapsedTime": elapsedTime]
-            NotificationCenter.default.post(name: .elapsedTime, object: nil, userInfo: elapsedTimeDictionary)
-        }
-    }
-    
-    private func updateCurrentQueue() {
-        guard
-            let currentQueue = currentQueue.storeIDs,
-            !currentQueue.isEmpty
-        else { return }
-
-        let indexOfNowPlaying = musicPlayer.indexOfNowPlayingItem
-        let nextSong = currentPlaylist[indexOfNowPlaying + 1]
-        let songTitle = MPMediaPropertyPredicate(value: nextSong.songName, forProperty: MPMediaItemPropertyTitle)
-        let artist = MPMediaPropertyPredicate(value: nextSong.artistName, forProperty: MPMediaItemPropertyArtist)
-        let filterSet = Set([songTitle, artist])
-        let query: MPMediaQuery = MPMediaQuery(filterPredicates: filterSet)
-        let song = query.items?.first
-        musicPlayer.nowPlayingItem = song
-        musicPlayer.setQueue(with: currentQueue)
     }
     
     func playlistSongTapped(index: Int) {
@@ -110,6 +78,7 @@ class MusicController: ObservableObject {
         currentPlaylist[index].isPlaying = true
         musicPlayer.setQueue(with: currentQueue)
         nowPlayingViewModel.playingMediaType = .playlist
+        nowPlayingViewModel.nowPlayingSong = currentPlaylist[index]
         musicPlayer.prepareToPlay()
         musicPlayer.play()
     }

@@ -9,7 +9,7 @@ import SwiftUI
 
 class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     static let identifier = "CurrentPlaylistCell"
-    weak var hostedView: UIView? {
+    var hostedView: UIView? {
         didSet {
             if let oldValue = oldValue {
                 if oldValue.isDescendant(of: self) {
@@ -17,19 +17,23 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
                 }
             }
             if let hostedView = hostedView {
-//                hostedView.frame = contentView.bounds
                 contentView.addSubview(hostedView)
-                hostedView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, bottom: contentView.bottomAnchor)
+                hostedView.frame = CGRect(x: (UIScreen.main.bounds.maxX - UIScreen.main.bounds.width / 5.5) - 20, y: contentView.bounds.minY, width: UIScreen.main.bounds.width / 5.5, height: UIScreen.main.bounds.width / 5.5)
             }
         }
     }
     var song: Song? {
         didSet {
-//            updateViews()
-            
+            updateViews()
         }
     }
+    
+    var indicatorView: PlayingIndicatorViewController? {
+        didSet {
 
+        }
+    }
+    
     let artistLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -55,6 +59,12 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
+    lazy var innerStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
+        stackView.axis = .vertical
+        return stackView
+    }()
+    
     let separatorView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGrayThree
@@ -65,7 +75,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        setUpViews()
+        setUpViews()
     }
     
     required init?(coder: NSCoder) {
@@ -73,8 +83,6 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUpViews() {
-        let innerStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
-        innerStackView.axis = .vertical
         let outerStackView = UIStackView(arrangedSubviews: [imageView, innerStackView])
         outerStackView.alignment = .center
         outerStackView.distribution = .fill
@@ -84,7 +92,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         mainStackView.distribution = .equalCentering
         mainStackView.spacing = 7.5
         contentView.addSubview(mainStackView)
-        mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
+        mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
     
     private func updateViews() {
@@ -94,19 +102,6 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         if let imageData = song.albumArtwork {
             imageView.image = UIImage(data: imageData)
         }
-//        APIController.shared.fetchImage(song: song, size: 500) { result in
-//            switch result {
-//            case .success(let imageData):
-//                if let imageData = imageData {
-//                    self.song?.albumArtwork = imageData
-//                    DispatchQueue.main.async {
-//                        self.imageView.image = UIImage(data: imageData)
-//                    }
-//                }
-//            case .failure(let error):
-//                print("Error fetching image data: \(error.localizedDescription)")
-//            }
-//        }
     }
     
     override func prepareForReuse() {

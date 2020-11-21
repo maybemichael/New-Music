@@ -12,11 +12,11 @@ import Combine
 class NowPlayingViewModel: ObservableObject {
     var musicPlayer: MPMusicPlayerController
     var didChange = PassthroughSubject<UIImage?, Never>()
-    var nowPlayingSong: Song?
     var displaylink: CADisplayLink?
     var isPlaylistSong = true
     var playingMediaType: PlayingMediaType = .playlist
     var searchedSong: Song?
+    @Published var nowPlayingSong: Song?
     @Published var songs: [Song]
     @Published var artist: String = ""
     @Published var songTitle: String = ""
@@ -35,6 +35,8 @@ class NowPlayingViewModel: ObservableObject {
     @Published var textColor4: Color
     @Published var lighterUIColor: UIColor
     @Published var beatsPerMinute: Int
+    @Published var lighterTextColor2: Color
+    @Published var darkerTextColor2: Color
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
@@ -71,6 +73,8 @@ class NowPlayingViewModel: ObservableObject {
         self.timeRemaining = 0.0
         self.lighterUIColor = .backgroundColor ?? .black
         self.beatsPerMinute = 90
+        self.lighterTextColor2 = .black
+        self.darkerTextColor2 = .black
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
@@ -99,13 +103,13 @@ class NowPlayingViewModel: ObservableObject {
             self.nowPlayingSong = songs[index]
         }
         if let bpm = musicPlayer.nowPlayingItem?.beatsPerMinute {
+            print("Beats Per Minute in view model: \(bpm)")
             self.beatsPerMinute = bpm
         }
         
         if let colors = getGradientColors() {
             print("Lighter: \(colors.lighter.description)")
             print("Darker: \(colors.darker.description)")
-            
             self.lighterAccentColor = colors.lighter
             self.darkerAccentColor = colors.darker
         }
@@ -204,6 +208,19 @@ class NowPlayingViewModel: ObservableObject {
         self.textColor2 = Color(text2UIColor)
         self.textColor3 = Color(text3UIColor)
         self.textColor4 = Color(text4UIColor)
+        
+        
+        self.darkerTextColor2 = Color(text2UIColor.darker())
+//        if isLightColor(color: text2UIColor, threshold: 0.5) {
+//            let darkerAccentColor = text2UIColor.darker()
+//            self.lighterTextColor2 = textColor2
+//            self.darkerTextColor2 = Color(darkerAccentColor)
+//        } else {
+//            let lighterAccentColor = text2UIColor.lighter()
+//            self.darkerTextColor2 = textColor2
+//            self.lighterTextColor2 = Color(lighterAccentColor)
+//        }
+        
     }
     
     private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {

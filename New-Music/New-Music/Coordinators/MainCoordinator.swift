@@ -91,7 +91,6 @@ class MainCoordinator: NSObject {
     func passTabBarSelectedView() {
         guard
             let navController = self.tabBarController.viewControllers?[self.tabBarController.selectedIndex] as? UINavigationController
-//            let presentingVC = navController.topViewController
         else { return }
         nowPlayingBarVC.tabBarSelectedView = navController.view
     }
@@ -102,13 +101,15 @@ class MainCoordinator: NSObject {
         }
     }
     
-    func getPlaylistCellView(for indexPath: IndexPath, moveTo parent: UIViewController) -> UIViewController {
-        childVCCoordinator.addChild(parent: parent, indexPath: indexPath, musicController: musicController)
-//        if let childVC = childVCCoordinator.getVC(for: indexPath, musicController: self.musicController) as? CurrentPlaylistCellViewController {
-//            childVC.song = song
-//            return childVC
-//        } else {
-//           return CurrentPlaylistCellViewController(musicController: musicController)
-//        }
+    func getPlaylistCellView(for indexPath: IndexPath, with song: Song, moveTo parent: UIViewController) -> UIViewController {
+        childVCCoordinator.addChild(parent: parent, indexPath: indexPath, musicController: musicController, song: song)
+    }
+    
+    func removePlaylistCellView(for indexPath: IndexPath) {
+        childVCCoordinator.remove(at: indexPath)
+    }
+    
+    func getViewController(indexPath: IndexPath) -> UIViewController? {
+        childVCCoordinator.viewControllersByIndexPath[indexPath]
     }
 }
