@@ -20,9 +20,11 @@ struct PlayingIndicatorView: View {
             }
             .frame(width: size, height: size)
             .scaleEffect(self.animate ? 1.5 : 1.0)
-            .animation(self.animate ? Animation.linear(duration: 0.8).repeatForever(autoreverses: true) : Animation.linear(duration: 0.8))
+            .animation(self.animate ? Animation.linear(duration: 0.8).repeatForever(autoreverses: true) : Animation.linear(duration: 0.4))
             .onAppear {
-                self.animate = true
+                if nowPlayingViewModel.isPlaying {
+                    self.animate = true
+                }
             }
             .onDisappear {
                 self.animate = false
