@@ -128,7 +128,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         return cell
     }
     
-    func createDataSource() {
+    private func createDataSource() {
         dataSource = SearchDataSource(collectionView: collectionView) { collectionView, indexPath, media in
             switch self.sections[indexPath.section].mediaType {
             case .song:
@@ -152,7 +152,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         }
     }
     
-    func reloadData() {
+    private func reloadData() {
         var snapshot = SearchSnapshot()
         let songSection = Section(mediaType: .song, media: musicController.searchedSongs)
         let albumSection = Section(mediaType: .album, media: musicController.searchedAlbums)

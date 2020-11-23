@@ -48,7 +48,7 @@ class APIController {
         guard let requestURL = urlComponents?.url else { return nil }
         var request = URLRequest(url: requestURL)
         request.httpMethod = HTTPMethod.get.rawValue
-        request.setValue("Bearer \(authController.developerToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(developerToken)", forHTTPHeaderField: "Authorization")
         request.setValue(authController.userToken, forHTTPHeaderField: "Music-User-Token")
 
         return request
