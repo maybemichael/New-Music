@@ -79,7 +79,6 @@
 		4CD485AD253ACC9B005265F3 /* SongData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD485AC253ACC9B005265F3 /* SongData.swift */; };
 		4CD485B2253ACE00005265F3 /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD485B1253ACE00005265F3 /* MediaType.swift */; };
 		4CD485BF253AD6D0005265F3 /* NowPlayingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7EE8252D05D0005A1424 /* NowPlayingViewModel.swift */; };
-		4CEC2425256BAB5C00784F8B /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC2424256BAB5C00784F8B /* ConcurrentOperation.swift */; };
 		4CEC2430256BADE100784F8B /* DeveloperToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC242F256BADE100784F8B /* DeveloperToken.swift */; };
 /* End PBXBuildFile section */
 
@@ -179,7 +178,6 @@
 		4CD485A7253AC364005265F3 /* AlbumResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumResource.swift; sourceTree = "<group>"; };
 		4CD485AC253ACC9B005265F3 /* SongData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongData.swift; sourceTree = "<group>"; };
 		4CD485B1253ACE00005265F3 /* MediaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
-		4CEC2424256BAB5C00784F8B /* ConcurrentOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
 		4CEC242F256BADE100784F8B /* DeveloperToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToken.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -353,7 +351,6 @@
 		4C646B0025296B8300B05D8A /* New-Music */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC2423256BAAA700784F8B /* Operations */,
 				4C06DE51254F65F200897208 /* AnimatedTransistions */,
 				4C646B4125296C4900B05D8A /* Helpers+Extensions */,
 				4C646B4025296C3F00B05D8A /* ViewControllers */,
@@ -492,14 +489,6 @@
 				4CA0ED47253CBDB1001E2ED7 /* NowPlayingBar.swift */,
 			);
 			path = NowPlayingViewState;
-			sourceTree = "<group>";
-		};
-		4CEC2423256BAAA700784F8B /* Operations */ = {
-			isa = PBXGroup;
-			children = (
-				4CEC2424256BAB5C00784F8B /* ConcurrentOperation.swift */,
-			);
-			path = Operations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -647,7 +636,6 @@
 				4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */,
 				4C87CE8C252DB578001B9935 /* Notifications.swift in Sources */,
 				4C04E8A5253E5253001C0039 /* TransitionAnimator.swift in Sources */,
-				4CEC2425256BAB5C00784F8B /* ConcurrentOperation.swift in Sources */,
 				4C3D1CEA2547F34E0067F57E /* AlbumArtworkView.swift in Sources */,
 				4CD4859B253AC1C5005265F3 /* ResourceType.swift in Sources */,
 				4C10BCA4255BDFED00E005D1 /* SectionHeader.swift in Sources */,

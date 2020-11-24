@@ -9,7 +9,7 @@ import UIKit
 
 struct Song: Decodable, Hashable, Identifiable, MediaItem {
     var mediaType: MediaType = .song
-    let id: UUID = UUID()
+    let id: String = UUID().uuidString
     let songName: String
     let playID: String
     let kind: String

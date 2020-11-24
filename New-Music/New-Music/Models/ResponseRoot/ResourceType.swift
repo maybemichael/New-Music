@@ -8,6 +8,6 @@
 import Foundation
 
 struct ResourceType: Decodable {
-    let songs: SongResource
-    let albums: AlbumResource
+    let songs: SongResource?
+    let albums: AlbumResource?
 }

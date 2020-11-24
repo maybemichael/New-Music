@@ -32,7 +32,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         return label
     }()
     
-    let songImageView: UIImageView = {
+    let mediaImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
         imageView.layer.cornerRadius = 7
@@ -68,7 +68,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
-        songImageView.setSize(width: UIScreen.main.bounds.width / 6, height: UIScreen.main.bounds.width / 6)
+        mediaImageView.setSize(width: UIScreen.main.bounds.width / 6, height: UIScreen.main.bounds.width / 6)
     }
     
     required init?(coder: NSCoder) {
@@ -80,14 +80,14 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         self.song = song
         artistLabel.text = song.artistName
         songTitleLabel.text = song.songName
-        print("Image View Size: \(songImageView.frame.size.width)")
+        print("Image View Size: \(mediaImageView.frame.size.width)")
         APIController.shared.fetchImage(mediaItem: song, size: imageSize) { result in
             switch result {
             case .success(let imageData):
                 DispatchQueue.main.async {
                     if let imageData = imageData {
                         self.song?.albumArtwork = imageData
-                        self.songImageView.image = UIImage(data: imageData)
+                        self.mediaImageView.image = UIImage(data: imageData)
                     }
                 }
             case .failure(let error):
@@ -99,7 +99,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
         let innerStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
         innerStackView.axis = .vertical
-        let outerStackView = UIStackView(arrangedSubviews: [songImageView, innerStackView, addButton])
+        let outerStackView = UIStackView(arrangedSubviews: [mediaImageView, innerStackView, addButton])
         outerStackView.alignment = .center
         outerStackView.distribution = .fill
         outerStackView.spacing = 8

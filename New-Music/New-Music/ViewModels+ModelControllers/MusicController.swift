@@ -15,7 +15,9 @@ class MusicController: ObservableObject {
     private var songsAdded = false
     private let library = MPMediaLibrary()
     private var indexOfSongAdded = Int()
-    private var isSearchedSong = false 
+    private var isSearchedSong = false
+    let cache = URLCache(memoryCapacity: 1024 * 1024 * 100, diskCapacity: 1024 * 1024 * 100, diskPath: "ImageCache")
+    var sections = [Section]()
     
     var currentPlaylist = [Song]() {
         didSet {

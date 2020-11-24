@@ -28,7 +28,7 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         return label
     }()
     
-    let albumImageView: UIImageView = {
+    let mediaImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
@@ -57,7 +57,7 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
                 DispatchQueue.main.async {
                     if let imageData = imageData {
                         self.album?.albumArtwork = imageData
-                        self.albumImageView.image = UIImage(data: imageData)
+                        self.mediaImageView.image = UIImage(data: imageData)
                     }
                 }
             case .failure(let error):
@@ -67,12 +67,12 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     }
     
     private func setUpViews() {
-        addSubview(albumImageView)
+        addSubview(mediaImageView)
         addSubview(artistLabel)
         addSubview(albumTitleLabel)
-        albumImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
-        albumImageView.heightAnchor.constraint(equalTo: albumImageView.widthAnchor).isActive = true
-        artistLabel.anchor(top: albumImageView.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
+        mediaImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
+        mediaImageView.heightAnchor.constraint(equalTo: mediaImageView.widthAnchor).isActive = true
+        artistLabel.anchor(top: mediaImageView.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
         albumTitleLabel.anchor(top: artistLabel.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
 }

@@ -10,6 +10,7 @@ import Combine
 
 class SearchViewController: UIViewController, SearchCellDelegate {
     
+    
     var collectionView: UICollectionView!
     lazy var searchController = UISearchController(searchResultsController: nil)
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Section, Media>
@@ -18,6 +19,9 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     var musicController: MusicController!
     weak var coordinator: MainCoordinator?
     var cancellable = [AnyCancellable]()
+//    var imageCache = Cache<IndexPath, Data>()
+//    var operations = Dictionary<IndexPath, Operation>()
+//    let photoQueue = OperationQueue()
     var sections = [Section]()
     
     override func viewDidLoad() {
@@ -157,6 +161,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         let songSection = Section(mediaType: .song, media: musicController.searchedSongs)
         let albumSection = Section(mediaType: .album, media: musicController.searchedAlbums)
         let sections = [albumSection, songSection]
+        musicController.sections = sections
         self.sections = sections
         snapshot.appendSections(sections)
         sections.forEach {
@@ -274,6 +279,56 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             }
         }
     }
+    
+//    private func loadImage(forCell cell: SelfConfiguringCell, forItemAt indexPath: IndexPath, with mediaItem: MediaItem) {
+//        let mediaCell = cell as! SelfConfiguringCell
+//        if cell is SongsCollectionViewCell {
+//            mediaCell = cell as! SongsCollectionViewCell
+//        }
+//        let stringURL = mediaItem.stringURL.replacingOccurrences(of: "{w}", with: String(Int(500))).replacingOccurrences(of: "{h}", with: String(Int(500)))
+//        let url = URL(string: stringURL)!
+//        let urlRequest = URLRequest(url: url)
+//        let id = mediaItem.id
+//        if let cachedData = musicController.cache.cachedResponse(for: urlRequest) {
+//            if self.collectionView.indexPath(for: cell as! UICollectionViewCell) == indexPath {
+//                cell.mediaImageView.image = UIImage(data: cachedData.data)
+//                return
+//            }
+//        }
+//        if let imageData = imageCache.getValue(for: indexPath) {
+//            if self.collectionView.indexPath(for: cell as! UICollectionViewCell) == indexPath {
+//                cell.mediaImageView.image = UIImage(data: imageData)
+//                return
+//            }
+//        }
+        
+//        let fetchPhotoOperation = FetchMediaPhotoOperation(urlRequest: urlRequest, imageSize: 500)
+//        let cachePhoto = BlockOperation {
+//            if let data = fetchPhotoOperation.imageData, let response = fetchPhotoOperation.response {
+//                let cachedData = CachedURLResponse(response: response, data: data)
+//                self.musicController.cache.storeCachedResponse(cachedData, for: urlRequest)
+//                self.imageCache.setValue(for: indexPath, value: data)
+//            }
+//        }
+        
+//        let setMediaPhoto = BlockOperation {
+//            defer { self.operations.removeValue(forKey: indexPath) }
+//
+//            if let currentIndexPath = self.collectionView.indexPath(for: cell as! UICollectionViewCell), currentIndexPath != indexPath {
+//                print("Cell was reused")
+//                return
+//            }
+//
+//            if let fetchedData = fetchPhotoOperation.imageData {
+//                cell.mediaImageView.image = UIImage(data: fetchedData)
+//            }
+//        }
+//        cachePhoto.addDependency(fetchPhotoOperation)
+//        setMediaPhoto.addDependency(fetchPhotoOperation)
+//        photoQueue.addOperations([fetchPhotoOperation, cachePhoto], waitUntilFinished: false)
+//        OperationQueue.main.addOperation(setMediaPhoto)
+//        operations[indexPath] = fetchPhotoOperation
+//    }
 }
 
 extension SearchViewController: UICollectionViewDelegate {
@@ -299,5 +354,19 @@ extension SearchViewController: UICollectionViewDelegate {
         default:
             break
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        operations[indexPath]?.cancel()
+//        switch indexPath.section {
+//        case 0:
+//            let album = musicController.searchedAlbums[indexPath.item]
+//            operations[album.id]?.cancel()
+//        case 1:
+//            let song = musicController.searchedSongs[indexPath.item]
+//            operations[song.id]?.cancel()
+//        default:
+//            break
+//        }
     }
 }
