@@ -31,13 +31,12 @@ class PlaylistViewController: UIViewController {
     private func configureContentView() {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Playlists"
-//        let height = view.frame.size.height
-//        let tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 50
-//        let contentView = UIHostingController(rootView: NowPlayingView(musicController: musicController, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: height, tabBarHeight: tabBarHeight).environmentObject(musicController.nowPlayingViewModel))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(createNewPlaylist))
         view.backgroundColor = .backgroundColor
-//        addChild(contentView)
-//        view.addSubview((contentView.view))
-//        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         view.layer.cornerRadius = 20
+    }
+    
+    @objc private func createNewPlaylist() {
+        coordinator?.presentCreatePlaylistVC()
     }
 }

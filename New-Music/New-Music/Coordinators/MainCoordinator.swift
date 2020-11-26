@@ -17,14 +17,13 @@ class MainCoordinator: NSObject {
     private var nowPlayingNav = UINavigationController(rootViewController: NowPlayingViewController())
     private var tabBarController = AppTabBarViewController()
     private var playlistNav = UINavigationController(rootViewController: PlaylistViewController()) 
-    private var searchNav = UINavigationController(rootViewController: SearchViewController())
+    private var searchNav = UINavigationController(rootViewController: SearchViewController(isPlaylistSearch: false))
     private var musicController = MusicController()
     private var nowPlayingFullVC = NowPlayingFullViewController()
     private var transitionCoordinator = NowPlayingTransitionCoordinator()
     private var nowPlayingBarVC =  NowPlayingBarViewController()
     private var transitionAnimator: UIViewPropertyAnimator?
-    var childVCCoordinator = ChildVCCoordinator()
-    let height = UIScreen.main.bounds.height / 11
+    private var childVCCoordinator = ChildVCCoordinator()
     
     init(window: UIWindow) {
         self.window = window
@@ -88,6 +87,14 @@ class MainCoordinator: NSObject {
     
     func dismissNowPlayingVC() {
         tabBarController.dismiss(animated: true, completion: nil)
+    }
+    
+    func presentCreatePlaylistVC() {
+        let createPlaylistNav = UINavigationController(rootViewController: CreatePlaylistViewController())
+        let createPlaylistVC = createPlaylistNav.topViewController as! CreatePlaylistViewController
+        createPlaylistVC.musicController = musicController
+        createPlaylistVC.coordinator = self
+        playlistNav.present(createPlaylistNav, animated: true)
     }
     
     func passTabBarSelectedView() {

@@ -22,7 +22,7 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
     var textColor3: String
     var textColor4: String
     var albumArtwork: Data?
-    var imageURL: URL
+    var imageURL: URL?
     var stringURL: String
     var isPlaying = false 
     
@@ -63,19 +63,19 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
         self.textColor4 = try artworkContainer.decode(String.self, forKey: .textColor4)
     }
     
-    init(songName: String, artistName: String, imageURL: URL) {
+    init(songName: String, artistName: String, imageURL: URL? = nil, playID: String = "", kind: String = "", albumName: String = "", accentColorHex: String = "", stringURL: String = "", textColorHex: String = "", textColor2Hex: String = "", textColor3Hex: String = "", textColor4Hex: String = "") {
         self.songName = songName
         self.artistName = artistName
         self.imageURL = imageURL
-        self.playID = ""
-        self.kind = ""
-        self.albumName = ""
-        self.accentColorHex = ""
-        self.stringURL = ""
-        self.textColor = ""
-        self.textColor2 = ""
-        self.textColor3 = ""
-        self.textColor4 = ""
+        self.playID = playID
+        self.kind = kind
+        self.albumName = albumName
+        self.accentColorHex = accentColorHex
+        self.stringURL = stringURL
+        self.textColor = textColorHex
+        self.textColor2 = textColor2Hex
+        self.textColor3 = textColor3Hex
+        self.textColor4 = textColor4Hex
     }
 }
 

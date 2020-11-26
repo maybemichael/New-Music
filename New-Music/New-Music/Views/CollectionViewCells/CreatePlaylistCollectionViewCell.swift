@@ -1,38 +1,17 @@
 //
-//  CurrentPlaylistCollectionViewCell.swift
+//  CreatePlaylistCollectionViewCell.swift
 //  New-Music
 //
-//  Created by Michael McGrath on 11/8/20.
+//  Created by Michael McGrath on 11/25/20.
 //
 
-import SwiftUI
+import UIKit
 
-class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
-    static let identifier = "CurrentPlaylistCell"
-    var hostedView: UIView? {
-        didSet {
-            if let oldValue = oldValue {
-                if oldValue.isDescendant(of: self) {
-                    oldValue.removeFromSuperview()
-                }
-            }
-            if let hostedView = hostedView {
-                holderView.addSubview(hostedView)
-
-                hostedView.center = holderView.center
-                hostedView.setSize(width: UIScreen.main.bounds.width / 9, height: UIScreen.main.bounds.width / 5.5)
-            }
-        }
-    }
+class CreatePlaylistCollectionViewCell: UICollectionViewCell {
+    static let identifier = "CreatePlaylistCell"
     var song: Song? {
         didSet {
             updateViews()
-        }
-    }
-    
-    var indicatorView: PlayingIndicatorViewController? {
-        didSet {
-
         }
     }
     
@@ -57,21 +36,8 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 7
-        imageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         imageView.setSize(width: contentView.bounds.height - 8, height: contentView.bounds.height - 8)
         return imageView
-    }()
-    
-    lazy var innerStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
-        stackView.axis = .vertical
-        return stackView
-    }()
-    
-    lazy var holderView: UIView = {
-        let view = UIView()
-        view.setSize(width: UIScreen.main.bounds.width / 9, height: contentView.bounds.height - 8)
-        return view
     }()
     
     let separatorView: UIView = {
@@ -80,6 +46,12 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.heightAnchor.constraint(equalToConstant: 1).isActive = true
         return view
+    }()
+    
+    lazy var innerStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
+        stackView.axis = .vertical
+        return stackView
     }()
     
     override init(frame: CGRect) {
@@ -92,7 +64,8 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUpViews() {
-        let outerStackView = UIStackView(arrangedSubviews: [imageView, innerStackView, holderView])
+        
+        let outerStackView = UIStackView(arrangedSubviews: [imageView, innerStackView])
         outerStackView.alignment = .center
         outerStackView.distribution = .fill
         outerStackView.spacing = 8
@@ -111,11 +84,5 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         if let imageData = song.albumArtwork {
             imageView.image = UIImage(data: imageData)
         }
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        hostedView?.removeFromSuperview()
-        hostedView = nil
     }
 }

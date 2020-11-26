@@ -7,6 +7,7 @@
 
 import Foundation
 import MediaPlayer
+import CoreData
 
 class MusicController: ObservableObject {
 
@@ -16,8 +17,13 @@ class MusicController: ObservableObject {
     private let library = MPMediaLibrary()
     private var indexOfSongAdded = Int()
     private var isSearchedSong = false
-    let cache = URLCache(memoryCapacity: 1024 * 1024 * 100, diskCapacity: 1024 * 1024 * 100, diskPath: "ImageCache")
     var sections = [Section]()
+    var createPlaylistSongs = [Song]()
+    var userPlaylists = [Playlist]() {
+        didSet {
+            print("User Playlists: \(self.userPlaylists)")
+        }
+    }
     
     var currentPlaylist = [Song]() {
         didSet {
@@ -65,11 +71,15 @@ class MusicController: ObservableObject {
         }
     }
     
-    func addSongToPlaylist(song: Song) {
-        currentPlaylist.append(song)
-        currentQueue.storeIDs?.append(song.playID)
+    func addSongToPlaylist(song: Song, isPlaylistSearch: Bool) {
         nowPlayingViewModel.playingMediaType = .playlist
-        songsAdded = true
+        if isPlaylistSearch {
+            createPlaylistSongs.append(song)
+        } else {
+            currentPlaylist.append(song)
+            currentQueue.storeIDs?.append(song.playID)
+            songsAdded = true
+        }
     }
     
     func playlistSongTapped(index: Int) {
@@ -106,9 +116,51 @@ class MusicController: ObservableObject {
         }
     }
     
+    func saveToPersistentStore() {
+        do {
+            try CoreDataStack.shared.save()
+        } catch {
+            print("Error Saving Managed Object Context: \(error)")
+            CoreDataStack.shared.mainContext.reset()
+        }
+    }
+    
+    func savePlaylistSongs(persistedPlaylist: PersistedPlaylist) {
+        guard !createPlaylistSongs.isEmpty else { return }
+        self.createPlaylistSongs.forEach {
+            if let playlistSong = PlaylistSong(song: $0) {
+                persistedPlaylist.mutableSetValue(forKey: "playlistSongs").add(playlistSong as PlaylistSong)
+            }
+        }
+        self.saveToPersistentStore()
+    }
+    
     init() {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
+        do {
+            let fetchRequest: NSFetchRequest<PersistedPlaylist> = PersistedPlaylist.fetchRequest()
+            let playlists = try CoreDataStack.shared.mainContext.fetch(fetchRequest)
+            playlists.forEach {
+                if var playlist = $0.playlist {
+                    if let songs = $0.playlistSongs {
+                        songs.forEach {
+                            if let playlistSong = $0 as? PlaylistSong {
+                                if let song = playlistSong.song {
+                                    playlist.songs.append(song)
+                                }
+                            }
+                        }
+                    }
+                    self.userPlaylists.append(playlist)
+                }
+            }
+            
+            let playlist = userPlaylists[0]
+            print("Playlist songs: \(playlist.songs)")
+        } catch {
+            print("Unable to successfully perform fetch request.")
+        }
     }
     
     deinit {

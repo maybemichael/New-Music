@@ -36,7 +36,7 @@ struct Media: Hashable, MediaItem {
     }
 }
 
-struct Section: Hashable {
+class Section: Hashable {
     static func == (lhs: Section, rhs: Section) -> Bool {
         lhs.id == rhs.id
     }
