@@ -54,36 +54,14 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
                 return cell
             case .song(let song):
                 let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
-//                cell.contentView.backgroundColor = .black
                 return cell
                 
             }
-//            guard
-//                let self = self,
-//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaylistCollectionViewCell.identifier, for: indexPath) as? PlaylistCollectionViewCell
-//            else { fatalError() }
-//            guard let self = self else { fatalError() }
-//            let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
-//            cell.artistLabel.text = song.artistName
-//            cell.songTitleLabel.text = song.artistName
-//            cell.song = song
-//            return cell
         }
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
-//            guard
-//                let self = self,
-//                let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.identifier, for: indexPath) as? SectionHeader
-//            else { fatalError() }
-//            let thing = self.dataSource.snapshot().sectionIdentifier(containingItem: <#T##PlaylistMedia#>)
-//            guard
-//                let song = self.dataSource.itemIdentifier(for: indexPath),
-//                let playlist = self.dataSource.snapshot().sectionIdentifier(containingItem: song)
-//            else { return nil }
             guard let self = self else { fatalError() }
-//            sectionHeader.titleLabel.text = self.musicController.userPlaylists[indexPath.section].playlistName
             let headerView = collectionView.dequeueConfiguredReusableSupplementary(using: self.makePlaylistHeaderRegistration(), for: indexPath)
             return headerView
-//            return sectionHeader
         }
         
         dataSource.reorderingHandlers.canReorderItem = { song -> Bool in
@@ -122,7 +100,6 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment -> NSCollectionLayoutSection? in
             let config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
             let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
-//            section.contentInsets
             return section
         }
         return layout
@@ -145,8 +122,6 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.secondaryTextProperties.color = .white
             content.textProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
             content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
-//            cell.backgroundColor = .clear
-//            cell.contentView.backgroundColor = .clear
             
             if let imageData = song.albumArtwork {
                 content.image = UIImage(data: imageData)

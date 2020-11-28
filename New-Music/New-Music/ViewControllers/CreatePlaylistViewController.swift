@@ -37,7 +37,9 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
     }()
     
     lazy var collectionView: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
+        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
+        let listLayout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: listLayout)
         cv.register(CreatePlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CreatePlaylistCollectionViewCell.identifier)
         cv.backgroundColor = .clear
         return cv
@@ -45,10 +47,12 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
     
     lazy var dataSource: CreatePlaylistDataSource = {
         let dataSource = CreatePlaylistDataSource(collectionView: collectionView) { collectionView, indexPath, song -> UICollectionViewCell? in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreatePlaylistCollectionViewCell.identifier, for: indexPath) as! CreatePlaylistCollectionViewCell
-        
-            let song = self.musicController?.createPlaylistSongs[indexPath.item]
-            cell.song = song
+            
+            let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreatePlaylistCollectionViewCell.identifier, for: indexPath) as! CreatePlaylistCollectionViewCell
+//
+//            let song = self.musicController?.createPlaylistSongs[indexPath.item]
+//            cell.song = song
             
             return cell
         }
@@ -65,6 +69,37 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
         playlistNameTextField.resignFirstResponder()
     }
     
+    private func makeCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Song> {
+        let songCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Song> { cell, indexPath, song in
+            var content = cell.defaultContentConfiguration()
+            content.imageProperties.maximumSize = CGSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
+            content.imageProperties.cornerRadius = 7
+            content.textProperties.color = .lightText
+            content.secondaryTextProperties.color = .white
+            content.textProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            
+            if let imageData = song.albumArtwork {
+                content.image = UIImage(data: imageData)
+            } else {
+                APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+                    switch result {
+                    case .success(let imageData):
+                        content.image = UIImage(data: imageData!)
+                    case .failure(let error):
+                        print("Unable to fetch image data for song: \(song). Error: \(error.localizedDescription)")
+                    }
+                }
+            }
+            content.text = song.artistName
+            content.secondaryText = song.songName
+            cell.contentConfiguration = content
+            let delete: UICellAccessory = .delete(displayed: .always, actionHandler: { self.deleteSelectedSong(song: song) })
+            let reorder: UICellAccessory = .reorder(displayed: .always)
+            cell.accessories = [delete, reorder]
+        }
+        return songCellRegistration
+    }
     
     private func setupViews() {
         view.backgroundColor = .backgroundColor
@@ -89,6 +124,15 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         let layout = UICollectionViewCompositionalLayout(section: layoutSection)
         return layout
+    }
+    
+    func deleteSelectedSong(song: Song) {
+        guard let indexPath = dataSource.indexPath(for: song) else { return }
+        var snapshot = dataSource.snapshot()
+        if let song = musicController?.createPlaylistSongs.remove(at: indexPath.item) {
+            snapshot.deleteItems([song])
+        }
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
     
     func reloadData() {
