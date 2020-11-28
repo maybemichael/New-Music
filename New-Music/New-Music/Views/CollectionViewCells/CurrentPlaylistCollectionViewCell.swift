@@ -52,7 +52,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var imageView: UIImageView = {
+    lazy var mediaImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
@@ -92,7 +92,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUpViews() {
-        let outerStackView = UIStackView(arrangedSubviews: [imageView, innerStackView, holderView])
+        let outerStackView = UIStackView(arrangedSubviews: [mediaImageView, innerStackView, holderView])
         outerStackView.alignment = .center
         outerStackView.distribution = .fill
         outerStackView.spacing = 8
@@ -109,7 +109,21 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         artistLabel.text = song.artistName
         songTitleLabel.text = song.songName
         if let imageData = song.albumArtwork {
-            imageView.image = UIImage(data: imageData)
+            mediaImageView.image = UIImage(data: imageData)
+        } else {
+            APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+                switch result {
+                case .success(let imageData):
+                    DispatchQueue.main.async {
+                        if let imageData = imageData {
+                            self.song?.albumArtwork = imageData
+                            self.mediaImageView.image = UIImage(data: imageData)
+                        }
+                    }
+                case .failure(let error):
+                    print("Error fetching image data: \(error.localizedDescription)")
+                }
+            }
         }
     }
     

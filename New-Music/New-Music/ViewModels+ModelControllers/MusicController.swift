@@ -21,7 +21,7 @@ class MusicController: ObservableObject {
     var createPlaylistSongs = [Song]()
     var userPlaylists = [Playlist]() {
         didSet {
-            print("User Playlists: \(self.userPlaylists)")
+            
         }
     }
     
@@ -125,16 +125,6 @@ class MusicController: ObservableObject {
         }
     }
     
-    func savePlaylistSongs(persistedPlaylist: PersistedPlaylist) {
-        guard !createPlaylistSongs.isEmpty else { return }
-        self.createPlaylistSongs.forEach {
-            if let playlistSong = PlaylistSong(song: $0) {
-                persistedPlaylist.mutableSetValue(forKey: "playlistSongs").add(playlistSong as PlaylistSong)
-            }
-        }
-        self.saveToPersistentStore()
-    }
-    
     init() {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
@@ -142,22 +132,10 @@ class MusicController: ObservableObject {
             let fetchRequest: NSFetchRequest<PersistedPlaylist> = PersistedPlaylist.fetchRequest()
             let playlists = try CoreDataStack.shared.mainContext.fetch(fetchRequest)
             playlists.forEach {
-                if var playlist = $0.playlist {
-                    if let songs = $0.playlistSongs {
-                        songs.forEach {
-                            if let playlistSong = $0 as? PlaylistSong {
-                                if let song = playlistSong.song {
-                                    playlist.songs.append(song)
-                                }
-                            }
-                        }
-                    }
-                    self.userPlaylists.append(playlist)
+                if let playlist = $0.playlist {
+                    userPlaylists.append(playlist)
                 }
             }
-            
-            let playlist = userPlaylists[0]
-            print("Playlist songs: \(playlist.songs)")
         } catch {
             print("Unable to successfully perform fetch request.")
         }

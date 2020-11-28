@@ -7,11 +7,7 @@
 
 import Foundation
 
-enum MediaType: String, Hashable {
-    case song = "Songs"
-    case album = "Albums"
-    case artist = "Artists"
-}
+
 
 //extension MediaType: Codable {
 //    enum TypeKeys: CodingKey {

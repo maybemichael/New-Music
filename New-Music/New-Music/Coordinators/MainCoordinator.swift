@@ -94,6 +94,7 @@ class MainCoordinator: NSObject {
         let createPlaylistVC = createPlaylistNav.topViewController as! CreatePlaylistViewController
         createPlaylistVC.musicController = musicController
         createPlaylistVC.coordinator = self
+        createPlaylistVC.reloadDataDelegate = playlistNav.topViewController as! PlaylistViewController
         playlistNav.present(createPlaylistNav, animated: true)
     }
     

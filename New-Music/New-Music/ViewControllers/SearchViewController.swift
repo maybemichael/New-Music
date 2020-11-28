@@ -21,7 +21,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     var cancellable = [AnyCancellable]()
     var isPlaylistSearch: Bool
     var sections = [Section]()
-    weak var createPlaylistDelegate: CreatePlaylistDelegate?
+    weak var reloadDataDelegate: ReloadDataDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,7 +113,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     }
 
     private func configureCollectionView() {
-        collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createCompLayout())
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompLayout())
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
         collectionView.register(SongsCollectionViewCell.self, forCellWithReuseIdentifier: SongsCollectionViewCell.identifier)
         collectionView.register(AlbumsCollectionViewCell.self, forCellWithReuseIdentifier: AlbumsCollectionViewCell.identifier)
@@ -136,14 +136,14 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     }
     
     private func createDataSource() {
-        dataSource = SearchDataSource(collectionView: collectionView) { collectionView, indexPath, media in
-            switch self.sections[indexPath.section].mediaType {
+        dataSource = SearchDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, media in
+            switch self?.sections[indexPath.section].mediaType {
             case .song:
-                return self.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
+                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
             case .album:
-                return self.configure(AlbumsCollectionViewCell.self, with: media, for: indexPath)
+                return self?.configure(AlbumsCollectionViewCell.self, with: media, for: indexPath)
             default:
-                return self.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
+                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
             }
         }
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
@@ -235,14 +235,22 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     
     func addSongTapped(cell: SongsCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
-        var song = musicController.searchedSongs[indexPath.item].media as! Song
-        APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+        let selectedMedia = musicController.searchedSongs[indexPath.item]
+        APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
             switch result {
             case .success(let imageData):
-                song.albumArtwork = imageData
-                self.musicController.addSongToPlaylist(song: song, isPlaylistSearch: self.isPlaylistSearch)
+                var mutableMedia = selectedMedia
+                var addedSong = mutableMedia.media as! Song
+                addedSong.albumArtwork = imageData
+                addedSong.isAdded = true
+//                mutableMedia.media = addedSong
+//                var songSnapshot = self.dataSource?.snapshot()
+//                songSnapshot?.insertItems([mutableMedia], beforeItem: selectedMedia)
+//                songSnapshot?.deleteItems([selectedMedia])
+//                self.dataSource?.apply(songSnapshot!)
+                self.musicController.addSongToPlaylist(song: addedSong, isPlaylistSearch: self.isPlaylistSearch)
                 if self.isPlaylistSearch {
-                    self.createPlaylistDelegate?.reloadData()
+                    self.reloadDataDelegate?.reloadData()
                 }
             case .failure(let error):
                 print("Error fetching image data: \(error)")

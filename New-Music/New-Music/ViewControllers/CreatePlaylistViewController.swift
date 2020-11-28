@@ -8,10 +8,11 @@
 import UIKit
 import Combine
 
-class CreatePlaylistViewController: UIViewController, CreatePlaylistDelegate {
-
+class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistDelegate {
+    
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
+    weak var reloadDataDelegate: ReloadDataDelegate?
     typealias CreatePlaylistDataSource = UICollectionViewDiffableDataSource<Int, Song>
     typealias CreatePlaylistSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
     
@@ -25,10 +26,12 @@ class CreatePlaylistViewController: UIViewController, CreatePlaylistDelegate {
         return textField
     }()
     
-    let addMusicButton: UIButton = {
-        let button = UIButton()
+    let addMusicButton: NeuMusicButton = {
+        let button = NeuMusicButton()
+        button.tintColor = .white
         button.setTitle("Add Music", for: .normal)
-        button.backgroundColor = .clear
+        button.setSize(width: 125, height: 40)
+        button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(presentSearchVC), for: .touchUpInside)
         return button
     }()
@@ -72,7 +75,7 @@ class CreatePlaylistViewController: UIViewController, CreatePlaylistDelegate {
         view.addSubview(addMusicButton)
         view.addSubview(collectionView)
         playlistNameTextField.anchor(top: view.safeAreaLayoutGuide.topAnchor, centerX: view.centerXAnchor, padding: .init(top: 20, left: 0, bottom: 0, right: 0))
-        addMusicButton.anchor(top: playlistNameTextField.bottomAnchor, centerX: view.centerXAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0), size: .init(width: UIScreen.main.bounds.width / 3, height: 50))
+        addMusicButton.anchor(top: playlistNameTextField.bottomAnchor, centerX: view.centerXAnchor, padding: .init(top: 20, left: 0, bottom: 0, right: 0), size: .init(width: UIScreen.main.bounds.width / 3, height: 50))
         collectionView.anchor(top: addMusicButton.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
     }
     
@@ -95,6 +98,13 @@ class CreatePlaylistViewController: UIViewController, CreatePlaylistDelegate {
         dataSource.apply(snapshot)
     }
     
+    func setQueue(with playlist: Playlist) {
+        let newQueue = playlist.songs.map { $0.playID }
+        musicController?.musicPlayer.setQueue(with: newQueue)
+        musicController?.currentPlaylist = playlist.songs
+        musicController?.play()
+    }
+    
     @objc private func cancelNewPlaylist() {
         musicController?.createPlaylistSongs.removeAll()
         self.dismiss(animated: true, completion: nil)
@@ -112,21 +122,11 @@ class CreatePlaylistViewController: UIViewController, CreatePlaylistDelegate {
         }
         
         let playlist = Playlist(playlistName: playlistName, songs: musicController.createPlaylistSongs)
-        if let persistedPlaylist = PersistedPlaylist(playlist: playlist) {
-//            var persistedSongs = [PlaylistSong]()
-            musicController.createPlaylistSongs.forEach {
-                if let playlistSong = PlaylistSong(song: $0) {
-//                    persistedPlaylist.mutableOrderedSetValue(forKey: "playlistSongs").add(playlistSong)
-                    persistedPlaylist.addToPlaylistSongs(playlistSong)
-//                    persistedSongs.append(playlistSong)
-                }
-            }
-//            persistedPlaylist.playlistSongs = NSOrderedSet(array: persistedSongs)
-            musicController.saveToPersistentStore()
-//            musicController.savePlaylistSongs(persistedPlaylist: persistedPlaylist)
-        }
+        _ = PersistedPlaylist(playlist: playlist)
+        musicController.saveToPersistentStore()
         musicController.userPlaylists.append(playlist)
         musicController.createPlaylistSongs.removeAll()
+        reloadDataDelegate?.reloadData()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -134,7 +134,7 @@ class CreatePlaylistViewController: UIViewController, CreatePlaylistDelegate {
         let searchNav = UINavigationController(rootViewController: SearchViewController(isPlaylistSearch: true))
         let searchVC = searchNav.topViewController as! SearchViewController
         searchVC.musicController = self.musicController
-        searchVC.createPlaylistDelegate = self
+        searchVC.reloadDataDelegate = self
         self.present(searchNav, animated: true)
     }
 }

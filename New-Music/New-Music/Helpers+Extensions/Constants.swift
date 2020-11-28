@@ -72,3 +72,14 @@ enum PlayingMediaType {
     case playlist
     case album
 }
+
+enum MediaType: String, Hashable {
+    case song = "Songs"
+    case album = "Albums"
+    case artist = "Artists"
+}
+
+enum PlaylistMedia: Hashable {
+    case song(Song)
+    case playlist(Playlist)
+}

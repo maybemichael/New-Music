@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Playlist {
+struct Playlist: Hashable {
     var id: String = UUID().uuidString
     var playlistName: String
     var songs: [Song]

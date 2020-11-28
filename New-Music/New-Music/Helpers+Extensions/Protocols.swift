@@ -24,6 +24,10 @@ protocol SearchCellDelegate: AnyObject {
     func addSongTapped(cell: SongsCollectionViewCell)
 }
 
-protocol CreatePlaylistDelegate: AnyObject {
+protocol ReloadDataDelegate: AnyObject {
     func reloadData()
+}
+
+protocol SetPlaylistDelegate: AnyObject {
+    func setQueue(with playlist: Playlist)
 }
