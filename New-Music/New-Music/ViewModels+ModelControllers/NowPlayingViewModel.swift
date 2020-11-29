@@ -40,9 +40,13 @@ class NowPlayingViewModel: ObservableObject {
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {
-                if self.albumArtwork == nil {
-                    self.updateAlbumArtwork { _ in
-                        self.didChange.send(self.albumArtwork)
+                if self.albumArtwork == nil && self.nowPlayingSong != nil {
+                    if let data = self.nowPlayingSong?.albumArtwork {
+                        self.albumArtwork = UIImage(data: data)
+                    } else {
+                        self.updateAlbumArtwork { _ in
+                            self.didChange.send(self.albumArtwork)
+                        }
                     }
                 }
             }
@@ -146,7 +150,10 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     private func updateAlbumArtwork(completion: @escaping (Result<UIImage?, NetworkError>) -> Void) {
-        if let imageURL = nowPlayingSong?.imageURL {
+        guard var stringURL = nowPlayingSong?.stringURL else { return }
+        stringURL = stringURL.replacingOccurrences(of: "{w}", with: String(Int(500))).replacingOccurrences(of: "{h}", with: String(Int(500)))
+        let imageURL = URL(string: stringURL)!
+//        if let imageURL = nowPlayingSong?.stringURL {
             URLSession.shared.dataTask(with: imageURL) { data, _, error in
                 if let networkError = NetworkError(data: data, response: nil, error: error) {
                     print("Error retrieving image data: \(networkError.localizedDescription)")
@@ -158,7 +165,7 @@ class NowPlayingViewModel: ObservableObject {
                 }
                 completion(.success(self.albumArtwork))
             }.resume()
-        }
+//        }
     }
     
     private func getGradientColors() -> (lighter: Color, darker: Color)? {

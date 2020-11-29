@@ -22,14 +22,19 @@ class PlayingIndicatorViewController: UIHostingController<PlayingIndicatorView> 
         // Do any additional setup after loading the view.
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+    
     init(song: Song, contentView: PlayingIndicatorView, musicController: MusicController) {
         self.song = song
         self.musicController = musicController
         super.init(rootView: contentView)
         
     }
-    
+
     @objc required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("Storyboard is horrible")
     }
 }

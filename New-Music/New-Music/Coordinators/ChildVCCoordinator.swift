@@ -29,5 +29,6 @@ class ChildVCCoordinator: NSObject {
         viewController.removeFromParent()
         viewControllersByIndexPath.removeValue(forKey: indexPath)
         unusedViewControllers.insert(viewController)
+        
     }
 }

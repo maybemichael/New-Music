@@ -46,15 +46,21 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
     }()
     
     lazy var dataSource: CreatePlaylistDataSource = {
-        let dataSource = CreatePlaylistDataSource(collectionView: collectionView) { collectionView, indexPath, song -> UICollectionViewCell? in
-            
+        let dataSource = CreatePlaylistDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, song -> UICollectionViewCell? in
+            guard let self = self else { return nil }
             let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
-//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreatePlaylistCollectionViewCell.identifier, for: indexPath) as! CreatePlaylistCollectionViewCell
-//
-//            let song = self.musicController?.createPlaylistSongs[indexPath.item]
-//            cell.song = song
             
             return cell
+        }
+        dataSource.reorderingHandlers.canReorderItem = { song -> Bool in
+            return true
+        }
+        
+        dataSource.reorderingHandlers.didReorder = { transaction in
+            let section = transaction.sectionTransactions.first
+            if let playlistSongs = section?.finalSnapshot.items {
+                self.musicController?.createPlaylistSongs = playlistSongs
+            }
         }
         return dataSource
     }()

@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistDelegate {
-    
+
     private var subscriptions = Set<AnyCancellable>()
     private var nowPlayingViewModel: NowPlayingViewModel!
     typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, PlaylistMedia>
@@ -59,7 +59,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             }
         }
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
-            guard let self = self else { fatalError() }
+            guard let self = self else { return nil }
             let headerView = collectionView.dequeueConfiguredReusableSupplementary(using: self.makePlaylistHeaderRegistration(), for: indexPath)
             return headerView
         }
@@ -68,11 +68,19 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             self.collectionView.isEditing
         }
         
-        dataSource.reorderingHandlers.didReorder = { transaction in
+        dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+            guard let self = self else { return }
+            var songs = [Song]()
             transaction.sectionTransactions.forEach {
                 let sectionIdentifier = $0.sectionIdentifier
+                var songs = [Song]()
+                $0.finalSnapshot.items.forEach {
+                    if case PlaylistMedia.song(let song) = $0 {
+                        songs.append(song)
+                    }
+                }
                 if let sectionIndex = transaction.finalSnapshot.indexOfSection(sectionIdentifier) {
-//                    self.musicController.userPlaylists[sectionIndex].songs = $0.finalSnapshot.items
+                    self.musicController.userPlaylists[sectionIndex].songs = songs
                 }
             }
         }
@@ -84,6 +92,11 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
 
         navigationController?.view.layer.cornerRadius = 20
         setupViews()
+        reloadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         reloadData()
     }
     
@@ -106,15 +119,23 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     }
     
     private func deleteSelectedSong(song: Song) {
+        var snapshot = dataSource.snapshot()
+        let playlistMedia = PlaylistMedia.song(song)
+        guard let indexPath = dataSource.indexPath(for: playlistMedia) else { return }
+        snapshot.deleteItems([playlistMedia])
+//        musicController.userPlaylists[indexPath.section].songs.remove(at: indexPath.item - 1)
+        if let index = musicController.userPlaylists[indexPath.section].songs.firstIndex(of: song) {
+            musicController.userPlaylists[indexPath.section].songs.remove(at: index)
+        }
 //        guard let indexPath = dataSource.indexPath(for: song) else { return }
-//        musicController.userPlaylists[indexPath.section].songs.remove(at: indexPath.item)
+//        let x = musicController.userPlaylists[indexPath.section].songs.remove(at: indexPath.item)
 //        var snapshot = dataSource.snapshot()
 //        snapshot.deleteItems([song])
-//        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
     
     private func makeCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Song> {
-        let songCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Song> { cell, indexPath, song in
+        let songCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Song> { [weak self] cell, indexPath, song in
             var content = cell.defaultContentConfiguration()
             content.imageProperties.maximumSize = CGSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
             content.imageProperties.cornerRadius = 7
@@ -122,7 +143,6 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.secondaryTextProperties.color = .white
             content.textProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
             content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
-            
             if let imageData = song.albumArtwork {
                 content.image = UIImage(data: imageData)
             } else {
@@ -138,7 +158,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.text = song.artistName
             content.secondaryText = song.songName
             cell.contentConfiguration = content
-            let delete: UICellAccessory = .delete(displayed: .whenEditing, actionHandler: { self.deleteSelectedSong(song: song) })
+            let delete: UICellAccessory = .delete(displayed: .whenEditing, actionHandler: { self?.deleteSelectedSong(song: song) })
             let reorder: UICellAccessory = .reorder(displayed: .whenEditing)
             cell.accessories = [delete, reorder]
         }
@@ -151,14 +171,10 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             if let item = self.dataSource.itemIdentifier(for: indexPath), let playlist = self.dataSource.snapshot().sectionIdentifier(containingItem: item) {
                 content.text = playlist.playlistName
             }
-            content.textProperties.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+            content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
             content.textProperties.color = .white
             content.textProperties.adjustsFontForContentSizeCategory = true
             header.contentConfiguration = content
-//            header.backgroundColor = .backgroundColor
-//            header.contentView.backgroundColor = .backgroundColor
-//            let headerDisclosureOption = UICellAccessory.OutlineDisclosureOptions(style: .automatic, isHidden: false, reservedLayoutWidth: .actual, tintColor: .white)
-//            header.accessories = [.outlineDisclosure(displayed: .always, options: headerDisclosureOption, actionHandler: .none)]
         }
         return playlistHeaderRegistration
     }
@@ -187,26 +203,17 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             sectionSnapshot.append(playlistSongs, to: playlistItem)
             dataSource.apply(sectionSnapshot, to: $0, animatingDifferences: true)
         }
-//        dataSource.apply(snapshot)
-//        musicController.userPlaylists.forEach {
-//            let playlistItem = PlaylistMedia.playlist($0)
-//            sectionSnapshot.append([playlistItem], to: )
-//            let playlistSongs = $0.songs.map { PlaylistMedia.song($0) }
-//            sectionSnapshot.append(playlistSongs, to: playlistItem)
-//            sectionSnapshot.expand([playlistItem])
-//        }
-//        dataSource.apply(sectionSnapshot, to: 0, animatingDifferences: true)
     }
     
     func setQueue(with playlist: Playlist) {
         let newQueue = playlist.songs.map { $0.playID }
+        musicController.updateAlbumArtwork(for: playlist)
         musicController?.musicPlayer.setQueue(with: newQueue)
         musicController?.currentPlaylist = playlist.songs
         musicController?.play()
     }
     
     @objc private func createNewPlaylist() {
-        
         coordinator?.presentCreatePlaylistVC()
     }
 }

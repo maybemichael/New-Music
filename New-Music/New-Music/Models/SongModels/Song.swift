@@ -23,7 +23,7 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
     var textColor4: String
     var albumArtwork: Data?
     var imageURL: URL?
-    var stringURL: String
+    var stringURL: String 
     var isPlaying = false 
     
     enum SongKeys: String, CodingKey {

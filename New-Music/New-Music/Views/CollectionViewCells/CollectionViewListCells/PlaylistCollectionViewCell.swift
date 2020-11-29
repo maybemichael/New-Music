@@ -33,7 +33,6 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
         button.tintColor = .white
         button.setSize(width: 125, height: 40)
         button.layer.cornerRadius = 8
-//        button.addTarget(self, action: #selector(listenToPlaylist), for: .touchUpInside)
         return button
     }()
     

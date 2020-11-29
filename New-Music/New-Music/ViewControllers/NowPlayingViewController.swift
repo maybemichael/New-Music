@@ -23,7 +23,8 @@ class NowPlayingViewController: UIViewController {
     }()
     
     lazy var dataSource: CurrentPlaylistDataSource = {
-        let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { collectionView, indexPath, song -> UICollectionViewCell? in
+        let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, song -> UICollectionViewCell? in
+            guard let self = self else { return nil }
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier, for: indexPath) as! CurrentPlaylistCollectionViewCell
             guard
                 let song = self.musicController?.currentPlaylist[indexPath.item],

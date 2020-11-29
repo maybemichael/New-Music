@@ -58,7 +58,7 @@ struct NeuAlbumArtworkView<S: Shape>: View {
 
 struct ArtworkView: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
-//    var size: CGFloat
+    @State var image: UIImage = UIImage()
     var body: some View {
         ZStack {
             Color.clear.opacity(0)

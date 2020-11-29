@@ -95,6 +95,27 @@ class MusicController: ObservableObject {
         musicPlayer.play()
     }
     
+    func updateAlbumArtwork(for playlist: Playlist) {
+        var songs = [Song]()
+            playlist.songs.forEach {
+                var song = $0
+                if song.albumArtwork == nil {
+                    APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+                        switch result {
+                        case .success(let imageData):
+                            song.albumArtwork = imageData
+                        case .failure(let error):
+                            print("Error fetching songs for searchTerm: \(error.localizedDescription)")
+                        }
+                    }
+                }
+                songs.append(song)
+            }
+        if let index = userPlaylists.firstIndex(of: playlist) {
+            userPlaylists[index].songs = songs
+        }
+    }
+    
     @objc func playbackStateDidChange(_ notification: Notification) {
         let playbackState = musicPlayer.playbackState
         switch playbackState {
@@ -131,9 +152,13 @@ class MusicController: ObservableObject {
         do {
             let fetchRequest: NSFetchRequest<PersistedPlaylist> = PersistedPlaylist.fetchRequest()
             let playlists = try CoreDataStack.shared.mainContext.fetch(fetchRequest)
-            playlists.forEach {
-                if let playlist = $0.playlist {
-                    userPlaylists.append(playlist)
+            DispatchQueue.global().async { [weak self] in
+                guard let self = self else { return }
+                playlists.forEach {
+                    if let playlist = $0.playlist {
+                        self.userPlaylists.append(playlist)
+                        self.updateAlbumArtwork(for: playlist)
+                    }
                 }
             }
         } catch {
