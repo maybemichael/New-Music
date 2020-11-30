@@ -12,6 +12,13 @@ class Playlist: Hashable, Codable {
     var id: String = UUID().uuidString
     var playlistName: String
     var songs: [Song]
+    var songCount: Int {
+        return self.songs.count
+    }
+    
+    var totalDuration: Double {
+        return songs.map { $0.duration }.reduce(0, +)
+    }
     
     init(playlistName: String, songs: [Song] = []) {
         self.playlistName = playlistName

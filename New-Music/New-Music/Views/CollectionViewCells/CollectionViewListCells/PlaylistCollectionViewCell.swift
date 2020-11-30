@@ -81,11 +81,13 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
         newConfig.playlistName = playlist?.playlistName
         newConfig.playlist = playlist
         newConfig.setPlaylistDelegate = setPlaylistDelegate
+         
         contentConfiguration = newConfig
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
 //        setupViews()
     }
     
