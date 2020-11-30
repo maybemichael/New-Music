@@ -73,7 +73,7 @@ enum PlayingMediaType {
     case album
 }
 
-enum MediaType: String, Hashable {
+enum MediaType: String, Hashable, Codable {
     case song = "Songs"
     case album = "Albums"
     case artist = "Artists"

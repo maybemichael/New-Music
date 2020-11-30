@@ -19,6 +19,7 @@ class NowPlayingViewController: UIViewController {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
         cv.register(CurrentPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier)
         cv.backgroundColor = .clear
+        cv.contentInset.bottom = 65
         return cv
     }()
     

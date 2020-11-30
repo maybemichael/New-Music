@@ -17,6 +17,13 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
         }
     }
     
+    let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.setSize(width: UIScreen.main.bounds.width / 4, height: UIScreen.main.bounds.width / 4)
+        return view
+    }()
+    
     let playlistNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -37,9 +44,20 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
     }()
     
     private func setupViews() {
-        setSize(width: self.bounds.width, height: 80)
-        contentView.addSubview(playButton)
-        playButton.anchor(leading: contentView.leadingAnchor, centerY: contentView.centerYAnchor, padding: .init(top: 0, left: 20, bottom: 0, right: 0))
+//        let heightConstraint = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 0, constant: UIScreen.main.bounds.width / 4)
+//        heightConstraint.isActive = true
+//        heightConstraint.priority = UILayoutPriority(rawValue: 999)
+//        setSize(width: self.bounds.width, height: 80)
+        contentView.addSubview(containerView)
+//        contentView.addSubview(playButton)
+//        contentView.addSubview(playlistNameLabel)
+        containerView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, bottom: contentView.bottomAnchor)
+        containerView.addSubview(playButton)
+        containerView.addSubview(playlistNameLabel)
+        
+        playlistNameLabel.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, padding: .init(top: 8, left: 20, bottom: 0, right: 0))
+        playButton.anchor(top: playlistNameLabel.bottomAnchor, leading: containerView.leadingAnchor, padding: .init(top: 8, left: 20, bottom: 0, right: 0))
+//        playButton.anchor(leading: contentView.leadingAnchor, centerY: contentView.centerYAnchor, padding: .init(top: 0, left: 20, bottom: 0, right: 0))
         separatorLayoutGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         let headerDisclosureOption = UICellAccessory.OutlineDisclosureOptions(style: .header, isHidden: false, tintColor: .white)
         let outlineDisclosure: UICellAccessory = .outlineDisclosure(displayed: .always, options: headerDisclosureOption, actionHandler: .none)

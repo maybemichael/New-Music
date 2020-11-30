@@ -23,7 +23,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     
     lazy var collectionView: UICollectionView = {
         var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
-        layoutConfig.headerMode = .supplementary
+//        layoutConfig.headerMode = .supplementary
         layoutConfig.backgroundColor = .backgroundColor
         let listLayout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
         let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
@@ -36,7 +36,8 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     
     let playlistCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Playlist> { cell, indexPath, playlist in
         var content = cell.defaultContentConfiguration()
-        content.text = playlist.playlistName
+        content.text = playlist.playlistName.lowercased().capitalized
+        content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
         cell.contentConfiguration = content
         let headerDisclosureOption = UICellAccessory.OutlineDisclosureOptions(style: .cell, isHidden: false, tintColor: .white)
         cell.accessories = [.outlineDisclosure(displayed: .always, options: headerDisclosureOption, actionHandler: .none)]
@@ -48,7 +49,10 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             guard let self = self else { fatalError() }
             switch playlistMedia {
             case .playlist(let playlist):
+//                let cell = collectionView.dequeueConfiguredReusableCell(using: self.playlistCellRegistration, for: indexPath, item: playlist)
+//                cell.sizeToFit()
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaylistCollectionViewCell.identifier, for: indexPath) as! PlaylistCollectionViewCell
+                cell.sizeToFit()
                 cell.playlist = playlist
                 cell.setPlaylistDelegate = self
                 return cell
@@ -58,11 +62,12 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
                 
             }
         }
-        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
-            guard let self = self else { return nil }
-            let headerView = collectionView.dequeueConfiguredReusableSupplementary(using: self.makePlaylistHeaderRegistration(), for: indexPath)
-            return headerView
-        }
+//        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
+//            guard let self = self else { return nil }
+//
+//            let headerView = collectionView.dequeueConfiguredReusableSupplementary(using: self.makePlaylistHeaderRegistration(), for: indexPath)
+//            return headerView
+//        }
         
         dataSource.reorderingHandlers.canReorderItem = { song -> Bool in
             self.collectionView.isEditing
@@ -97,7 +102,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        reloadData()
+
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -123,14 +128,9 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         let playlistMedia = PlaylistMedia.song(song)
         guard let indexPath = dataSource.indexPath(for: playlistMedia) else { return }
         snapshot.deleteItems([playlistMedia])
-//        musicController.userPlaylists[indexPath.section].songs.remove(at: indexPath.item - 1)
         if let index = musicController.userPlaylists[indexPath.section].songs.firstIndex(of: song) {
             musicController.userPlaylists[indexPath.section].songs.remove(at: index)
         }
-//        guard let indexPath = dataSource.indexPath(for: song) else { return }
-//        let x = musicController.userPlaylists[indexPath.section].songs.remove(at: indexPath.item)
-//        var snapshot = dataSource.snapshot()
-//        snapshot.deleteItems([song])
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
@@ -143,6 +143,12 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.secondaryTextProperties.color = .white
             content.textProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
             content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            content.imageToTextPadding = 0
+            content.textToSecondaryTextVerticalPadding = 0
+//            content.imageProperties
+            content.imageProperties.reservedLayoutSize = CGSize(width: (UIScreen.main.bounds.width / 7) + 16, height: (UIScreen.main.bounds.width / 7) + 16)
+            content.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+//            cell.separatorLayoutGuide.leadingAnchor.constraint(equalTo: cell.leadingAnchor).isActive = true
             if let imageData = song.albumArtwork {
                 content.image = UIImage(data: imageData)
             } else {
@@ -168,12 +174,15 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     private func makePlaylistHeaderRegistration() -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
         let playlistHeaderRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { (header: UICollectionViewListCell, string, indexPath) in
             var content = header.defaultContentConfiguration()
-            if let item = self.dataSource.itemIdentifier(for: indexPath), let playlist = self.dataSource.snapshot().sectionIdentifier(containingItem: item) {
-                content.text = playlist.playlistName
-            }
             content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
             content.textProperties.color = .white
-            content.textProperties.adjustsFontForContentSizeCategory = true
+            content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
+            if let item = self.dataSource.itemIdentifier(for: indexPath), let playlist = self.dataSource.snapshot().sectionIdentifier(containingItem: item) {
+//                content.text = playlist.playlistName.lowercased()
+                content.secondaryText = playlist.playlistName
+            }
+
+//            content.textProperties.adjustsFontForContentSizeCategory = false
             header.contentConfiguration = content
         }
         return playlistHeaderRegistration

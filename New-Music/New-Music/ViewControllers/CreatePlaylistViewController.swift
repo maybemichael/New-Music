@@ -173,8 +173,8 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
         
         let playlist = Playlist(playlistName: playlistName, songs: musicController.createPlaylistSongs)
         _ = PersistedPlaylist(playlist: playlist)
-        musicController.saveToPersistentStore()
         musicController.userPlaylists.append(playlist)
+        musicController.saveToPersistentStore()
         musicController.createPlaylistSongs.removeAll()
         reloadDataDelegate?.reloadData()
         self.dismiss(animated: true, completion: nil)

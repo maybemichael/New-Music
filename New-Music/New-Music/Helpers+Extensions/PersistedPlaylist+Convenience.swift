@@ -13,7 +13,6 @@ extension PersistedPlaylist {
     var playlist: Playlist? {
         
         guard
-            let id = self.identifier,
             let playlistName = self.playlistName
         else { return nil }
         
@@ -25,7 +24,7 @@ extension PersistedPlaylist {
                 }
             }
         }
-        return Playlist(id: id, playlistName: playlistName, songs: songs)
+        return Playlist(playlistName: playlistName, songs: songs)
     }
     
     @discardableResult convenience init?(identifier: String,

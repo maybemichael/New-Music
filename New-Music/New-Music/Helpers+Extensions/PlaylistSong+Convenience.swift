@@ -66,7 +66,7 @@ extension PlaylistSong {
                   playID: song.playID,
                   stringURL: song.stringURL,
                   accentColorHex: song.accentColorHex,
-                  textColorHex: song.textColor,
+                  textColorHex: song.textColor1,
                   textColor2Hex: song.textColor2,
                   textColor3Hex: song.textColor3,
                   textColor4Hex: song.textColor4,

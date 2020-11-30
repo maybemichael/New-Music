@@ -200,7 +200,7 @@ class NowPlayingViewModel: ObservableObject {
     
     private func getTextColors() {
         guard
-            let text1String = self.nowPlayingSong?.textColor,
+            let text1String = self.nowPlayingSong?.textColor1,
             let text2String = self.nowPlayingSong?.textColor2,
             let text3String = self.nowPlayingSong?.textColor3,
             let text4String = self.nowPlayingSong?.textColor4

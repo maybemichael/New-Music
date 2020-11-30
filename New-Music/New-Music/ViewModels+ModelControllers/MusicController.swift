@@ -21,8 +21,15 @@ class MusicController: ObservableObject {
     var createPlaylistSongs = [Song]()
     var userPlaylists = [Playlist]() {
         didSet {
-            
+            self.saveToPersistentStore()
         }
+    }
+    
+    var userPlaylistURL: URL? {
+        let fileManager = FileManager.default
+        guard let documentsDir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let playlistURL = documentsDir.appendingPathComponent("UserPlaylist.plist")
+        return playlistURL
     }
     
     var currentPlaylist = [Song]() {
@@ -95,6 +102,28 @@ class MusicController: ObservableObject {
         musicPlayer.play()
     }
     
+    func saveToPersistentStore() {
+        guard let playlistURL = self.userPlaylistURL else { return }
+        do {
+            let playlistData = try PropertyListEncoder().encode(self.userPlaylists)
+            try playlistData.write(to: playlistURL)
+        } catch {
+            print("Error saving users playlists: \(error)")
+        }
+    }
+    
+    func loadFromPersistentStore() {
+        guard let playlistURL = self.userPlaylistURL else { return }
+        do {
+            let playlistData = try Data(contentsOf: playlistURL)
+            let decoder = PropertyListDecoder()
+            decoder.userInfo[.dataType] = "plist"
+            self.userPlaylists = try decoder.decode([Playlist].self, from: playlistData)
+        } catch {
+            print("Error loading users playlists from plist: \(error).")
+        }
+    }
+    
     func updateAlbumArtwork(for playlist: Playlist) {
         var songs = [Song]()
             playlist.songs.forEach {
@@ -137,33 +166,34 @@ class MusicController: ObservableObject {
         }
     }
     
-    func saveToPersistentStore() {
-        do {
-            try CoreDataStack.shared.save()
-        } catch {
-            print("Error Saving Managed Object Context: \(error)")
-            CoreDataStack.shared.mainContext.reset()
-        }
-    }
+//    func saveToPersistentStore() {
+//        do {
+//            try CoreDataStack.shared.save()
+//        } catch {
+//            print("Error Saving Managed Object Context: \(error)")
+//            CoreDataStack.shared.mainContext.reset()
+//        }
+//    }
     
     init() {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
-        do {
-            let fetchRequest: NSFetchRequest<PersistedPlaylist> = PersistedPlaylist.fetchRequest()
-            let playlists = try CoreDataStack.shared.mainContext.fetch(fetchRequest)
-            DispatchQueue.global().async { [weak self] in
-                guard let self = self else { return }
-                playlists.forEach {
-                    if let playlist = $0.playlist {
-                        self.userPlaylists.append(playlist)
-                        self.updateAlbumArtwork(for: playlist)
-                    }
-                }
-            }
-        } catch {
-            print("Unable to successfully perform fetch request.")
-        }
+        loadFromPersistentStore()
+//        do {
+//            let fetchRequest: NSFetchRequest<PersistedPlaylist> = PersistedPlaylist.fetchRequest()
+//            let playlists = try CoreDataStack.shared.mainContext.fetch(fetchRequest)
+//            DispatchQueue.global().async { [weak self] in
+//                guard let self = self else { return }
+//                playlists.forEach {
+//                    if let playlist = $0.playlist {
+//                        self.userPlaylists.append(playlist)
+//                        self.updateAlbumArtwork(for: playlist)
+//                    }
+//                }
+//            }
+//        } catch {
+//            print("Unable to successfully perform fetch request.")
+//        }
     }
     
     deinit {

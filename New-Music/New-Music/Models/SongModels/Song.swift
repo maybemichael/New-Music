@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Song: Decodable, Hashable, Identifiable, MediaItem {
+struct Song: Codable, Hashable, Identifiable, MediaItem {
     var mediaType: MediaType = .song
     let id: String = UUID().uuidString
     let songName: String
@@ -17,7 +17,7 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
     let artistName: String
     var isAdded: Bool = false
     var accentColorHex: String
-    var textColor: String
+    var textColor1: String
     var textColor2: String
     var textColor3: String
     var textColor4: String
@@ -41,26 +41,48 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
         case textColor3
         case textColor4
         case attributes
+        case songName
+        case playID
+        case stringURL
+        case accentColorHex
     }
     
     init(from decoder: Decoder) throws {
+        let dataType = decoder.userInfo[.dataType] as? String
         let container = try decoder.container(keyedBy: SongKeys.self)
-        let playParamsContainer = try container.nestedContainer(keyedBy: SongKeys.self, forKey: .playParams)
-        let artworkContainer = try container.nestedContainer(keyedBy: SongKeys.self, forKey: .artwork)
         
-        self.songName = try container.decode(String.self, forKey: .name)
-        self.artistName = try container.decode(String.self, forKey: .artistName)
-        self.albumName = try container.decode(String.self, forKey: .albumName)
-        self.playID = try playParamsContainer.decode(String.self, forKey: .id)
-        self.kind = try playParamsContainer.decode(String.self, forKey: .kind)
-        self.stringURL = try artworkContainer.decode(String.self, forKey: .url)
-        let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "1500").replacingOccurrences(of: "{h}", with: "1500")
-        self.imageURL = URL(string: stringURL)!
-        self.accentColorHex = try artworkContainer.decode(String.self, forKey: .bgColor)
-        self.textColor = try artworkContainer.decode(String.self, forKey: .textColor1)
-        self.textColor2 = try artworkContainer.decode(String.self, forKey: .textColor2)
-        self.textColor3 = try artworkContainer.decode(String.self, forKey: .textColor3)
-        self.textColor4 = try artworkContainer.decode(String.self, forKey: .textColor4)
+        switch dataType {
+        case .some("plist"):
+            self.songName = try container.decode(String.self, forKey: .songName)
+            self.artistName = try container.decode(String.self, forKey: .artistName)
+            self.albumName = try container.decode(String.self, forKey: .albumName)
+            self.playID = try container.decode(String.self, forKey: .playID)
+            self.kind = try container.decode(String.self, forKey: .kind)
+            self.stringURL = try container.decode(String.self, forKey: .stringURL)
+            self.accentColorHex = try container.decode(String.self, forKey: .accentColorHex)
+            self.textColor1 = try container.decode(String.self, forKey: .textColor1)
+            self.textColor2 = try container.decode(String.self, forKey: .textColor2)
+            self.textColor3 = try container.decode(String.self, forKey: .textColor3)
+            self.textColor4 = try container.decode(String.self, forKey: .textColor4)
+        default:
+            let playParamsContainer = try container.nestedContainer(keyedBy: SongKeys.self, forKey: .playParams)
+            let artworkContainer = try container.nestedContainer(keyedBy: SongKeys.self, forKey: .artwork)
+            
+            self.songName = try container.decode(String.self, forKey: .name)
+            self.artistName = try container.decode(String.self, forKey: .artistName)
+            self.albumName = try container.decode(String.self, forKey: .albumName)
+            self.playID = try playParamsContainer.decode(String.self, forKey: .id)
+            self.kind = try playParamsContainer.decode(String.self, forKey: .kind)
+            self.stringURL = try artworkContainer.decode(String.self, forKey: .url)
+            let stringURL = try artworkContainer.decode(String.self, forKey: .url).replacingOccurrences(of: "{w}", with: "1500").replacingOccurrences(of: "{h}", with: "1500")
+            self.imageURL = URL(string: stringURL)!
+            self.accentColorHex = try artworkContainer.decode(String.self, forKey: .bgColor)
+            self.textColor1 = try artworkContainer.decode(String.self, forKey: .textColor1)
+            self.textColor2 = try artworkContainer.decode(String.self, forKey: .textColor2)
+            self.textColor3 = try artworkContainer.decode(String.self, forKey: .textColor3)
+            self.textColor4 = try artworkContainer.decode(String.self, forKey: .textColor4)
+        }
+        
     }
     
     init(songName: String, artistName: String, imageURL: URL? = nil, playID: String = "", kind: String = "", albumName: String = "", accentColorHex: String = "", stringURL: String = "", textColorHex: String = "", textColor2Hex: String = "", textColor3Hex: String = "", textColor4Hex: String = "") {
@@ -72,7 +94,7 @@ struct Song: Decodable, Hashable, Identifiable, MediaItem {
         self.albumName = albumName
         self.accentColorHex = accentColorHex
         self.stringURL = stringURL
-        self.textColor = textColorHex
+        self.textColor1 = textColorHex
         self.textColor2 = textColor2Hex
         self.textColor3 = textColor3Hex
         self.textColor4 = textColor4Hex

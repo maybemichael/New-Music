@@ -72,6 +72,7 @@
 		4C646B962529759000B05D8A /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B952529759000B05D8A /* Section.swift */; };
 		4C646B9B2529769900B05D8A /* SelfConfiguringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */; };
 		4C6E646A2563E88B00353615 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6E64692563E88B00353615 /* Protocols.swift */; };
+		4C6F58AA2574BFE700511E9C /* UserInfo+CodingUserInfoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F58A92574BFE700511E9C /* UserInfo+CodingUserInfoKey.swift */; };
 		4C71CA65253ED48D0039C127 /* NowPlayingPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C71CA64253ED48D0039C127 /* NowPlayingPresentationController.swift */; };
 		4C7291E625497BA50028A5C0 /* ModalPresentation+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */; };
 		4C87CE8C252DB578001B9935 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C87CE8B252DB578001B9935 /* Notifications.swift */; };
@@ -182,6 +183,7 @@
 		4C646B952529759000B05D8A /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfConfiguringCell.swift; sourceTree = "<group>"; };
 		4C6E64692563E88B00353615 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		4C6F58A92574BFE700511E9C /* UserInfo+CodingUserInfoKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserInfo+CodingUserInfoKey.swift"; sourceTree = "<group>"; };
 		4C71CA64253ED48D0039C127 /* NowPlayingPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingPresentationController.swift; sourceTree = "<group>"; };
 		4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModalPresentation+SwiftUI.swift"; sourceTree = "<group>"; };
 		4C87CE8B252DB578001B9935 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
@@ -520,6 +522,7 @@
 				4C5F40EB256DE5C400DBDA8C /* PlaylistSong+Convenience.swift */,
 				4C5F40F1256DFB9500DBDA8C /* PersistedPlaylist+Convenience.swift */,
 				4CFB1DCE256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift */,
+				4C6F58A92574BFE700511E9C /* UserInfo+CodingUserInfoKey.swift */,
 			);
 			path = "Helpers+Extensions";
 			sourceTree = "<group>";
@@ -718,6 +721,7 @@
 				4C3D1CFC2547FCEC0067F57E /* NowPlayingFullView.swift in Sources */,
 				4C646B6E25296E0B00B05D8A /* PlaylistViewController.swift in Sources */,
 				4C27C3C22542BC600005BD01 /* PlaylistSongView.swift in Sources */,
+				4C6F58AA2574BFE700511E9C /* UserInfo+CodingUserInfoKey.swift in Sources */,
 				4C1B03522566550700FDBEB5 /* PlayingIndicatorViewController.swift in Sources */,
 				4CA9332325668AA4003CC2F5 /* PlayingIndicatorView.swift in Sources */,
 				4C646B3625296BE500B05D8A /* MainCoordinator.swift in Sources */,
