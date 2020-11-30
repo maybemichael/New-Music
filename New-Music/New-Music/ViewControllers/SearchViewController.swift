@@ -42,7 +42,8 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         })
         .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
         .removeDuplicates()
-        .sink(receiveValue: { searchTerm in
+        .sink(receiveValue: { [weak self] searchTerm in
+            guard let self = self else { return }
             DispatchQueue.global(qos: .userInteractive).async {
                 APIController.shared.searchForMedia(with: searchTerm ?? "") { result in
                     switch result {

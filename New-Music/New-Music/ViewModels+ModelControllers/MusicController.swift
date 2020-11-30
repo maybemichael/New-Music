@@ -112,7 +112,7 @@ class MusicController: ObservableObject {
         }
     }
     
-    func loadFromPersistentStore() {
+    private func loadFromPersistentStore() {
         guard let playlistURL = self.userPlaylistURL else { return }
         do {
             let playlistData = try Data(contentsOf: playlistURL)

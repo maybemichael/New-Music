@@ -25,6 +25,21 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
 //        layoutConfig.headerMode = .supplementary
         layoutConfig.backgroundColor = .backgroundColor
+        layoutConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration? in
+            guard let playlistMedia = self.dataSource.itemIdentifier(for: indexPath) else { return nil }
+            switch playlistMedia {
+            case .playlist(let playlist):
+                return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "Delete", handler: { [weak self] _, _, completion in
+                    self?.deleteSelectedPlaylist(playlist: playlistMedia)
+                    completion(true)
+                })])
+            case .song(let song):
+                return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "Delete", handler: { [weak self] _, _, completion in
+                    self?.deleteSelectedSong(song: song)
+                    completion(true)
+                })])
+            }
+        }
         let listLayout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
         let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
         cv.backgroundColor = .clear
@@ -49,12 +64,13 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             guard let self = self else { fatalError() }
             switch playlistMedia {
             case .playlist(let playlist):
-//                let cell = collectionView.dequeueConfiguredReusableCell(using: self.playlistCellRegistration, for: indexPath, item: playlist)
-//                cell.sizeToFit()
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaylistCollectionViewCell.identifier, for: indexPath) as! PlaylistCollectionViewCell
-                cell.sizeToFit()
-                cell.playlist = playlist
+                let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCustomPlaylistCellRegistration(), for: indexPath, item: playlist)
                 cell.setPlaylistDelegate = self
+//                cell.sizeToFit()
+//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaylistCollectionViewCell.identifier, for: indexPath) as! PlaylistCollectionViewCell
+//                cell.sizeToFit()
+//                cell.playlist = playlist
+//                cell.setPlaylistDelegate = self
                 return cell
             case .song(let song):
                 let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
@@ -123,6 +139,17 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         return layout
     }
     
+    private func deleteSelectedPlaylist(playlist: PlaylistMedia) {
+        var snapshot = dataSource.snapshot()
+        guard let indexPath = dataSource.indexPath(for: playlist) else { return }
+        if case PlaylistMedia.playlist(let playlist) = playlist {
+            snapshot.deleteSections([playlist])
+            musicController.userPlaylists.remove(at: indexPath.section)
+            musicController.saveToPersistentStore()
+        }
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
     private func deleteSelectedSong(song: Song) {
         var snapshot = dataSource.snapshot()
         let playlistMedia = PlaylistMedia.song(song)
@@ -130,8 +157,19 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         snapshot.deleteItems([playlistMedia])
         if let index = musicController.userPlaylists[indexPath.section].songs.firstIndex(of: song) {
             musicController.userPlaylists[indexPath.section].songs.remove(at: index)
+            musicController.saveToPersistentStore()
         }
         dataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func makeCustomPlaylistCellRegistration() -> UICollectionView.CellRegistration<PlaylistCollectionViewCell, Playlist> {
+        let playlistCellRegistration = UICollectionView.CellRegistration<PlaylistCollectionViewCell, Playlist> { cell, indexPath, playlist in
+            cell.playlist = playlist
+            let headerDisclosureOption = UICellAccessory.OutlineDisclosureOptions(style: .header, isHidden: false, tintColor: .white)
+            let outlineDisclosure: UICellAccessory = .outlineDisclosure(displayed: .always, options: headerDisclosureOption, actionHandler: .none)
+            cell.accessories = [outlineDisclosure]
+        }
+        return playlistCellRegistration
     }
     
     private func makeCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Song> {

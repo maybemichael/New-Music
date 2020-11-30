@@ -13,7 +13,7 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
     var setPlaylistDelegate: SetPlaylistDelegate?
     var playlist: Playlist? {
         didSet {
-            updateViews()
+//            updateViews()
         }
     }
     
@@ -75,9 +75,18 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
         setPlaylistDelegate?.setQueue(with: playlist)
     }
     
+    override func updateConfiguration(using state: UICellConfigurationState) {
+        var newConfig = PlaylistCellContentConfiguration().updated(for: state)
+        
+        newConfig.playlistName = playlist?.playlistName
+        newConfig.playlist = playlist
+        newConfig.setPlaylistDelegate = setPlaylistDelegate
+        contentConfiguration = newConfig
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupViews()
+//        setupViews()
     }
     
     required init?(coder: NSCoder) {
