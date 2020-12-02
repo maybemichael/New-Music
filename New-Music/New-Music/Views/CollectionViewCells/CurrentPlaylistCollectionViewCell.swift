@@ -101,7 +101,7 @@ class CurrentPlaylistCollectionViewCell: UICollectionViewCell {
         mainStackView.distribution = .equalCentering
         mainStackView.spacing = 8
         contentView.addSubview(mainStackView)
-        mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
+        mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, centerX: contentView.centerXAnchor, padding: .init(top: 8, left: 0, bottom: -8, right: 0))
     }
     
     private func updateViews() {

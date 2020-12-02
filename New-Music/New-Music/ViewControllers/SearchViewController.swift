@@ -240,8 +240,8 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
             switch result {
             case .success(let imageData):
-                var mutableMedia = selectedMedia
-                var addedSong = mutableMedia.media as! Song
+//                var mutableMedia = selectedMedia
+                var addedSong = selectedMedia.media as! Song
                 addedSong.albumArtwork = imageData
                 addedSong.isAdded = true
 //                mutableMedia.media = addedSong

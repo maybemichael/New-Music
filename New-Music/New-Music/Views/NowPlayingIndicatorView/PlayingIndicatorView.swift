@@ -18,17 +18,17 @@ struct PlayingIndicatorView: View {
                 gradient(for: nowPlayingViewModel.whiteLevel)
                     .mask(Image(systemName: "music.note").resizable().aspectRatio(contentMode: .fit))
             }
-            .frame(width: size, height: size)
-            .scaleEffect(self.animate ? 1.5 : 1.0)
+            .frame(width: size, height: size, alignment: .center)
+            .scaleEffect(self.animate ? 1.0 : 0.5)
             .animation(self.animate ? Animation.linear(duration: 0.8).repeatForever(autoreverses: true) : Animation.linear(duration: 0.4))
             .onAppear {
                 if nowPlayingViewModel.isPlaying {
                     self.animate = true
                 }
             }
-            .onDisappear {
-                self.animate = false
-            }
+//            .onDisappear {
+//                self.animate = false
+//            }
             .onChange(of: self.nowPlayingViewModel.isPlaying, perform: { _ in
                 if nowPlayingViewModel.isPlaying {
                     self.animate = true

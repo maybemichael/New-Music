@@ -32,7 +32,8 @@ class NeuMusicButton: UIButton {
     
     private func gradientLayer() {
         let gradientlayer = CAGradientLayer()
-        gradientlayer.colors = [UIColor.systemBlue.cgColor, UIColor.systemBlue.darker().cgColor]
+//        gradientlayer.colors = [UIColor.darkGray.cgColor, UIColor.darkGray.darker().cgColor]
+        gradientlayer.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray5.cgColor]
         gradientlayer.locations = [0.0, 1.0]
         gradientlayer.frame = bounds
         gradientlayer.startPoint = CGPoint(x: 0.0, y: 0.0)

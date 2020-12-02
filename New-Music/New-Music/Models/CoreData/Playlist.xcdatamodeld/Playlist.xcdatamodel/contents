@@ -18,7 +18,7 @@
         <attribute name="textColor3Hex" attributeType="String"/>
         <attribute name="textColor4Hex" attributeType="String"/>
         <attribute name="textColorHex" attributeType="String"/>
-        <relationship name="persistedPlaylist" optional="YES" maxCount="1" deletionRule="No Action" destinationEntity="PersistedPlaylist" inverseName="playlistSongs" inverseEntity="PersistedPlaylist"/>
+        <relationship name="persistedPlaylist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PersistedPlaylist" inverseName="playlistSongs" inverseEntity="PersistedPlaylist"/>
     </entity>
     <elements>
         <element name="PersistedPlaylist" positionX="-63" positionY="-18" width="128" height="88"/>

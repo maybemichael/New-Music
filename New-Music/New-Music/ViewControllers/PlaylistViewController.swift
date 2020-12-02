@@ -13,9 +13,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     private var subscriptions = Set<AnyCancellable>()
     private var nowPlayingViewModel: NowPlayingViewModel!
     typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, PlaylistMedia>
-//    typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, Song>
     typealias PlaylistSnapshot = NSDiffableDataSourceSnapshot<Playlist, PlaylistMedia>
-//    typealias PlaylistSnapshot = NSDiffableDataSourceSnapshot<Playlist, Song>
     var musicController: MusicController!
     weak var coordinator: MainCoordinator?
     let artistLabel = UILabel()
@@ -183,10 +181,10 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
             content.imageToTextPadding = 0
             content.textToSecondaryTextVerticalPadding = 0
-//            content.imageProperties
+
             content.imageProperties.reservedLayoutSize = CGSize(width: (UIScreen.main.bounds.width / 7) + 16, height: (UIScreen.main.bounds.width / 7) + 16)
             content.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-//            cell.separatorLayoutGuide.leadingAnchor.constraint(equalTo: cell.leadingAnchor).isActive = true
+
             if let imageData = song.albumArtwork {
                 content.image = UIImage(data: imageData)
             } else {
@@ -216,11 +214,9 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.textProperties.color = .white
             content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
             if let item = self.dataSource.itemIdentifier(for: indexPath), let playlist = self.dataSource.snapshot().sectionIdentifier(containingItem: item) {
-//                content.text = playlist.playlistName.lowercased()
                 content.secondaryText = playlist.playlistName
             }
 
-//            content.textProperties.adjustsFontForContentSizeCategory = false
             header.contentConfiguration = content
         }
         return playlistHeaderRegistration
@@ -230,7 +226,9 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Playlists"
         navigationItem.leftBarButtonItem = editButtonItem
+        navigationItem.leftBarButtonItem?.tintColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(createNewPlaylist))
+        navigationItem.rightBarButtonItem?.tintColor = .white
         view.backgroundColor = .backgroundColor
         view.layer.cornerRadius = 20
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]

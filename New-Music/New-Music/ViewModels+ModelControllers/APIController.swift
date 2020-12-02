@@ -36,12 +36,12 @@ class APIController {
     var searchedAlbums = [Album]()
     var songsNext: String? = nil {
         didSet {
-            print("Next Songs: \(self.songsNext)")
+
         }
     }
     var albumsNext: String? = nil {
         didSet {
-            print("Next Albums: \(self.albumsNext)")
+
         }
     }
     

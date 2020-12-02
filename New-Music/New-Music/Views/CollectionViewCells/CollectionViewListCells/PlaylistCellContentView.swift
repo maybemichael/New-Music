@@ -23,7 +23,7 @@ class PlaylistCellContentView: UIView, UIContentView {
     
     let playlistStatsLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
+        label.textColor = .lightText
         label.font = UIFont.preferredFont(forTextStyle: .headline).withSize(12)
         label.textAlignment = .left
         return label
@@ -31,10 +31,24 @@ class PlaylistCellContentView: UIView, UIContentView {
     
     let playButton: NeuMusicButton = {
         let button = NeuMusicButton()
-        button.setTitle(" Play", for: .normal)
+        button.setTitle("  Play", for: .normal)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        button.setTitleColor(.white, for: .normal)
         button.setImage(UIImage(systemName: "play.fill"), for: .normal)
         button.tintColor = .white
-        button.setSize(width: 125, height: 40)
+        button.setSize(width: 100, height: 40)
+        button.layer.cornerRadius = 8
+        return button
+    }()
+    
+    let shuffleButton: NeuMusicButton = {
+        let button = NeuMusicButton()
+        button.setTitle(" Shuffle", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        button.setImage(UIImage(systemName: "shuffle"), for: .normal)
+        button.tintColor = .white
+        button.setSize(width: 100, height: 40)
         button.layer.cornerRadius = 8
         return button
     }()
@@ -69,17 +83,31 @@ class PlaylistCellContentView: UIView, UIContentView {
     }
     
     private func setupViews() {
-        addSubview(containerView)
-        containerView.addSubview(playlistNameLabel)
-        containerView.addSubview(playButton)
-        containerView.addSubview(playlistStatsLabel)
-        containerView.anchor(top: layoutMarginsGuide.topAnchor, leading: layoutMarginsGuide.leadingAnchor, trailing: layoutMarginsGuide.trailingAnchor, bottom: layoutMarginsGuide.bottomAnchor)
-        playlistNameLabel.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, padding: .init(top: 0, left: 20, bottom: 0, right: 0))
-        playlistStatsLabel.anchor(top: playlistNameLabel.bottomAnchor, leading: containerView.leadingAnchor, padding: .init(top: 8, left: 20, bottom: 0, right: 0))
-        playButton.anchor(top: playlistStatsLabel.bottomAnchor, leading: containerView.leadingAnchor, padding: .init(top: 8, left: 20, bottom: 0, right: 0))
-//        playlistStatsLabel.anchor(leading: playButton.trailingAnchor, trailing: containerView.trailingAnchor, centerY: playButton.centerYAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: 0))
+        let buttonStackView = UIStackView(arrangedSubviews: [playButton, shuffleButton])
+        buttonStackView.axis = .horizontal
+        buttonStackView.spacing = 20
+        let stackView = UIStackView(arrangedSubviews: [playlistNameLabel, buttonStackView, playlistStatsLabel])
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.distribution = .fill
+        stackView.spacing = 8
+        addSubview(stackView)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        let topConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .topMargin, multiplier: 1, constant: 0)
+        topConstraint.priority = UILayoutPriority(999)
+        let leadingConstraint = NSLayoutConstraint(item: stackView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1, constant: 20)
+        leadingConstraint.priority = UILayoutPriority(999)
+        let trailingConstraint = NSLayoutConstraint(item: stackView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailingMargin, multiplier: 1, constant: 0)
+        trailingConstraint.priority = UILayoutPriority(999)
+        let bottomConstraint = NSLayoutConstraint(item: stackView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottomMargin, multiplier: 1, constant: 0)
+        bottomConstraint.priority = UILayoutPriority(999)
+        NSLayoutConstraint.activate([
+            topConstraint,
+            leadingConstraint,
+            trailingConstraint,
+            bottomConstraint
+        ])
         playButton.addTarget(self, action: #selector(listenToPlaylist), for: .touchUpInside)
-        
     }
     
     private func apply(configuration: PlaylistCellContentConfiguration) {

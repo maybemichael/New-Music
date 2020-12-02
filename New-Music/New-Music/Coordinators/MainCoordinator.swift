@@ -11,7 +11,7 @@ protocol Coordinator: AnyObject {
     func start()
 }
 
-class MainCoordinator: NSObject {
+class MainCoordinator: NSObject, UITabBarControllerDelegate {
     
     private var window: UIWindow
     private var nowPlayingNav = UINavigationController(rootViewController: NowPlayingViewController())
@@ -123,5 +123,9 @@ class MainCoordinator: NSObject {
     
     func getViewController(indexPath: IndexPath) -> UIViewController? {
         childVCCoordinator.viewControllersByIndexPath[indexPath]
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        
     }
 }
