@@ -37,6 +37,8 @@ class NowPlayingViewModel: ObservableObject {
     @Published var beatsPerMinute: Int
     @Published var lighterTextColor2: Color
     @Published var darkerTextColor2: Color
+    @Published var minimizedImageFrame: CGRect = CGRect()
+    @Published var fullImageFrame: CGRect = CGRect()
     @Published var albumArtwork: UIImage? = nil {
         didSet {
             DispatchQueue.main.async {

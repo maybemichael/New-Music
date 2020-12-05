@@ -93,6 +93,7 @@ struct BackgroundView: View {
 struct NowPlayingMinimized: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     let musicController: MusicController
+    var height: CGFloat
     
     var body: some View {
             HStack(spacing: 12) {
@@ -126,6 +127,91 @@ struct NowPlayingMinimized: View {
 struct NowPlayingMinimized_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingMinimized(musicController: musicController).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingMinimized2(musicController: musicController, height: 65).environmentObject(musicController.nowPlayingViewModel)
+    }
+}
+
+struct NowPlayingMinimized3: View {
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
+    let musicController: MusicController
+    var height: CGFloat
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
+//                .onTapGesture {
+//                    print("Global Frame: \(geo.frame(in: .global))")
+//                }
+//                .frame(height: height - 5, alignment: .center)
+            VStack(alignment: .leading) {
+                Text(nowPlayingViewModel.artist)
+                    .font(Font.system(.subheadline).weight(.light))
+                    .foregroundColor(.lightTextColor)
+                        .lineLimit(1)
+                    Text(nowPlayingViewModel.songTitle)
+                        .font(Font.system(.headline).weight(.light))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: (height) * 3, alignment: .leading)
+                HStack(spacing: 15) {
+                    BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
+                        .foregroundColor(.white)
+                        .frame(width: height - 5, height: height - 5, alignment: .center)
+                    BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
+                        .frame(width: height - 16, height: height - 16, alignment: .center)
+                }
+
+        }
+        .frame(alignment: .center)
+    }
+    
+    private func backgroundColorFor(isTooLight: Bool) -> Color {
+        isTooLight ? nowPlayingViewModel.darkerAccentColor : nowPlayingViewModel.lighterAccentColor
+    }
+}
+
+struct NowPlayingMinimized2: View {
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
+    let musicController: MusicController
+    var height: CGFloat
+    
+    var body: some View {
+        HStack {
+            GeometryReader { geo in
+                NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
+                    .frame(width: height - 5, height: height - 5, alignment: .center)
+                    .onAppear {
+                        print("Global Frame: \(geo.frame(in: .global))")
+                        nowPlayingViewModel.minimizedImageFrame = geo.frame(in: .global)
+                    }
+            }
+            .frame(width: height - 5, height: height - 5, alignment: .center)
+            GeometryReader { geo in
+                VStack(alignment: .leading) {
+                    Text(nowPlayingViewModel.artist)
+//                    Text("Fall Out Boy")
+                        .font(Font.system(.subheadline).weight(.light))
+                        .foregroundColor(.lightTextColor)
+                        .lineLimit(1)
+                    Text(nowPlayingViewModel.songTitle)
+//                    Text("Nobody Puts Baby in the Corner")
+                        .font(Font.system(.headline).weight(.light))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                }
+                .frame(height: height + 5, alignment: .center)
+            }
+            HStack(spacing: 12) {
+                BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
+                    .foregroundColor(.white)
+                    .frame(width: height - 5, height: height - 5, alignment: .center)
+                BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
+                    .frame(width: height - 16, height: height - 16, alignment: .center)
+            }
+        }
+        .frame(alignment: .center)
+        .padding(.leading, 20)
+        .padding(.trailing, 15)
     }
 }

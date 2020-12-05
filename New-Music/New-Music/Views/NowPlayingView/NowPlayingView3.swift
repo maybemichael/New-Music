@@ -59,7 +59,7 @@ struct NowPlayingView3: View {
             .frame(alignment: .top)
             ZStack {
                 if isPresented {
-                    NowPlayingFullView(isPresented: $isPresented, musicController: musicController)
+                    NowPlayingFullView(musicController: musicController)
                         .background(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .nowPlayingBG))
                         .cornerRadius(20)
                         .edgesIgnoringSafeArea(.all)

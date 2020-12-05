@@ -14,12 +14,19 @@ class NowPlayingViewController: UIViewController {
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
     var childVCCoordinator = ChildVCCoordinator()
+   
+    let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .opaqueSeparator
+        view.setSize(width: UIScreen.main.bounds.width, height: 1)
+        return view
+    }()
     
     lazy var collectionView: UICollectionView = {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
         cv.register(CurrentPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier)
         cv.backgroundColor = .clear
-        cv.contentInset.bottom = 65
+        cv.contentInset.bottom = 66
         return cv
     }()
     
@@ -80,6 +87,8 @@ class NowPlayingViewController: UIViewController {
         view.backgroundColor = .backgroundColor
         title = "Now Playing"
         collectionView.delegate = self
+        view.addSubview(separatorView)
+        separatorView.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, centerX: view.centerXAnchor)
     }
     
     private func reloadData() {

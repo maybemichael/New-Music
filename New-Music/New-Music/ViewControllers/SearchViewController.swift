@@ -23,10 +23,17 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     var sections = [Section]()
     weak var reloadDataDelegate: ReloadDataDelegate?
     
+    let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .opaqueSeparator
+        view.setSize(width: UIScreen.main.bounds.width, height: 1)
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpViews()
         configureCollectionView()
+        setUpViews()
         createDataSource()
         setupSearchBarListeners()
     }
@@ -101,7 +108,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissSearchVC))
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissSearchVC))
         }
-        
         view.layer.cornerRadius = 20
         navigationController?.navigationBar.layer.cornerRadius = 20
         navigationController?.navigationBar.layer.cornerRadius = 20
@@ -111,6 +117,10 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         searchController.searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         searchController.searchBar.backgroundImage = UIImage()
+        if !isPlaylistSearch {
+            view.addSubview(separatorView)
+            separatorView.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, centerX: view.centerXAnchor)
+        }
     }
 
     private func configureCollectionView() {
@@ -125,6 +135,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.layer.cornerRadius = 20
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.delegate = self
+        collectionView.contentInset.bottom = 66
     }
     
     private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath) -> T {
@@ -185,7 +196,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         if isPlaylistSearch {
             layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         } else {
-            layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: UIScreen.main.bounds.width / 5, trailing: 20)
+            layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         }
         layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
         return layoutSection

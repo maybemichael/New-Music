@@ -50,10 +50,12 @@ class MusicController: ObservableObject {
     
     var searchedMedia = [Media]()
     
-    lazy var nowPlayingViewModel: NowPlayingViewModel = {
-        let viewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: currentPlaylist)
-        return viewModel
-    }()
+    lazy var nowPlayingViewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: [])
+    
+//    lazy var nowPlayingViewModel: NowPlayingViewModel = {
+//        let viewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: currentPlaylist)
+//        return viewModel
+//    }()
     
     func play() {
         musicPlayer.prepareToPlay()

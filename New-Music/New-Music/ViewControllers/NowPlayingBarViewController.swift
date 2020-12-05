@@ -60,7 +60,8 @@ class NowPlayingBarViewController: UIViewController {
     }
     
     private func configureSubviews() {
-        minimizedFrame = CGRect(x: 0, y: UIScreen.main.bounds.midY + (tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: tabBarHeight - 10)
+//        minimizedFrame = CGRect(x: 0, y: UIScreen.main.bounds.midY + (tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: tabBarHeight - 10)
+        minimizedFrame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarHeight + 66), width: UIScreen.main.bounds.width, height: 65)
         view.backgroundColor = .clear
         view.addGestureRecognizer(tapGesture)
         view.addGestureRecognizer(panGesture)
@@ -69,7 +70,7 @@ class NowPlayingBarViewController: UIViewController {
     }
     
     func createAnimator() {
-        coordinator?.passTabBarSelectedView()
+//        coordinator?.passTabBarSelectedView()
         tabBarSelectedView?.transform = CGAffineTransform(scaleX: 0.87, y: 0.87)
         transitionAnimator = UIViewPropertyAnimator(duration: 0.4, curve: .linear) {
             self.tabBarSelectedView?.transform = .identity
@@ -99,11 +100,11 @@ class NowPlayingBarViewController: UIViewController {
         addChild(artworkView)
         artworkView.didMove(toParent: self)
         childVCs.append(artworkView)
-        let fullPlayerView = UIHostingController(rootView: NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
+        let fullPlayerView = UIHostingController(rootView: NowPlayingFullView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
         addChild(fullPlayerView)
         fullPlayerView.didMove(toParent: self)
         view.addSubview(fullPlayerView.view)
-        view.addSubview(artworkView.view)
+//        view.addSubview(artworkView.view)
         fullPlayerView.view.frame = view.bounds
         artworkView.view.backgroundColor = .clear
         artworkView.view.frame = CGRect(x: 20, y: view.bounds.minY + 8, width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
@@ -112,14 +113,17 @@ class NowPlayingBarViewController: UIViewController {
         childVCs.append(fullPlayerView)
         
         // MARK: - Minimized Now Playing View
-        let minimizedNowPlayingView = UIHostingController(rootView: NowPlayingMinimized(musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
+        let minimizedNowPlayingView = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
         addChild(minimizedNowPlayingView)
         minimizedNowPlayingView.didMove(toParent: self)
         view.addSubview(minimizedNowPlayingView.view)
         minimizedNowPlayingView.view.backgroundColor = .clear
         childVCs.append(minimizedNowPlayingView)
-        minimizedNowPlayingView.view.frame = CGRect(x: artworkView.view.frame.maxX + 8, y: artworkView.view.frame.minY, width: (UIScreen.main.bounds.width / 7) * 5.5, height: UIScreen.main.bounds.width / 7)
-        self.minimizedNowPlayingFrame = minimizedNowPlayingView.view.frame
+        minimizedNowPlayingView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+//        minimizedNowPlayingView.view.frame = CGRect(x: artworkView.view.frame.maxX + 8, y: artworkView.view.frame.minY, width: (UIScreen.main.bounds.width / 7) * 5.5, height: UIScreen.main.bounds.width / 7)
+//        minimizedNowPlayingView.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarHeight + 66), width: UIScreen.main.bounds.width, height: 65)
+        minimizedNowPlayingView.view.frame = self.view.bounds
+//        self.minimizedNowPlayingFrame = minimizedNowPlayingView.view.frame
     }
     
     @objc func presentFullScreenNowPlaying(_ sender: UITapGestureRecognizer) {
@@ -130,12 +134,14 @@ class NowPlayingBarViewController: UIViewController {
         self.blurView.effect = UIBlurEffect(style: .light)
         self.childVCs[2].view.alpha = 0
         self.childVCs[1].view.alpha = 1
+//        self.childVCs[1].view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         separatorView.isHidden = true
         let transitionAnimator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.87) {
             self.view.frame = self.fullFrame
             self.view.layer.cornerRadius = 20
             self.childVCs[0].view.frame = CGRect(x: self.view.safeAreaInsets.left + 40, y: self.view.safeAreaInsets.top + 140, width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
             self.childVCs[1].view.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor)
+//            self.childVCs[1].view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             self.musicController.nowPlayingViewModel.isFullScreen = true
             self.view.layer.cornerRadius = 20
             self.view.layoutIfNeeded()
@@ -158,7 +164,8 @@ class NowPlayingBarViewController: UIViewController {
         self.childVCs[1].view.alpha = 0
        
         let transitionAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
-            self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (self.tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: self.tabBarHeight - 10)
+//            self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - (self.tabBarHeight * 2) + 10, width: UIScreen.main.bounds.width, height: self.tabBarHeight - 10)
+            self.view.frame = CGRect(x: UIScreen.main.bounds.minX, y: UIScreen.main.bounds.height - (self.tabBarHeight + 66), width: UIScreen.main.bounds.width, height: 65)
             self.view.layer.cornerRadius = 0
             self.blurView.contentView.frame = self.minimizedFrame
             self.childVCs[0].view.frame = self.artworkViewFrame

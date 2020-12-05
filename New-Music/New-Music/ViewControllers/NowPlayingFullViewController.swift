@@ -9,11 +9,7 @@ import SwiftUI
 
 class NowPlayingFullViewController: UIViewController {
 
-    var musicController: MusicController! {
-        didSet {
-            configureContentView()
-        }
-    }
+    var musicController: MusicController! 
     weak var coordinator: MainCoordinator?
     
     override func viewDidLoad() {
@@ -22,19 +18,19 @@ class NowPlayingFullViewController: UIViewController {
     }
     
     private func configureContentView() {
-        let contentView = UIHostingController(rootView: NowPlayingFullView(isPresented: .constant(true), musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
+        let contentView = UIHostingController(rootView: NowPlayingFullView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
         let backgroundView = UIVisualEffectView()
         backgroundView.effect = UIBlurEffect(style: .light)
-        view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
-        view.backgroundColor = .clear
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 20
         view.addSubview(backgroundView)
-//        backgroundView.contentView.frame = view.frame
         backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         addChild(contentView)
         contentView.didMove(toParent: self)
         view.addSubview(contentView.view)
         contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         contentView.view.backgroundColor = .clear
+        view.backgroundColor = .clear
     }
 }
