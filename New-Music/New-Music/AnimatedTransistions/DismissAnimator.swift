@@ -10,54 +10,43 @@ import SwiftUI
 class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     var finalFrame: CGRect
+    var musicController: MusicController
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        0.4
+        return  0.5
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        guard
-            let toVC = transitionContext.viewController(forKey: .to),
-            let fromVC = transitionContext.viewController(forKey: .from),
-            let snapshot = fromVC.view.snapshotView(afterScreenUpdates: true)
-        else { return }
+        guard let fromVC = transitionContext.viewController(forKey: .from) else { return }
         let containerView = transitionContext.containerView
         containerView.backgroundColor = .clear
-        let tabBarController = toVC as! UITabBarController
-        let nav = tabBarController.viewControllers?[tabBarController.selectedIndex] as! UINavigationController
-        let vc = nav.topViewController
-        let barVC = vc?.children.first(where: { $0 is NowPlayingMinimizedViewController} ) as! NowPlayingMinimizedViewController
-        print("Bar VC: \(barVC.description)")
-        containerView.addSubview(snapshot)
-        snapshot.frame = fromVC.view.frame
-        fromVC.view.removeFromSuperview()
-        containerView.layoutSubviews()
-        UIView.animateKeyframes(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .calculationModeCubicPaced) {
-            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.6) {
-                snapshot.center = CGPoint(x: self.finalFrame.midX, y: UIScreen.main.bounds.height + 100)
-            }
-            UIView.addKeyframe(withRelativeStartTime: 0.6, relativeDuration: 0.4) {
-                snapshot.frame = self.finalFrame
-                snapshot.layer.cornerRadius = 0
-            }
-        } completion: { _ in
-            snapshot.removeFromSuperview()
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        }
-
-
         
-//        UIView.animate(withDuration: transitionDuration(using: transitionContext)) {
-//            fromVC.view.frame = self.finalFrame
+        
+//        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.0, options: .curveLinear) {
 //            fromVC.view.layer.cornerRadius = 0
+//            fromVC.view.frame = self.finalFrame
+//            self.musicController.nowPlayingViewModel.isFullScreen = false
 //        } completion: { _ in
+//            fromVC.view.removeFromSuperview()
 //            fromVC.view.layer.cornerRadius = 20
+//            self.musicController.nowPlayingViewModel.shouldAnimateColorChange = true
 //            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
 //        }
-
+        self.musicController.nowPlayingViewModel.isFullScreen = false
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveEaseOut) {
+            fromVC.view.layer.cornerRadius = 0
+            fromVC.view.frame = self.finalFrame
+            self.musicController.nowPlayingViewModel.shouldAnimateColorChange = false
+        } completion: { _ in
+            fromVC.view.removeFromSuperview()
+            fromVC.view.layer.cornerRadius = 20
+            self.musicController.nowPlayingViewModel.shouldAnimateColorChange = true
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        }
     }
     
-    init(finalFrame: CGRect) {
+    init(finalFrame: CGRect, musicController: MusicController) {
         self.finalFrame = finalFrame
+        self.musicController = musicController
     }
 }

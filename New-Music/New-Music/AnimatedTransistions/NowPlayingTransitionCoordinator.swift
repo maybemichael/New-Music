@@ -16,6 +16,8 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
     weak var toVC: UIViewController?
     weak var fromVC: NowPlayingFullViewController?
     var centerPoint = CGPoint()
+    var startFrame = CGRect()
+    
     private lazy var panGesture: UIPanGestureRecognizer = {
         let gesture = UIPanGestureRecognizer()
         gesture.addTarget(self, action: #selector(handleGesture(_:)))
@@ -58,7 +60,6 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
     private func bounceBackFull() {
         let animator = UIViewPropertyAnimator(duration: 0.25, dampingRatio: 0.8) {
             self.fromVC?.view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            self.fromVC?.view.frame = (self.fromVC?.view.convert((self.fromVC?.view.frame)!, from: UIScreen.main.coordinateSpace))!
             self.fromVC?.view.layoutIfNeeded()
         }
         animator.addCompletion { _ in
@@ -81,7 +82,7 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
             animator.pauseAnimation()
             translation = max(translation, 0)
             viewToAnimate.frame = viewToAnimate.bounds.offsetBy(dx: 0, dy: translation)
-            var percentage =  translation / (UIScreen.main.bounds.height / 2)
+            var percentage =  translation / UIScreen.main.bounds.height
             percentage = min(percentage, 0.999)
             percentage = max(percentage, 0.001)
             animator.fractionComplete = percentage
@@ -109,11 +110,11 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
 
 extension NowPlayingTransitionCoordinator: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return DismissAnimator(finalFrame: self.finalFrame)
+        return DismissAnimator(finalFrame: self.finalFrame, musicController: self.musicController)
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return PresentAnimator()
+        return PresentAnimator(startFrame: self.startFrame, musicController: self.musicController)
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {

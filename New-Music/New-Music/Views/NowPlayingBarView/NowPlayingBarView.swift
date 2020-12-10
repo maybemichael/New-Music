@@ -127,7 +127,7 @@ struct NowPlayingMinimized: View {
 struct NowPlayingMinimized_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingMinimized2(musicController: musicController, height: 65).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingMinimized2(musicController: musicController, height: 65, frame: CGRect(x: 20, y: 5, width: 55, height: 55), frameDelegate: NowPlayingMinimizedViewController()).environmentObject(musicController.nowPlayingViewModel)
     }
 }
 
@@ -175,43 +175,50 @@ struct NowPlayingMinimized2: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     let musicController: MusicController
     var height: CGFloat
+    var frame: CGRect
+    var frameDelegate: FrameDelegate
     
     var body: some View {
-        HStack {
-            GeometryReader { geo in
-                NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
-                    .frame(width: height - 5, height: height - 5, alignment: .center)
-                    .onAppear {
-                        print("Global Frame: \(geo.frame(in: .global))")
-                        nowPlayingViewModel.minimizedImageFrame = geo.frame(in: .global)
-                    }
-            }
-            .frame(width: height - 5, height: height - 5, alignment: .center)
-            GeometryReader { geo in
-                VStack(alignment: .leading) {
-                    Text(nowPlayingViewModel.artist)
-//                    Text("Fall Out Boy")
-                        .font(Font.system(.subheadline).weight(.light))
-                        .foregroundColor(.lightTextColor)
-                        .lineLimit(1)
-                    Text(nowPlayingViewModel.songTitle)
-//                    Text("Nobody Puts Baby in the Corner")
-                        .font(Font.system(.headline).weight(.light))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
+        GeometryReader { geo in
+            HStack {
+                GeometryReader { geometry in
+                    NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
+//                        .position(x: frame.midX, y: frame.midY)
+                        .frame(width: height - 5, height: height - 5, alignment: .center)
+                        .onAppear {
+                            nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
+                            print("Minimized Now Playing: \(nowPlayingViewModel.minimizedImageFrame)")
+                        }
                 }
-                .frame(height: height + 5, alignment: .center)
+                .frame(width: height - 5, height: height - 5, alignment: .center)
+                GeometryReader { geo in
+                    VStack(alignment: .leading) {
+                        Text(nowPlayingViewModel.artist)
+//                        Text("Fall Out Boy")
+                            .font(Font.system(.subheadline).weight(.light))
+                            .foregroundColor(.lightTextColor)
+                            .lineLimit(1)
+                        Text(nowPlayingViewModel.songTitle)
+//                        Text("Nobody Puts Baby in the Corner" )
+                            .font(Font.system(.headline).weight(.light))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                    }
+                    .frame(height: geo.size.height, alignment: .center)
+                }
+                .frame(maxWidth: height * 3.5)
+                HStack(spacing: 12) {
+                    BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
+                        .foregroundColor(.white)
+                        .frame(width: height - 5, height: height - 5, alignment: .center)
+                    BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
+                        .frame(width: height - 16, height: height - 16, alignment: .center)
+                }
             }
-            HStack(spacing: 12) {
-                BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
-                    .foregroundColor(.white)
-                    .frame(width: height - 5, height: height - 5, alignment: .center)
-                BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
-                    .frame(width: height - 16, height: height - 16, alignment: .center)
-            }
+            .padding(.leading, 20)
+            .padding(.trailing, 15)
         }
-        .frame(alignment: .center)
-        .padding(.leading, 20)
-        .padding(.trailing, 15)
+        .coordinateSpace(name: "MinimizedNowPlaying")
+        .frame(width: UIScreen.main.bounds.width, height: height, alignment: .center)
     }
 }

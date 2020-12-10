@@ -8,22 +8,35 @@
 import SwiftUI
 
 class PresentAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    
+    var startFrame: CGRect
+    var musicController: MusicController
+    
+    
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.5
+        return 0.6
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        guard let toVC = transitionContext.viewController(forKey: .to) else { return }
+        guard let nowPlayingFullVC = transitionContext.viewController(forKey: .to) as? NowPlayingFullViewController else { return }
         
         let containerView = transitionContext.containerView
         containerView.backgroundColor = .clear
-        toVC.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        containerView.addSubview(toVC.view)
-        let finalFrame = transitionContext.finalFrame(for: toVC)
-        UIView.animate(withDuration: transitionDuration(using: transitionContext)) {
-            toVC.view.frame = finalFrame
+        let finalFrame = transitionContext.finalFrame(for: nowPlayingFullVC)
+        print("Final Frame: \(finalFrame)")
+        containerView.addSubview(nowPlayingFullVC.view)
+        nowPlayingFullVC.view.frame = startFrame
+        musicController.nowPlayingViewModel.shouldAnimateColorChange = true
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseOut) {
+            nowPlayingFullVC.view.frame = finalFrame
         } completion: { _ in
+            self.musicController.nowPlayingViewModel.isFullScreen = true
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
+    }
+    
+    init(startFrame: CGRect, musicController: MusicController) {
+        self.startFrame = startFrame
+        self.musicController = musicController
     }
 }

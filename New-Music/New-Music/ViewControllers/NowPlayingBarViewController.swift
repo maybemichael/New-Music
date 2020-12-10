@@ -7,7 +7,11 @@
 
 import SwiftUI
 
-class NowPlayingBarViewController: UIViewController {
+class NowPlayingBarViewController: UIViewController, FrameDelegate {
+    func getFrame(frame: CGRect) {
+        
+    }
+    
     
     weak var coordinator: MainCoordinator?
     weak var tabBarSelectedView: UIView?
@@ -100,7 +104,7 @@ class NowPlayingBarViewController: UIViewController {
         addChild(artworkView)
         artworkView.didMove(toParent: self)
         childVCs.append(artworkView)
-        let fullPlayerView = UIHostingController(rootView: NowPlayingFullView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel))
+        let fullPlayerView = UIHostingController(rootView: NowPlayingFullView(frame: CGRect(x: 40, y: UIScreen.main.bounds.height / 6, width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80), musicController: musicController, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
         addChild(fullPlayerView)
         fullPlayerView.didMove(toParent: self)
         view.addSubview(fullPlayerView.view)
@@ -113,7 +117,7 @@ class NowPlayingBarViewController: UIViewController {
         childVCs.append(fullPlayerView)
         
         // MARK: - Minimized Now Playing View
-        let minimizedNowPlayingView = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
+        let minimizedNowPlayingView = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60, frame: CGRect(x: 20, y: 5, width: view.bounds.width - 10, height: view.bounds.width - 10), frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
         addChild(minimizedNowPlayingView)
         minimizedNowPlayingView.didMove(toParent: self)
         view.addSubview(minimizedNowPlayingView.view)

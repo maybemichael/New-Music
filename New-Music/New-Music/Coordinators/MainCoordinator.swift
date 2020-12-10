@@ -87,7 +87,6 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
         transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: navController, finalFrame: nowPlayingMinimized.view.frame, centerPoint: nowPlayingBarVC.view.center)
 //        transitionCoordinator.prepareViewForDismiss(fromVC: nowPlayingFullVC, toVC: presentingVC, finalFrame: nowPlayingBarVC.view.frame)
         DispatchQueue.main.async {
-            self.musicController.nowPlayingViewModel.isFullScreen = true
             navController.present(self.nowPlayingFullVC, animated: true, completion: nil)
 //            presentingVC.present(self.nowPlayingFullVC, animated: true, completion: nil)
         }
@@ -97,9 +96,12 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
         let searchVC = searchNav.topViewController as! SearchViewController
         searchVC.addChild(nowPlayingBarVC)
         nowPlayingBarVC.didMove(toParent: searchVC)
-        searchVC.view.addSubview(nowPlayingMinimized.view)
 //        nowPlayingBarVC.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + 74), width: UIScreen.main.bounds.width, height: 73)
+        searchVC.addChild(nowPlayingMinimized)
+        nowPlayingMinimized.didMove(toParent: searchVC)
+        searchVC.view.addSubview(nowPlayingMinimized.view)
         nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + 66), width: UIScreen.main.bounds.width, height: 65)
+        transitionCoordinator.startFrame = nowPlayingMinimized.view.frame
     }
     
     func dismissNowPlayingVC() {

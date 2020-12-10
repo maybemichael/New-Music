@@ -81,9 +81,89 @@ struct ArtworkView: View {
                 .shadow(color: Color.white.opacity(0.1), radius: 10, x: nowPlayingViewModel.isFullScreen ? -3 : -1, y: nowPlayingViewModel.isFullScreen ? -3 : -1)
             Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
                 .resizable()
-                .frame(width: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.03), height: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.03))
+                .frame(width: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.03), height: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.05))
                 .scaledToFit()
         }
+    }
+    
+    private func artworkWidth(for state: Bool) -> CGFloat {
+        nowPlayingViewModel.isFullScreen ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
+    }
+}
+
+struct ArtworkView2: View {
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
+    @State var image: UIImage = UIImage()
+    var size: CGFloat
+    var body: some View {
+        
+        GeometryReader { geo in
+            ZStack {
+                Color.clear.opacity(0)
+                Rectangle()
+                    .fill(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black))
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.black, lineWidth: 4)
+                            .blur(radius: 4)
+                            .offset(x: 10, y: 10)
+                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.clear, Color.black))))
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.nowPlayingBG, lineWidth: 4)
+                            .blur(radius: 4)
+                            .offset(x: -10, y: -10)
+                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
+                    .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: size * 0.03))
+                    .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
+                    .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
+                Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
+                    .resizable()
+                    .frame(width: geo.size.width - (geo.size.width * 0.03), height: geo.size.height - (geo.size.height * 0.03), alignment: .center)
+                    .scaledToFit()
+            }
+        }
+        .frame(width: size, height: size, alignment: .center)
+    }
+    
+    private func artworkWidth(for state: Bool) -> CGFloat {
+        nowPlayingViewModel.isFullScreen ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
+    }
+}
+
+struct ArtworkAnimationView: View {
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
+    @State var image: UIImage = UIImage()
+    var size: CGFloat
+    var body: some View {
+        
+        GeometryReader { geo in
+            ZStack {
+                Color.clear.opacity(0)
+                Rectangle()
+                    .fill(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black))
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.black, lineWidth: 4)
+                            .blur(radius: 4)
+                            .offset(x: 10, y: 10)
+                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.clear, Color.black))))
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.nowPlayingBG, lineWidth: 4)
+                            .blur(radius: 4)
+                            .offset(x: -10, y: -10)
+                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
+                    .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: size * 0.03))
+                    .shadow(color: Color.black.opacity(0.8), radius: 10, x: 5, y: 5)
+                    .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
+                Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
+                    .resizable()
+                    .frame(width: geo.size.width - (geo.size.width * 0.03), height: geo.size.height - (geo.size.height * 0.03), alignment: .center)
+                    .scaledToFit()
+            }
+        }
+        .frame(width: size, height: size, alignment: .center)
     }
     
     private func artworkWidth(for state: Bool) -> CGFloat {

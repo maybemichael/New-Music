@@ -29,6 +29,8 @@ class NowPlayingViewModel: ObservableObject {
     @Published var darkerAccentColor: Color
     @Published var isTooLight = false
     @Published var isFullScreen = false
+    @Published var shouldAnimateColorChange = false 
+    @Published var getFrame = false
     @Published var textColor1: Color
     @Published var textColor2: Color
     @Published var textColor3: Color

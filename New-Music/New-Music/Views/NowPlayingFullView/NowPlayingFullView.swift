@@ -12,52 +12,60 @@ struct NowPlayingFullView: View {
     @GestureState private var dragState = DragState.inactive
     @State private var position: CGFloat = 0
     @State private var topAnchor: CGFloat = 0
+    @Namespace var artworkAnimation
+    var frame: CGRect
     let musicController: MusicController
-    
-    var drag: some Gesture {
-        let drag = DragGesture()
-            .updating($dragState) { drag, state, transaction in
-                state = .dragging(translation: drag.translation)
-
-            }
-            .onEnded(onDragEnded)
-        return drag
-    }
+    var frameDelegate: FrameDelegate
     
     var body: some View {
-        
-        ZStack {
-            Color.clear
-                .edgesIgnoringSafeArea(.all)
-            if nowPlayingViewModel.isFullScreen {
-                VStack {
-                    GeometryReader { geo in
-                        AlbumArtworkView()
-                            //                    Rectangle()
-                            //                        .foregroundColor(.clear)
-                            //                        .padding(.bottom, 20)
-                            .foregroundColor(.clear)
-                            .padding(.bottom, 20)
+        GeometryReader { geo in
+            
+//            ZStack {
+//                Color.clear
+//                    .edgesIgnoringSafeArea(.all)
+            VStack {
+                GeometryReader { geometry in
+                    if nowPlayingViewModel.isFullScreen {
+                        ArtworkView2(size: UIScreen.main.bounds.width - 80)
+                            .position(x: ((UIScreen.main.bounds.width - 80) / 2), y:  ((UIScreen.main.bounds.width - 80) / 2))
+//                            .position(x: frame.midX, y: frame.midY)
+                            .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
                             .onAppear {
-                                nowPlayingViewModel.fullImageFrame = CGRect(x: 0, y: geo.frame(in: .named("FullNowPlayingView")).minY + UIScreen.main.bounds.height, width: geo.frame(in: .named("FullNowPlayingView")).width, height: geo.frame(in: .named("FullNowPlayingView")).height)
-                                print("Albunm Artwork Full Frame: \(geo.frame(in: .named("FullNowPlayingView")))")
-                            }
-                            .onChange(of: nowPlayingViewModel.isFullScreen, perform: { value in
-                                if !nowPlayingViewModel.isFullScreen {
-                                    nowPlayingViewModel.fullImageFrame = geo.frame(in: .global)
-                                    print("On Changed Album Artwork Frame: \(nowPlayingViewModel.fullImageFrame)")
-                                }
+                                let frame = CGRect(x: geometry.frame(in: .global).origin.x - ((UIScreen.main.bounds.width - 80) * 0.015), y: geometry.frame(in: .global).origin.y - ((UIScreen.main.bounds.width - 80) * 0.015), width: geometry.frame(in: .global).size.width + ((UIScreen.main.bounds.width - 80) * 0.03), height: geometry.frame(in: .global).size.height + ((UIScreen.main.bounds.width - 80) * 0.03))
+                                nowPlayingViewModel.fullImageFrame = frame
+                                print("Full Image View Frame: \(nowPlayingViewModel.fullImageFrame)")
+                                frameDelegate.getFrame(frame: frame)
+                            }.animation(.easeIn(duration: 0.65))
+                            .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
+                                nowPlayingViewModel.fullImageFrame = geometry.frame(in: .global)
+                                print("Full Image View Frame: \(nowPlayingViewModel.fullImageFrame)")
+                                frameDelegate.getFrame(frame: geometry.frame(in: .global))
                             })
+                    } else {
+                        Rectangle()
+                            .foregroundColor(.clear)
+                        
                     }
-                    .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-                    VStack {
+                }
+                .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+                    //                    .edgesIgnoringSafeArea(.all)
+                    //                    .position(x: geo.frame(in: .local).maxX, y: geo.frame(in: .local).minY)
+                    //                    .frame(alignment: .center)
+                    //            }
+                    //            else {
+                    //                    .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+                    //                    .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+                    //                    .frame(width: frame.width, height: frame.height, alignment: .center)
+                    //            }
+                    //            .frame(minWidth: 60, maxWidth: UIScreen.main.bounds.width - 80, minHeight: 60, maxHeight: UIScreen.main.bounds.width - 80, alignment: .center)/
+                    VStack(alignment: .center) {
                         Text(nowPlayingViewModel.artist)
-                            //                    Text("Fall Out Boy")
+                            //                Text("Fall Out Boy")
                             .font(Font.system(.title3).weight(.medium))
                             .foregroundColor(nowPlayingViewModel.textColor2)
                             .multilineTextAlignment(.center)
                         Text(nowPlayingViewModel.songTitle)
-                            //                    Text("Grand Theft Autumn")
+                            //                Text("Grand Theft Autumn")
                             .font(Font.system(.title3).weight(.medium))
                             .foregroundColor(textColorFor(isTooLight: nowPlayingViewModel.isTooLight))
                             .multilineTextAlignment(.center)
@@ -65,7 +73,6 @@ struct NowPlayingFullView: View {
                         
                     }
                     .frame(minHeight: 80, alignment: .center)
-                    .padding(.horizontal, 40)
                     TrackProgressBarView(musicController: musicController)
                     HStack(spacing: 40) {
                         NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackBackward, musicController: musicController)
@@ -75,17 +82,26 @@ struct NowPlayingFullView: View {
                         NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackForward, musicController: musicController)
                             .frame(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7, alignment: .center)
                     }
+                    
+//                }
+//                .frame(width: geo.size.width, height: geo.size.height)
                 }
-            }
-            //        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            
-            
+                .padding(.horizontal, 40)
+                .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                .edgesIgnoringSafeArea(.all)
+
         }
-        .background(nowPlayingStateBackground(isFullScreen: nowPlayingViewModel.isFullScreen).animation(.linear(duration: 0.4)))
-        //        .background(backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight))
-        .coordinateSpace(name: "FullNowPlayingView")
+        .frame(width: UIScreen.main.bounds.width)
+        .background(nowPlayingStateBackground(animateColor: nowPlayingViewModel.shouldAnimateColorChange).animation(.linear(duration: 0.4)))
         .edgesIgnoringSafeArea(.all)
+//        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        
+        //        }
+//        .background(backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight))
+        .coordinateSpace(name: "FullNowPlayingView")
     }
+    
+    
     
     private func getTopInset() -> CGFloat {
         guard let topInset = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.safeAreaInsets.top else { return 30 }
@@ -95,35 +111,18 @@ struct NowPlayingFullView: View {
     private func setOffset() -> CGFloat {
         return self.position + self.dragState.translation.height
     }
-
-    private func onDragEnded(drag: DragGesture.Value) {
-        let verticalDirection = drag.predictedEndLocation.y - drag.location.y
-        topAnchor = self.position + drag.translation.height
-        let positionAbove: CGFloat = CardPosition.top.offset
-        let positionBelow: CGFloat = CardPosition.bottom.offset
-        let closestPosition: CGFloat
-        if verticalDirection > 40 {
-            withAnimation(Animation.easeIn(duration: 0.3)) {
-                position = CardPosition.top.offset
-            }
-        }
-        if (topAnchor - positionAbove) < (positionBelow - topAnchor) {
-            closestPosition = positionAbove
-        } else {
-            closestPosition = positionBelow
-        }
-
-        if verticalDirection > 0 {
-            withAnimation(Animation.easeOut(duration: 0.3)) {
-                self.position = positionBelow
-            }
-        } else if verticalDirection < 0 {
-            withAnimation(Animation.easeOut(duration: 0.3)) {
-                self.position = positionAbove
-            }
-        } else {
-            self.position = closestPosition
-        }
+    
+    private func getCenterX() -> CGFloat {
+        let imageWidth = UIScreen.main.bounds.width - 80
+        let halfWidth: CGFloat = imageWidth / 2
+        let margin: CGFloat = 40
+        return margin + halfWidth
+    }
+    private func getCenterY() -> CGFloat {
+        let imageWidth = UIScreen.main.bounds.width - 80
+        let halfHeight: CGFloat = imageWidth / 2
+        let topMargin = UIScreen.main.bounds.height / 6
+        return topMargin + halfHeight
     }
     
     private func opacity(for whiteLevel: CGFloat) -> Double {
@@ -149,15 +148,13 @@ struct NowPlayingFullView: View {
         return isTooLight ? Color.white : Color.white
     }
     
-    private func nowPlayingStateBackground(isFullScreen: Bool) -> Color {
-        return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
-//        if isFullScreen {
-//            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
-//        } else {
-//            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
-//            return Color.nowPlayingBG.opacity(0.4)
-//            return Color.clear
-//        }
+    private func nowPlayingStateBackground(animateColor: Bool) -> Color {
+//        return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+        if animateColor {
+            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+        } else {
+            return Color.nowPlayingBG.opacity(0.4)
+        }
     }
     
     private func backgroundColorFor(isTooLight: Bool) -> Color {
@@ -168,6 +165,12 @@ struct NowPlayingFullView: View {
 struct NowPlayingFullView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingFullView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingFullView(frame: CGRect(x: 40, y: UIScreen.main.bounds.height / 6, width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80), musicController: musicController, frameDelegate: NowPlayingFullViewController()).environmentObject(musicController.nowPlayingViewModel)
     }
 }
+
+//func artworkView(frame: CGRect) -> some View {
+//    Rectangle()
+//        .background(Color.blue)
+//        .position(frame.origin)
+//}

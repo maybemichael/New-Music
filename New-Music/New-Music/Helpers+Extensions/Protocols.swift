@@ -31,3 +31,12 @@ protocol ReloadDataDelegate: AnyObject {
 protocol SetPlaylistDelegate: AnyObject {
     func setQueue(with playlist: Playlist)
 }
+
+protocol NowPlayingController {
+    var animationFrameView: UIView { get }
+    var animationFrame: CGRect { get set }
+}
+
+protocol FrameDelegate: AnyObject {
+    func getFrame(frame: CGRect)
+}

@@ -7,10 +7,22 @@
 
 import SwiftUI
 
-class NowPlayingMinimizedViewController: UIViewController {
+class NowPlayingMinimizedViewController: UIViewController, NowPlayingController, FrameDelegate {
+    
 
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
+    var animationFrame: CGRect = CGRect() {
+        didSet {
+            self.animationFrameView.frame = self.animationFrame
+        }
+    }
+    
+    let animationFrameView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
     
     lazy var tapGesture: UITapGestureRecognizer = {
         let gesture = UITapGestureRecognizer()
@@ -25,13 +37,16 @@ class NowPlayingMinimizedViewController: UIViewController {
     }
     
     private func setupViews() {
+        view.addSubview(animationFrameView)
+        animationFrameView.frame = CGRect(x: 20, y: 5, width: 55, height: 55)
+        self.animationFrame = animationFrameView.frame
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
         view.addSubview(blurView)
         view.layer.masksToBounds = true
         view.clipsToBounds = true
         blurView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         guard let musicController = self.musicController else { return }
-        let nowPlayingMinimizedVC = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
+        let nowPlayingMinimizedVC = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60, frame: animationFrame, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
         addChild(nowPlayingMinimizedVC)
         nowPlayingMinimizedVC.didMove(toParent: self)
         view.addSubview(nowPlayingMinimizedVC.view)
@@ -43,5 +58,9 @@ class NowPlayingMinimizedViewController: UIViewController {
     
     @objc private func presentFullScreenNowPlaying() {
         coordinator?.presentNowPlayingFullVC()
+    }
+    
+    func getFrame(frame: CGRect) {
+        self.animationFrame = frame
     }
 }
