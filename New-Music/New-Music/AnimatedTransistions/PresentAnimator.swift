@@ -26,7 +26,7 @@ class PresentAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         print("Final Frame: \(finalFrame)")
         containerView.addSubview(nowPlayingFullVC.view)
         nowPlayingFullVC.view.frame = startFrame
-        musicController.nowPlayingViewModel.shouldAnimateColorChange = true
+        self.musicController.nowPlayingViewModel.shouldAnimateColorChange = true
         UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseOut) {
             nowPlayingFullVC.view.frame = finalFrame
         } completion: { _ in

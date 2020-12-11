@@ -90,8 +90,8 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
         case .ended:
             let yVelocity = gesture.velocity(in: viewToAnimate).y
             if yVelocity > 400 || viewToAnimate.frame.minY > UIScreen.main.bounds.height / 3 {
-                self.fromVC?.dismiss(animated: true, completion: nil)
                 musicController.nowPlayingViewModel.isFullScreen = false
+                self.fromVC?.dismiss(animated: true, completion: nil)
             } else {
                 bounceBackFull()
                 musicController.nowPlayingViewModel.isFullScreen = true

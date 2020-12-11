@@ -10,10 +10,8 @@ import SwiftUI
 final class NowPlayingPresentationController: UIPresentationController {
     
     var musicController: MusicController
-    var artworkView: UIViewController
     let shadowView: UIView = {
         let view = UIView()
-//        view.contentMode = .scaleAspectFit
         view.backgroundColor = .clear
         return view
     }()
@@ -32,7 +30,7 @@ final class NowPlayingPresentationController: UIPresentationController {
     }
     
     override func presentationTransitionWillBegin() {
-        self.artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
+        let artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
         let tabBarController = presentingViewController as! UITabBarController
         let nav = tabBarController.viewControllers?[tabBarController.selectedIndex] as! UINavigationController
@@ -61,7 +59,7 @@ final class NowPlayingPresentationController: UIPresentationController {
         artworkView.view.frame = nowPlayingFull.animationFrame
         let snapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
         let snapshot2 = artworkView.view.snapshotView(afterScreenUpdates: true)
-        matchImageShadows(snapshot1: snapshot, snapshot2: snapshot2)
+        matchImageShadowsPresent(snapshot1: snapshot, snapshot2: snapshot2)
         snapshot?.frame = barVC.animationFrame
         snapshot2?.frame = barVC.animationFrame
 
@@ -81,7 +79,9 @@ final class NowPlayingPresentationController: UIPresentationController {
     }
     
     override func dismissalTransitionWillBegin() {
-        self.artworkView = UIHostingController(rootView: ArtworkView2(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
+        let artworkView = UIHostingController(rootView: ArtworkView2(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
+        let barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
+        barView.view.backgroundColor = .clear
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
         let tabBarController = presentingViewController as! UITabBarController
         let nav = tabBarController.viewControllers?[tabBarController.selectedIndex] as! UINavigationController
@@ -107,20 +107,29 @@ final class NowPlayingPresentationController: UIPresentationController {
             let barVC = nowPlayingMinimized
         else { return }
 
+        barView.view.frame = barVC.view.frame
         artworkView.view.frame = nowPlayingFull.animationFrame
-        let snapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
-        snapshot?.frame = nowPlayingFull.animationFrame
-        presentedView?.addSubview(snapshot!)
-        
+        let artworkSnapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
+        let barViewSnapshot = barView.view.snapshotView(afterScreenUpdates: true)
+        barViewSnapshot?.frame = barVC.view.bounds
+        barViewSnapshot?.center = containerView!.center
+        barViewSnapshot!.alpha = 0
+        artworkSnapshot?.frame = nowPlayingFull.animationFrame
+        containerView?.addSubview(barViewSnapshot!)
+        presentedView?.addSubview(artworkSnapshot!)
+        barVC.view.isHidden = true
         coordinator.animate { _ in
-            snapshot?.frame = barVC.animationFrame
+            artworkSnapshot?.frame = barVC.animationFrame
+            barViewSnapshot?.alpha = 1
+            barViewSnapshot?.frame = barVC.view.frame
         } completion: { _ in
-            snapshot?.removeFromSuperview()
+            barVC.view.isHidden = false
+            artworkSnapshot?.removeFromSuperview()
+            barViewSnapshot?.removeFromSuperview()
         }
     }
     
-    private func matchImageShadows(snapshot1: UIView?, snapshot2: UIView?) {
-//        shadowView.addSubview(snapshot!)
+    private func matchImageShadowsPresent(snapshot1: UIView?, snapshot2: UIView?) {
         snapshot1?.layer.shadowColor = UIColor.black.cgColor
         snapshot1?.layer.shadowOffset = CGSize(width: 5, height: 5)
         snapshot1?.layer.shadowRadius = 10
@@ -129,12 +138,21 @@ final class NowPlayingPresentationController: UIPresentationController {
         snapshot2?.layer.shadowOffset = CGSize(width: -3, height: -3)
         snapshot2?.layer.shadowRadius = 10
         snapshot2?.layer.shadowOpacity = 0.1
-//        snapshot?.frame = shadowView.bounds
+    }
+    
+    private func matchImageShadowsDismiss(snapshot1: UIView?, snapshot2: UIView?) {
+        snapshot1?.layer.shadowColor = UIColor.black.cgColor
+        snapshot1?.layer.shadowOffset = CGSize(width: 5, height: 5)
+        snapshot1?.layer.shadowRadius = 10
+        snapshot1?.layer.shadowOpacity = 0.9
+        snapshot2?.layer.shadowColor = UIColor.white.cgColor
+        snapshot2?.layer.shadowOffset = CGSize(width: -3, height: -3)
+        snapshot2?.layer.shadowRadius = 10
+        snapshot2?.layer.shadowOpacity = 0.1
     }
     
     init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?, musicController: MusicController) {
         self.musicController = musicController
-        self.artworkView = UIHostingController(rootView: ArtworkView2(size: 60).environmentObject(musicController.nowPlayingViewModel))
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
         self.containerView?.backgroundColor = .clear
     }

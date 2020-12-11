@@ -10,7 +10,6 @@
 		4C04E8A5253E5253001C0039 /* TransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04E8A4253E5253001C0039 /* TransitionAnimator.swift */; };
 		4C04E8AD253E5C11001C0039 /* NowPlayingFullViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04E8AC253E5C11001C0039 /* NowPlayingFullViewController.swift */; };
 		4C06DE60254F9D8A00897208 /* Interactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04E8B7253E6083001C0039 /* Interactor.swift */; };
-		4C0744B1254AA01E002CA9AD /* NowPlayingView3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0744B0254AA01E002CA9AD /* NowPlayingView3.swift */; };
 		4C07BE1B25555CF000A2D85A /* InstantPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */; };
 		4C0FD8DD252AB79E003AA808 /* MusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8DC252AB79E003AA808 /* MusicController.swift */; };
 		4C0FD8E2252ADFC1003AA808 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */; };
@@ -28,6 +27,7 @@
 		4C27C3C22542BC600005BD01 /* PlaylistSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C27C3C12542BC600005BD01 /* PlaylistSongView.swift */; };
 		4C2AE15F25310BAE009164B8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2AE15E25310BAE009164B8 /* Constants.swift */; };
 		4C2C83CA256498FD00D4332F /* ChildVCCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C83C9256498FD00D4332F /* ChildVCCoordinator.swift */; };
+		4C319907258381E4007D9A3F /* NowPlayingBarAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C319906258381E4007D9A3F /* NowPlayingBarAnimationView.swift */; };
 		4C32722A2547DA9700C5A169 /* ButtonBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3272292547DA9700C5A169 /* ButtonBackgrounds.swift */; };
 		4C32722F2547DC3200C5A169 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C32722E2547DC3200C5A169 /* ButtonStyles.swift */; };
 		4C3272372547DCBB00C5A169 /* MusicControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3272362547DCBB00C5A169 /* MusicControlsView.swift */; };
@@ -36,7 +36,6 @@
 		4C3D1CF32547F7000067F57E /* TrackProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D1CF22547F7000067F57E /* TrackProgressBarView.swift */; };
 		4C3D1CFC2547FCEC0067F57E /* NowPlayingFullView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D1CFB2547FCEC0067F57E /* NowPlayingFullView.swift */; };
 		4C3D1D052547FF7E0067F57E /* NowPlayingBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D1D042547FF7E0067F57E /* NowPlayingBarView.swift */; };
-		4C3D1D11254806B60067F57E /* NowPlayingView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D1D10254806B60067F57E /* NowPlayingView2.swift */; };
 		4C4BB608253C07C3005B086A /* MockSearchResults.json in Resources */ = {isa = PBXBuildFile; fileRef = 4C4BB607253C07C3005B086A /* MockSearchResults.json */; };
 		4C4BB613253C121E005B086A /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4BB612253C121E005B086A /* SearchResult.swift */; };
 		4C4BB61E253C2BE2005B086A /* AlbumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4BB61D253C2BE2005B086A /* AlbumData.swift */; };
@@ -118,7 +117,6 @@
 		4C04E8A4253E5253001C0039 /* TransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionAnimator.swift; sourceTree = "<group>"; };
 		4C04E8AC253E5C11001C0039 /* NowPlayingFullViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingFullViewController.swift; sourceTree = "<group>"; };
 		4C04E8B7253E6083001C0039 /* Interactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interactor.swift; sourceTree = "<group>"; };
-		4C0744B0254AA01E002CA9AD /* NowPlayingView3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView3.swift; sourceTree = "<group>"; };
 		4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstantPanGestureRecognizer.swift; sourceTree = "<group>"; };
 		4C0FD8DC252AB79E003AA808 /* MusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicController.swift; sourceTree = "<group>"; };
 		4C0FD8E1252ADFC1003AA808 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
@@ -137,6 +135,7 @@
 		4C27C3C12542BC600005BD01 /* PlaylistSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistSongView.swift; sourceTree = "<group>"; };
 		4C2AE15E25310BAE009164B8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		4C2C83C9256498FD00D4332F /* ChildVCCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildVCCoordinator.swift; sourceTree = "<group>"; };
+		4C319906258381E4007D9A3F /* NowPlayingBarAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingBarAnimationView.swift; sourceTree = "<group>"; };
 		4C3272292547DA9700C5A169 /* ButtonBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonBackgrounds.swift; sourceTree = "<group>"; };
 		4C32722E2547DC3200C5A169 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		4C3272362547DCBB00C5A169 /* MusicControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicControlsView.swift; sourceTree = "<group>"; };
@@ -145,7 +144,6 @@
 		4C3D1CF22547F7000067F57E /* TrackProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackProgressBarView.swift; sourceTree = "<group>"; };
 		4C3D1CFB2547FCEC0067F57E /* NowPlayingFullView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingFullView.swift; sourceTree = "<group>"; };
 		4C3D1D042547FF7E0067F57E /* NowPlayingBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingBarView.swift; sourceTree = "<group>"; };
-		4C3D1D10254806B60067F57E /* NowPlayingView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView2.swift; sourceTree = "<group>"; };
 		4C4BB607253C07C3005B086A /* MockSearchResults.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MockSearchResults.json; sourceTree = "<group>"; };
 		4C4BB612253C121E005B086A /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
 		4C4BB61D253C2BE2005B086A /* AlbumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumData.swift; sourceTree = "<group>"; };
@@ -318,17 +316,9 @@
 			isa = PBXGroup;
 			children = (
 				4C3D1D042547FF7E0067F57E /* NowPlayingBarView.swift */,
+				4C319906258381E4007D9A3F /* NowPlayingBarAnimationView.swift */,
 			);
 			path = NowPlayingBarView;
-			sourceTree = "<group>";
-		};
-		4C3D1D0F254806A30067F57E /* NowPlayingView */ = {
-			isa = PBXGroup;
-			children = (
-				4C3D1D10254806B60067F57E /* NowPlayingView2.swift */,
-				4C0744B0254AA01E002CA9AD /* NowPlayingView3.swift */,
-			);
-			path = NowPlayingView;
 			sourceTree = "<group>";
 		};
 		4C4BB622253C2C27005B086A /* SongModels */ = {
@@ -484,7 +474,6 @@
 				4C586BDD2562389700277E6A /* NowPlayingIndicatorView */,
 				4C1218902558FEDB00164062 /* CollectionViewCells */,
 				4C1E4610254D117A00E49F17 /* NowPlayingPlaylistView */,
-				4C3D1D0F254806A30067F57E /* NowPlayingView */,
 				4C3D1D032547FF660067F57E /* NowPlayingBarView */,
 				4C3D1CFA2547FCD30067F57E /* NowPlayingFullView */,
 				4C3D1CF12547F6CD0067F57E /* TrackProgressView */,
@@ -707,7 +696,6 @@
 				4C5F40F2256DFB9500DBDA8C /* PersistedPlaylist+Convenience.swift in Sources */,
 				4CD485BF253AD6D0005265F3 /* NowPlayingViewModel.swift in Sources */,
 				4C646B5A25296D4100B05D8A /* Song.swift in Sources */,
-				4C3D1D11254806B60067F57E /* NowPlayingView2.swift in Sources */,
 				4CD485A3253AC214005265F3 /* SongResource.swift in Sources */,
 				4C0FD8E7252AF62E003AA808 /* Colors.swift in Sources */,
 				4C32722A2547DA9700C5A169 /* ButtonBackgrounds.swift in Sources */,
@@ -726,7 +714,6 @@
 				4CC643A72542D506003E6EAE /* CurrentPlaylist.swift in Sources */,
 				4CA0ED48253CBDB1001E2ED7 /* NowPlayingBar.swift in Sources */,
 				4C646B8225296FB400B05D8A /* UIColors.swift in Sources */,
-				4C0744B1254AA01E002CA9AD /* NowPlayingView3.swift in Sources */,
 				4C646B8C2529726600B05D8A /* AlbumsCollectionViewCell.swift in Sources */,
 				4C1E460C254D01A900E49F17 /* AppTabBarViewController.swift in Sources */,
 				4C07BE1B25555CF000A2D85A /* InstantPanGestureRecognizer.swift in Sources */,
@@ -762,6 +749,7 @@
 				4CFB1DCF256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift in Sources */,
 				4C4BB613253C121E005B086A /* SearchResult.swift in Sources */,
 				4C1E4612254D119700E49F17 /* NowPlayingPlaylistView.swift in Sources */,
+				4C319907258381E4007D9A3F /* NowPlayingBarAnimationView.swift in Sources */,
 				4C646B872529725800B05D8A /* SongsCollectionViewCell.swift in Sources */,
 				4C2C83CA256498FD00D4332F /* ChildVCCoordinator.swift in Sources */,
 				4CA71D442571168E00CF6980 /* PlaylistCollectionViewCell.swift in Sources */,

@@ -49,7 +49,8 @@ struct NowPlayingBarView: View {
 struct NowPlayingBarView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingBarView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel)
+//        NowPlayingBarView(musicController: musicController).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingMinimized3(musicController: musicController, height: 65).environmentObject(musicController.nowPlayingViewModel)
     }
 }
 
@@ -137,33 +138,44 @@ struct NowPlayingMinimized3: View {
     var height: CGFloat
     
     var body: some View {
-        HStack(spacing: 12) {
-            NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
-//                .onTapGesture {
-//                    print("Global Frame: \(geo.frame(in: .global))")
-//                }
-//                .frame(height: height - 5, alignment: .center)
-            VStack(alignment: .leading) {
-                Text(nowPlayingViewModel.artist)
-                    .font(Font.system(.subheadline).weight(.light))
-                    .foregroundColor(.lightTextColor)
-                        .lineLimit(1)
-                    Text(nowPlayingViewModel.songTitle)
-                        .font(Font.system(.headline).weight(.light))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
+        GeometryReader { geo in
+            HStack {
+                GeometryReader { geometry in
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(width: height - 3, height: height - 3, alignment: .center)
                 }
-                .frame(maxWidth: (height) * 3, alignment: .leading)
-                HStack(spacing: 15) {
+                .frame(width: height - 5, height: height - 5, alignment: .center)
+                GeometryReader { geo in
+                    VStack(alignment: .leading) {
+                        Text(nowPlayingViewModel.artist)
+//                        Text("Fall Out Boy")
+                            .font(Font.system(.subheadline).weight(.light))
+                            .foregroundColor(.lightTextColor)
+                            .lineLimit(1)
+                        Text(nowPlayingViewModel.songTitle)
+//                        Text("Nobody Puts Baby in the Corner")
+                            .font(Font.system(.headline).weight(.light))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                    }
+                    .frame(height: geo.size.height, alignment: .center)
+                }
+                .frame(maxWidth: height * 3.5)
+                HStack(spacing: 12) {
                     BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
                         .foregroundColor(.white)
                         .frame(width: height - 5, height: height - 5, alignment: .center)
                     BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
                         .frame(width: height - 16, height: height - 16, alignment: .center)
                 }
-
+            }
+            .padding(.leading, 20)
+            .padding(.trailing, 15)
         }
-        .frame(alignment: .center)
+        .coordinateSpace(name: "MinimizedNowPlaying")
+        .frame(width: UIScreen.main.bounds.width, height: height, alignment: .center)
+//        .background(Color.nowPlayingBG.opacity(0.4))
     }
     
     private func backgroundColorFor(isTooLight: Bool) -> Color {
@@ -183,7 +195,6 @@ struct NowPlayingMinimized2: View {
             HStack {
                 GeometryReader { geometry in
                     NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
-//                        .position(x: frame.midX, y: frame.midY)
                         .frame(width: height - 5, height: height - 5, alignment: .center)
                         .onAppear {
                             nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
@@ -222,3 +233,4 @@ struct NowPlayingMinimized2: View {
         .frame(width: UIScreen.main.bounds.width, height: height, alignment: .center)
     }
 }
+

@@ -12,7 +12,6 @@ struct NowPlayingFullView: View {
     @GestureState private var dragState = DragState.inactive
     @State private var position: CGFloat = 0
     @State private var topAnchor: CGFloat = 0
-    @Namespace var artworkAnimation
     var frame: CGRect
     let musicController: MusicController
     var frameDelegate: FrameDelegate
@@ -48,24 +47,14 @@ struct NowPlayingFullView: View {
                     }
                 }
                 .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-                    //                    .edgesIgnoringSafeArea(.all)
-                    //                    .position(x: geo.frame(in: .local).maxX, y: geo.frame(in: .local).minY)
-                    //                    .frame(alignment: .center)
-                    //            }
-                    //            else {
-                    //                    .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-                    //                    .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-                    //                    .frame(width: frame.width, height: frame.height, alignment: .center)
-                    //            }
-                    //            .frame(minWidth: 60, maxWidth: UIScreen.main.bounds.width - 80, minHeight: 60, maxHeight: UIScreen.main.bounds.width - 80, alignment: .center)/
                     VStack(alignment: .center) {
                         Text(nowPlayingViewModel.artist)
-                            //                Text("Fall Out Boy")
+//                        Text("Fall Out Boy")
                             .font(Font.system(.title3).weight(.medium))
                             .foregroundColor(nowPlayingViewModel.textColor2)
                             .multilineTextAlignment(.center)
                         Text(nowPlayingViewModel.songTitle)
-                            //                Text("Grand Theft Autumn")
+//                        Text("Grand Theft Autumn")
                             .font(Font.system(.title3).weight(.medium))
                             .foregroundColor(textColorFor(isTooLight: nowPlayingViewModel.isTooLight))
                             .multilineTextAlignment(.center)
@@ -82,9 +71,6 @@ struct NowPlayingFullView: View {
                         NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackForward, musicController: musicController)
                             .frame(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7, alignment: .center)
                     }
-                    
-//                }
-//                .frame(width: geo.size.width, height: geo.size.height)
                 }
                 .padding(.horizontal, 40)
                 .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
@@ -92,12 +78,8 @@ struct NowPlayingFullView: View {
 
         }
         .frame(width: UIScreen.main.bounds.width)
-        .background(nowPlayingStateBackground(animateColor: nowPlayingViewModel.shouldAnimateColorChange).animation(.linear(duration: 0.4)))
+        .background(nowPlayingBackground(for: nowPlayingViewModel.shouldAnimateColorChange).animation(nowPlayingViewModel.isFullScreen ? Animation.easeOut(duration: 0.5) : Animation.linear(duration: 0.0)))
         .edgesIgnoringSafeArea(.all)
-//        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        
-        //        }
-//        .background(backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight))
         .coordinateSpace(name: "FullNowPlayingView")
     }
     
@@ -148,7 +130,7 @@ struct NowPlayingFullView: View {
         return isTooLight ? Color.white : Color.white
     }
     
-    private func nowPlayingStateBackground(animateColor: Bool) -> Color {
+    private func nowPlayingBackground(for animateColor: Bool) -> Color {
 //        return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
         if animateColor {
             return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
