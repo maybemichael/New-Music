@@ -47,6 +47,7 @@ struct NowPlayingFullView: View {
                     }
                 }
                 .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+                if !nowPlayingViewModel.isMinimized {
                     VStack(alignment: .center) {
                         Text(nowPlayingViewModel.artist)
 //                        Text("Fall Out Boy")
@@ -61,7 +62,8 @@ struct NowPlayingFullView: View {
                             .lineLimit(2)
                         
                     }
-                    .frame(minHeight: 80, alignment: .center)
+                    .frame(minHeight: 85, alignment: .center)
+                }
                     TrackProgressBarView(musicController: musicController)
                     HStack(spacing: 40) {
                         NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackBackward, musicController: musicController)
@@ -78,7 +80,7 @@ struct NowPlayingFullView: View {
 
         }
         .frame(width: UIScreen.main.bounds.width)
-        .background(nowPlayingBackground(for: nowPlayingViewModel.shouldAnimateColorChange).animation(.easeOut(duration: 0.5)))
+        .background(nowPlayingBackground(for: nowPlayingViewModel.isMinimized).animation(nowPlayingViewModel.shouldAnimateColorChange ? Animation.linear(duration: 0.5) : Animation.easeOut(duration: 0.05)))
         .edgesIgnoringSafeArea(.all)
         .coordinateSpace(name: "FullNowPlayingView")
     }
@@ -130,11 +132,11 @@ struct NowPlayingFullView: View {
         return isTooLight ? Color.white : Color.white
     }
     
-    private func nowPlayingBackground(for animateColor: Bool) -> Color {
-        if animateColor {
-            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+    private func nowPlayingBackground(for isMinimized: Bool) -> Color {
+        if isMinimized {
+            return Color.nowPlayingBG.opacity(0.8)
         } else {
-            return Color.nowPlayingBG
+            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
         }
     }
     

@@ -47,8 +47,8 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         }
         let listLayout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
         let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
-        cv.backgroundColor = .clear
         cv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        cv.backgroundColor = .clear
         cv.contentInset.bottom = 66
         cv.register(PlaylistCollectionViewCell.self, forCellWithReuseIdentifier: PlaylistCollectionViewCell.identifier)
         cv.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
@@ -239,7 +239,6 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         navigationItem.rightBarButtonItem?.tintColor = .white
         view.backgroundColor = .backgroundColor
         view.layer.cornerRadius = 20
-//        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(collectionView)
         view.addSubview(separatorView)
         separatorView.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, centerX: view.centerXAnchor)

@@ -87,12 +87,14 @@ struct TrackProgressView: View {
                 }
                 HStack(alignment: .center) {
                     Text(formattedTimeFor(timeInterval: nowPlayingViewModel.elapsedTime))
-                        .font(Font.system(.body).weight(.medium))
-                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
+                        .font(.custom("CourierNewPS-BoldMT", size: 15, relativeTo: .title3))
+                        .foregroundColor(.white)
+//                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                     Spacer()
                     Text("-\(formattedTimeRemainingFor(timeInterval: nowPlayingViewModel.timeRemaining))")
-                        .font(Font.system(.body).weight(.medium))
-                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
+                        .font(.custom("CourierNewPS-BoldMT", size: 15, relativeTo: .title3))
+                        .foregroundColor(.white)
+//                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                 }
             }
         }

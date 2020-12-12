@@ -59,7 +59,7 @@ final class NowPlayingPresentationController: UIPresentationController {
         artworkView.view.frame = nowPlayingFull.animationFrame
         let snapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
         let snapshot2 = artworkView.view.snapshotView(afterScreenUpdates: true)
-        matchImageShadowsPresent(snapshot1: snapshot, snapshot2: snapshot2)
+        matchImageShadows(snapshot1: snapshot, snapshot2: snapshot2)
         snapshot?.frame = barVC.animationFrame
         snapshot2?.frame = barVC.animationFrame
 
@@ -110,37 +110,38 @@ final class NowPlayingPresentationController: UIPresentationController {
         barView.view.frame = barVC.view.frame
         artworkView.view.frame = nowPlayingFull.animationFrame
         let artworkSnapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
+        let artworkSnapshot2 = artworkView.view.snapshotView(afterScreenUpdates: true)
         let barViewSnapshot = barView.view.snapshotView(afterScreenUpdates: true)
         barViewSnapshot?.frame = barVC.view.bounds
         barViewSnapshot?.center = CGPoint(x: containerView!.center.x, y: getStartingY(barVC: barVC))
         barViewSnapshot!.alpha = 0
         artworkSnapshot?.frame = nowPlayingFull.animationFrame
+        artworkSnapshot2?.frame = nowPlayingFull.animationFrame
         containerView?.addSubview(barViewSnapshot!)
         presentedView?.addSubview(artworkSnapshot!)
+        presentedView?.addSubview(artworkSnapshot2!)
         barVC.view.isHidden = true
         coordinator.animate { _ in
-            artworkSnapshot?.frame = barVC.animationFrame
-            barViewSnapshot?.alpha = 1
-            barViewSnapshot?.frame = barVC.view.frame
-        } completion: { _ in
-            barVC.view.isHidden = false
-            artworkSnapshot?.removeFromSuperview()
-            barViewSnapshot?.removeFromSuperview()
+            UIView.animate(withDuration: 0.45, delay: 0, options: .curveEaseIn) {
+                artworkSnapshot?.frame = barVC.animationFrame
+                artworkSnapshot2?.frame = barVC.animationFrame
+                barViewSnapshot?.alpha = 1
+                barViewSnapshot?.frame = barVC.view.frame
+            } completion: { _ in
+                barVC.view.isHidden = false
+                barViewSnapshot?.removeFromSuperview()
+                artworkSnapshot?.removeFromSuperview()
+                artworkSnapshot2?.removeFromSuperview()
+                
+            }
+        } completion: { [weak self] _ in
+//            guard let self = self else { return }
+//            self.presentedView?.sendSubviewToBack(artworkSnapshot!)
+//            self.presentedView?.sendSubviewToBack(artworkSnapshot2!)
         }
     }
     
-    private func matchImageShadowsPresent(snapshot1: UIView?, snapshot2: UIView?) {
-        snapshot1?.layer.shadowColor = UIColor.black.cgColor
-        snapshot1?.layer.shadowOffset = CGSize(width: 5, height: 5)
-        snapshot1?.layer.shadowRadius = 10
-        snapshot1?.layer.shadowOpacity = 0.9
-        snapshot2?.layer.shadowColor = UIColor.white.cgColor
-        snapshot2?.layer.shadowOffset = CGSize(width: -3, height: -3)
-        snapshot2?.layer.shadowRadius = 10
-        snapshot2?.layer.shadowOpacity = 0.1
-    }
-    
-    private func matchImageShadowsDismiss(snapshot1: UIView?, snapshot2: UIView?) {
+    private func matchImageShadows(snapshot1: UIView?, snapshot2: UIView?) {
         snapshot1?.layer.shadowColor = UIColor.black.cgColor
         snapshot1?.layer.shadowOffset = CGSize(width: 5, height: 5)
         snapshot1?.layer.shadowRadius = 10

@@ -201,6 +201,11 @@ struct NowPlayingMinimized2: View {
                                 nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
                                 print("Minimized Now Playing: \(nowPlayingViewModel.minimizedImageFrame)")
                             }
+                            .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
+                                nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
+                                print("Full Image View Frame: \(nowPlayingViewModel.minimizedImageFrame)")
+                                frameDelegate.getFrame(frame: geometry.frame(in: .named("MinimizedNowPlaying")))
+                            })
                     }
                     .frame(width: height - 5, height: height - 5, alignment: .center)
                     GeometryReader { geo in
