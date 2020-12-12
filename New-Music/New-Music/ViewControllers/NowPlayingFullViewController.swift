@@ -55,12 +55,10 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
         view.clipsToBounds = true
         view.layer.cornerRadius = 20
         view.addSubview(backgroundView)
-//        backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         backgroundView.frame = self.view.bounds
         addChild(contentView)
         contentView.didMove(toParent: self)
         view.addSubview(contentView.view)
-//        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         contentView.view.frame = self.view.bounds
         contentView.view.backgroundColor = .clear
         view.backgroundColor = .clear
@@ -70,7 +68,6 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
         artworkView.didMove(toParent: self)
         artworkViewHolder.addSubview(artworkView.view)
         artworkView.view.anchor(top: artworkViewHolder.topAnchor, leading: artworkViewHolder.leadingAnchor, trailing: artworkViewHolder.trailingAnchor, bottom: artworkViewHolder.bottomAnchor, padding: .init(top: 5, left: 5, bottom: -5, right: -5))
-//        animationFrameView.frame = CGRect(x: 40, y: (UIScreen.main.bounds.height / 6), width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
     }
     
     private func startingFrame() -> CGRect {

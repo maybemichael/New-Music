@@ -135,7 +135,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.layer.cornerRadius = 20
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.delegate = self
-        collectionView.contentInset.bottom = 66
+        collectionView.contentInset.bottom = 65
     }
     
     private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath) -> T {

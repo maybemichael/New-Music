@@ -32,7 +32,7 @@ struct NowPlayingView: View {
     }
     
     var body: some View {
-        if songViewModel.isFullScreen {
+        if songViewModel.isFull {
             NowPlayingFull(musicController: musicController, namespace: namespace, isPresented: $isFullScreen)
                 .cornerRadius(15.0)
                 .offset(y: setOffset())
@@ -73,7 +73,7 @@ struct NowPlayingView: View {
                     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 9)
                     .onTapGesture(perform: {
                         withAnimation(Animation.easeOut(duration: 0.3)) {
-                            songViewModel.isFullScreen = true
+                            songViewModel.isFull = true
                             self.position = CardPosition.top.offset
                                 
                         }
@@ -104,7 +104,7 @@ struct NowPlayingView: View {
         
         if verticalDirection > 40 {
             withAnimation {
-                songViewModel.isFullScreen = true
+                songViewModel.isFull = true
             }
         }
 
@@ -124,12 +124,12 @@ struct NowPlayingView: View {
         
         if self.position > CardPosition.middle.offset {
             withAnimation {
-                songViewModel.isFullScreen = false
+                songViewModel.isFull = false
                 self.position = CardPosition.bottom.offset
             }
         } else {
             withAnimation {
-                songViewModel.isFullScreen = true
+                songViewModel.isFull = true
                 self.position = CardPosition.top.offset
             }
         }
@@ -609,6 +609,6 @@ struct BottomSheet<SheetContent: View>: ViewModifier {
 struct NowPlayingView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        NowPlayingView(musicController: musicController, isFullScreen: musicController.nowPlayingViewModel.isFullScreen, height: UIScreen.main.bounds.height - 120, tabBarHeight: 50).environmentObject(musicController.nowPlayingViewModel)
+        NowPlayingView(musicController: musicController, isFullScreen: musicController.nowPlayingViewModel.isFull, height: UIScreen.main.bounds.height - 120, tabBarHeight: 50).environmentObject(musicController.nowPlayingViewModel)
     }
 }

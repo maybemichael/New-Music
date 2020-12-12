@@ -76,18 +76,18 @@ struct ArtworkView: View {
                         .blur(radius: 4)
                         .offset(x: -10, y: -10)
                         .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: nowPlayingViewModel.isFullScreen ? (UIScreen.main.bounds.width - 80) * 0.03 : (UIScreen.main.bounds.width / 7) * 0.03))
-                .shadow(color: Color.black.opacity(0.9), radius: 10, x: nowPlayingViewModel.isFullScreen ? 5 : 2, y: nowPlayingViewModel.isFullScreen ? 5 : 2)
-                .shadow(color: Color.white.opacity(0.1), radius: 10, x: nowPlayingViewModel.isFullScreen ? -3 : -1, y: nowPlayingViewModel.isFullScreen ? -3 : -1)
+                .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: nowPlayingViewModel.isFull ? (UIScreen.main.bounds.width - 80) * 0.03 : (UIScreen.main.bounds.width / 7) * 0.03))
+                .shadow(color: Color.black.opacity(0.9), radius: 10, x: nowPlayingViewModel.isFull ? 5 : 2, y: nowPlayingViewModel.isFull ? 5 : 2)
+                .shadow(color: Color.white.opacity(0.1), radius: 10, x: nowPlayingViewModel.isFull ? -3 : -1, y: nowPlayingViewModel.isFull ? -3 : -1)
             Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
                 .resizable()
-                .frame(width: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.03), height: artworkWidth(for: nowPlayingViewModel.isFullScreen) - (artworkWidth(for: nowPlayingViewModel.isFullScreen) * 0.05))
+                .frame(width: artworkWidth(for: nowPlayingViewModel.isFull) - (artworkWidth(for: nowPlayingViewModel.isFull) * 0.03), height: artworkWidth(for: nowPlayingViewModel.isFull) - (artworkWidth(for: nowPlayingViewModel.isFull) * 0.05))
                 .scaledToFit()
         }
     }
     
     private func artworkWidth(for state: Bool) -> CGFloat {
-        nowPlayingViewModel.isFullScreen ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
+        nowPlayingViewModel.isFull ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
     }
 }
 
@@ -127,7 +127,7 @@ struct ArtworkView2: View {
     }
     
     private func artworkWidth(for state: Bool) -> CGFloat {
-        nowPlayingViewModel.isFullScreen ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
+        nowPlayingViewModel.isFull ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
     }
 }
 
@@ -167,6 +167,6 @@ struct ArtworkAnimationView: View {
     }
     
     private func artworkWidth(for state: Bool) -> CGFloat {
-        nowPlayingViewModel.isFullScreen ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
+        nowPlayingViewModel.isFull ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
     }
 }

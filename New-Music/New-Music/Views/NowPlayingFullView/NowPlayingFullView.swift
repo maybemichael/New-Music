@@ -24,11 +24,11 @@ struct NowPlayingFullView: View {
 //                    .edgesIgnoringSafeArea(.all)
             VStack {
                 GeometryReader { geometry in
-                    if nowPlayingViewModel.isFullScreen {
+                    if nowPlayingViewModel.isFull {
                         ArtworkView2(size: UIScreen.main.bounds.width - 80)
                             .position(x: ((UIScreen.main.bounds.width - 80) / 2), y:  ((UIScreen.main.bounds.width - 80) / 2))
 //                            .position(x: frame.midX, y: frame.midY)
-                            .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
+//                            .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
                             .onAppear {
                                 let frame = CGRect(x: geometry.frame(in: .global).origin.x - ((UIScreen.main.bounds.width - 80) * 0.015), y: geometry.frame(in: .global).origin.y - ((UIScreen.main.bounds.width - 80) * 0.015), width: geometry.frame(in: .global).size.width + ((UIScreen.main.bounds.width - 80) * 0.03), height: geometry.frame(in: .global).size.height + ((UIScreen.main.bounds.width - 80) * 0.03))
                                 nowPlayingViewModel.fullImageFrame = frame
@@ -78,7 +78,7 @@ struct NowPlayingFullView: View {
 
         }
         .frame(width: UIScreen.main.bounds.width)
-        .background(nowPlayingBackground(for: nowPlayingViewModel.shouldAnimateColorChange).animation(nowPlayingViewModel.isFullScreen ? Animation.easeOut(duration: 0.5) : Animation.linear(duration: 0.0)))
+        .background(nowPlayingBackground(for: nowPlayingViewModel.shouldAnimateColorChange).animation(.easeOut(duration: 0.5)))
         .edgesIgnoringSafeArea(.all)
         .coordinateSpace(name: "FullNowPlayingView")
     }
@@ -131,11 +131,10 @@ struct NowPlayingFullView: View {
     }
     
     private func nowPlayingBackground(for animateColor: Bool) -> Color {
-//        return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
         if animateColor {
             return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
         } else {
-            return Color.nowPlayingBG.opacity(0.4)
+            return Color.nowPlayingBG
         }
     }
     
@@ -151,8 +150,46 @@ struct NowPlayingFullView_Previews: PreviewProvider {
     }
 }
 
-//func artworkView(frame: CGRect) -> some View {
-//    Rectangle()
-//        .background(Color.blue)
-//        .position(frame.origin)
-//}
+struct Background: ViewModifier {
+    
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
+    
+    func body(content: Content) -> some View {
+        content
+            .background(nowPlayingBackground(for: nowPlayingViewModel.shouldAnimateColorChange).animation(nowPlayingViewModel.isFull ? Animation.linear(duration: 0.5) : Animation.linear(duration: 0.05)))
+            
+    }
+    
+    
+    private func nowPlayingBackground(for animateColor: Bool) -> Color {
+        if animateColor {
+            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+        } else {
+            return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+//            return Color.nowPlayingBG
+        }
+    }
+    
+    private func opacity(for whiteLevel: CGFloat) -> Double {
+        switch whiteLevel {
+        case 0...0.2:
+            return 0.8
+        case 0.21...0.3:
+            return 0.65
+        case 0.31...0.5:
+            return 0.6
+        case 0.51...0.7:
+            return 0.5
+        case 0.71...0.87:
+            return 0.35
+        case 0.88...1:
+            return 0.3
+        default:
+            return 1.0
+        }
+    }
+    
+    private func backgroundColorFor(isTooLight: Bool) -> Color {
+        return isTooLight ? nowPlayingViewModel.darkerAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel)) : nowPlayingViewModel.lighterAccentColor.opacity(opacity(for: nowPlayingViewModel.whiteLevel))
+    }
+}

@@ -146,7 +146,7 @@ class NowPlayingBarViewController: UIViewController, FrameDelegate {
             self.childVCs[0].view.frame = CGRect(x: self.view.safeAreaInsets.left + 40, y: self.view.safeAreaInsets.top + 140, width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
             self.childVCs[1].view.anchor(top: self.view.topAnchor, leading: self.view.leadingAnchor, trailing: self.view.trailingAnchor, bottom: self.view.bottomAnchor)
 //            self.childVCs[1].view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            self.musicController.nowPlayingViewModel.isFullScreen = true
+            self.musicController.nowPlayingViewModel.isFull = true
             self.view.layer.cornerRadius = 20
             self.view.layoutIfNeeded()
         }
@@ -175,7 +175,7 @@ class NowPlayingBarViewController: UIViewController, FrameDelegate {
             self.childVCs[0].view.frame = self.artworkViewFrame
             self.childVCs[1].view.frame = self.minimizedFrame
             self.childVCs[2].view.alpha = 1
-            self.musicController.nowPlayingViewModel.isFullScreen = false
+            self.musicController.nowPlayingViewModel.isFull = false
             self.view.layoutIfNeeded()
         }
         transitionAnimator.addCompletion { position in

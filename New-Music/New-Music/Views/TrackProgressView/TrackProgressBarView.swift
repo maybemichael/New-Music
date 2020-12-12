@@ -66,18 +66,14 @@ struct TrackProgressView: View {
                         Circle()
                             .fill(fillGradient(whiteLevel: nowPlayingViewModel.whiteLevel))
                             .frame(width: 14, height: 14)
-                            .animation(nil)
-                            .scaleEffect(isDragging ? 2 : 1)
+                            .scaleEffect(isDragging ? 2.5 : 1)
                             .padding(.leading, geo.size.width * self.percentagePlayedForSong() - 7)
-                            
                             .gesture(
                                 DragGesture()
                                     .onChanged({ value in
                                         self.isDragging = true
-//                                        nowPlayingViewModel.timer?.invalidate()
-//                                        nowPlayingViewModel.timer = nil
                                         nowPlayingViewModel.displaylink?.invalidate()
-                                        nowPlayingViewModel.displaylink = nil 
+                                        nowPlayingViewModel.displaylink = nil
                                         self.nowPlayingViewModel.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
                                             
                                     })
@@ -91,12 +87,10 @@ struct TrackProgressView: View {
                 }
                 HStack(alignment: .center) {
                     Text(formattedTimeFor(timeInterval: nowPlayingViewModel.elapsedTime))
-//                        .font(Font.custom("Courier", size: 18))  // Monospaced font
                         .font(Font.system(.body).weight(.medium))
                         .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                     Spacer()
                     Text("-\(formattedTimeRemainingFor(timeInterval: nowPlayingViewModel.timeRemaining))")
-//                        .font(Font.custom("Courier", size: 18)) // Monospaced font
                         .font(Font.system(.body).weight(.medium))
                         .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                 }

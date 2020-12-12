@@ -192,42 +192,44 @@ struct NowPlayingMinimized2: View {
     
     var body: some View {
         GeometryReader { geo in
-            HStack {
-                GeometryReader { geometry in
-                    NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
-                        .frame(width: height - 5, height: height - 5, alignment: .center)
-                        .onAppear {
-                            nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
-                            print("Minimized Now Playing: \(nowPlayingViewModel.minimizedImageFrame)")
-                        }
-                }
-                .frame(width: height - 5, height: height - 5, alignment: .center)
-                GeometryReader { geo in
-                    VStack(alignment: .leading) {
-                        Text(nowPlayingViewModel.artist)
-//                        Text("Fall Out Boy")
-                            .font(Font.system(.subheadline).weight(.light))
-                            .foregroundColor(.lightTextColor)
-                            .lineLimit(1)
-                        Text(nowPlayingViewModel.songTitle)
-//                        Text("Nobody Puts Baby in the Corner" )
-                            .font(Font.system(.headline).weight(.light))
-                            .foregroundColor(.white)
-                            .lineLimit(1)
+            if nowPlayingViewModel.isMinimized {
+                HStack {
+                    GeometryReader { geometry in
+                        NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
+                            .frame(width: height - 5, height: height - 5, alignment: .center)
+                            .onAppear {
+                                nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
+                                print("Minimized Now Playing: \(nowPlayingViewModel.minimizedImageFrame)")
+                            }
                     }
-                    .frame(height: geo.size.height, alignment: .center)
+                    .frame(width: height - 5, height: height - 5, alignment: .center)
+                    GeometryReader { geo in
+                        VStack(alignment: .leading) {
+                            Text(nowPlayingViewModel.artist)
+//                            Text("Fall Out Boy")
+                                .font(Font.system(.subheadline).weight(.light))
+                                .foregroundColor(.lightTextColor)
+                                .lineLimit(1)
+                            Text(nowPlayingViewModel.songTitle)
+//                            Text("Nobody Puts Baby in the Corner" )
+                                .font(Font.system(.headline).weight(.light))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                        }
+                        .frame(height: geo.size.height, alignment: .center)
+                    }
+                    .frame(maxWidth: height * 3.5)
+                    HStack(spacing: 12) {
+                        BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
+                            .foregroundColor(.white)
+                            .frame(width: height - 5, height: height - 5, alignment: .center)
+                        BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
+                            .frame(width: height - 16, height: height - 16, alignment: .center)
+                    }
                 }
-                .frame(maxWidth: height * 3.5)
-                HStack(spacing: 12) {
-                    BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
-                        .foregroundColor(.white)
-                        .frame(width: height - 5, height: height - 5, alignment: .center)
-                    BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
-                        .frame(width: height - 16, height: height - 16, alignment: .center)
-                }
+                .padding(.leading, 20)
+                .padding(.trailing, 15)
             }
-            .padding(.leading, 20)
-            .padding(.trailing, 15)
         }
         .coordinateSpace(name: "MinimizedNowPlaying")
         .frame(width: UIScreen.main.bounds.width, height: height, alignment: .center)

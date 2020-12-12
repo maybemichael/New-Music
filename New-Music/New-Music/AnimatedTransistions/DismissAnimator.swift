@@ -13,7 +13,7 @@ class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     var musicController: MusicController
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return  0.6
+        return  0.5
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -22,24 +22,16 @@ class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         containerView.backgroundColor = .clear
 
         self.musicController.nowPlayingViewModel.shouldAnimateColorChange = false
-        self.musicController.nowPlayingViewModel.isFullScreen = true
-        self.musicController.nowPlayingViewModel.isFullScreen = false
-        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseOut) {
-            fromVC.view.layer.cornerRadius = 7
+        
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveLinear) { [weak self] in
+            guard let self = self else { return }
+            self.musicController.nowPlayingViewModel.isFull = false
             fromVC.view.frame = self.finalFrame
-//            self.musicController.nowPlayingViewModel.isFullScreen = false
+            fromVC.view.layer.cornerRadius = 7
         } completion: { _ in
-            UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut) {
-                fromVC.view.layer.cornerRadius = 0
-                fromVC.view.alpha = 0
-            } completion: { _ in
-                self.musicController.nowPlayingViewModel.shouldAnimateColorChange = true
-                fromVC.view.removeFromSuperview()
-                fromVC.view.layer.cornerRadius = 20
-//                fromVC.view.backgroundColor = .clear
-                fromVC.view.alpha = 1
-            }
-
+            self.musicController.nowPlayingViewModel.isMinimized = true 
+            fromVC.view.removeFromSuperview()
+            fromVC.view.layer.cornerRadius = 20
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }

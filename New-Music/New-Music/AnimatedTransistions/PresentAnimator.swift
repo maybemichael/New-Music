@@ -27,10 +27,11 @@ class PresentAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         containerView.addSubview(nowPlayingFullVC.view)
         nowPlayingFullVC.view.frame = startFrame
         self.musicController.nowPlayingViewModel.shouldAnimateColorChange = true
+        self.musicController.nowPlayingViewModel.isMinimized = false
         UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseOut) {
             nowPlayingFullVC.view.frame = finalFrame
         } completion: { _ in
-            self.musicController.nowPlayingViewModel.isFullScreen = true
+            self.musicController.nowPlayingViewModel.isFull = true
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }

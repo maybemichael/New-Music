@@ -28,7 +28,8 @@ class NowPlayingViewModel: ObservableObject {
     @Published var lighterAccentColor: Color
     @Published var darkerAccentColor: Color
     @Published var isTooLight = false
-    @Published var isFullScreen = false
+    @Published var isFull = false
+    @Published var isMinimized = true 
     @Published var shouldAnimateColorChange = false 
     @Published var getFrame = false
     @Published var textColor1: Color
@@ -64,7 +65,7 @@ class NowPlayingViewModel: ObservableObject {
         return formatter
     }()
     
-    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.black.lighter()), darkerAccentColor: Color = .black) {
+    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.systemGraySix!), darkerAccentColor: Color = Color.black) {
         self.artist = artist
         self.songTitle = songTitle
         self.albumArtwork = albumArtwork
@@ -157,19 +158,18 @@ class NowPlayingViewModel: ObservableObject {
         guard var stringURL = nowPlayingSong?.stringURL else { return }
         stringURL = stringURL.replacingOccurrences(of: "{w}", with: String(Int(500))).replacingOccurrences(of: "{h}", with: String(Int(500)))
         let imageURL = URL(string: stringURL)!
-//        if let imageURL = nowPlayingSong?.stringURL {
-            URLSession.shared.dataTask(with: imageURL) { data, _, error in
-                if let networkError = NetworkError(data: data, response: nil, error: error) {
-                    print("Error retrieving image data: \(networkError.localizedDescription)")
-                    completion(.failure(networkError))
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.albumArtwork = UIImage(data: data!)
-                }
-                completion(.success(self.albumArtwork))
-            }.resume()
-//        }
+        URLSession.shared.dataTask(with: imageURL) { data, _, error in
+            if let networkError = NetworkError(data: data, response: nil, error: error) {
+                print("Error retrieving image data: \(networkError.localizedDescription)")
+                completion(.failure(networkError))
+                return
+            }
+            DispatchQueue.main.async {
+                self.albumArtwork = UIImage(data: data!)
+            }
+            completion(.success(self.albumArtwork))
+        }.resume()
+
     }
     
     private func getGradientColors() -> (lighter: Color, darker: Color)? {
@@ -222,16 +222,6 @@ class NowPlayingViewModel: ObservableObject {
         
         
         self.darkerTextColor2 = Color(text2UIColor.darker())
-//        if isLightColor(color: text2UIColor, threshold: 0.5) {
-//            let darkerAccentColor = text2UIColor.darker()
-//            self.lighterTextColor2 = textColor2
-//            self.darkerTextColor2 = Color(darkerAccentColor)
-//        } else {
-//            let lighterAccentColor = text2UIColor.lighter()
-//            self.darkerTextColor2 = textColor2
-//            self.lighterTextColor2 = Color(lighterAccentColor)
-//        }
-        
     }
     
     private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {

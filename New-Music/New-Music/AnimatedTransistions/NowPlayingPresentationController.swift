@@ -112,7 +112,7 @@ final class NowPlayingPresentationController: UIPresentationController {
         let artworkSnapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
         let barViewSnapshot = barView.view.snapshotView(afterScreenUpdates: true)
         barViewSnapshot?.frame = barVC.view.bounds
-        barViewSnapshot?.center = containerView!.center
+        barViewSnapshot?.center = CGPoint(x: containerView!.center.x, y: getStartingY(barVC: barVC))
         barViewSnapshot!.alpha = 0
         artworkSnapshot?.frame = nowPlayingFull.animationFrame
         containerView?.addSubview(barViewSnapshot!)
@@ -149,6 +149,10 @@ final class NowPlayingPresentationController: UIPresentationController {
         snapshot2?.layer.shadowOffset = CGSize(width: -3, height: -3)
         snapshot2?.layer.shadowRadius = 10
         snapshot2?.layer.shadowOpacity = 0.1
+    }
+    
+    private func getStartingY(barVC: NowPlayingMinimizedViewController) -> CGFloat {
+        return presentedView!.frame.minY > barVC.view.frame.minY ? barVC.view.frame.minY + (barVC.view.frame.height / 2) : presentedView!.frame.minY + barVC.view.frame.height
     }
     
     init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?, musicController: MusicController) {
