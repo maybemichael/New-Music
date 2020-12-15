@@ -136,13 +136,13 @@ class NowPlayingViewModel: ObservableObject {
             isPlaying = true
             if self.displaylink == nil {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 12
+                self.displaylink?.preferredFramesPerSecond = 1
                 displaylink?.add(to: .current, forMode: .common)
             } else {
                 self.displaylink?.invalidate()
                 self.displaylink = nil
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 12
+                self.displaylink?.preferredFramesPerSecond = 1
                 displaylink?.add(to: .current, forMode: .common)
             }
         case .seekingBackward:

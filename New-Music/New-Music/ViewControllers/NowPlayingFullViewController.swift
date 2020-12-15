@@ -15,11 +15,11 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
     var albumArtworkView: UIViewController?
     var contentView: UIViewController?
     
-    let artworkViewHolder: UIView = {
-        let view = UIView(frame: .zero)
-        view.backgroundColor = .clear
-        return view
-    }()
+//    let artworkViewHolder: UIView = {
+//        let view = UIView(frame: .zero)
+//        view.backgroundColor = .clear
+//        return view
+//    }()
     
     var animationFrame: CGRect = CGRect() {
         didSet {
@@ -28,7 +28,7 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
     }
     
     let animationFrameView: UIView = {
-        let view = UIView()
+        let view = UIView(frame: .zero)
         view.backgroundColor = .clear
         return view
     }()
@@ -51,23 +51,23 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
         self.contentView = contentView
         let backgroundView = UIVisualEffectView()
         backgroundView.effect = UIBlurEffect(style: .light)
-        view.layer.masksToBounds = true
         view.clipsToBounds = true
         view.layer.cornerRadius = 20
         view.addSubview(backgroundView)
+//        backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         backgroundView.frame = self.view.bounds
         addChild(contentView)
         contentView.didMove(toParent: self)
         view.addSubview(contentView.view)
-        contentView.view.frame = self.view.bounds
+        contentView.view.anchor(top: backgroundView.topAnchor, leading: backgroundView.leadingAnchor, trailing: backgroundView.trailingAnchor, bottom: backgroundView.bottomAnchor)
+//        contentView.view.frame = backgroundView.bounds
         contentView.view.backgroundColor = .clear
         view.backgroundColor = .clear
         let artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
         self.albumArtworkView = artworkView
         addChild(artworkView)
         artworkView.didMove(toParent: self)
-        artworkViewHolder.addSubview(artworkView.view)
-        artworkView.view.anchor(top: artworkViewHolder.topAnchor, leading: artworkViewHolder.leadingAnchor, trailing: artworkViewHolder.trailingAnchor, bottom: artworkViewHolder.bottomAnchor, padding: .init(top: 5, left: 5, bottom: -5, right: -5))
+        artworkView.view.backgroundColor = .clear
     }
     
     private func startingFrame() -> CGRect {

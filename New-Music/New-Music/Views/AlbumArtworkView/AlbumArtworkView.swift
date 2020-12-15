@@ -17,7 +17,13 @@ struct AlbumArtworkView: View {
 struct AlbumArtworkView_Previews: PreviewProvider {
     static var previews: some View {
         let musicController = MusicController()
-        AlbumArtworkView().environmentObject(musicController.nowPlayingViewModel)
+//        ArtworkView2(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel)
+        ZStack {
+            Color.blue.edgesIgnoringSafeArea(.all).opacity(0.7)
+            ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel)
+                .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80, alignment: .center)
+        }
+            
     }
 }
 
@@ -114,8 +120,8 @@ struct ArtworkView2: View {
                             .blur(radius: 4)
                             .offset(x: -10, y: -10)
                             .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                    .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: size * 0.03))
-                    .shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5)
+                    .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: geo.size.width * 0.03))
+                    .shadow(color: Color.black.opacity(0.8), radius: 10, x: 5, y: 5)
                     .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
                 Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
                     .resizable()
@@ -123,7 +129,8 @@ struct ArtworkView2: View {
                     .scaledToFit()
             }
         }
-        .frame(width: size, height: size, alignment: .center)
+        .frame(minWidth: 50, maxWidth: size, minHeight: 50, maxHeight: size, alignment: .center)
+//        .frame(width: size, height: size, alignment: .center)
     }
     
     private func artworkWidth(for state: Bool) -> CGFloat {
@@ -139,34 +146,32 @@ struct ArtworkAnimationView: View {
         
         GeometryReader { geo in
             ZStack {
-                Color.clear.opacity(0)
                 Rectangle()
                     .fill(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black))
-                    .overlay(
-                        Rectangle()
-                            .stroke(Color.black, lineWidth: 4)
-                            .blur(radius: 4)
-                            .offset(x: 10, y: 10)
-                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.clear, Color.black))))
-                    .overlay(
-                        Rectangle()
-                            .stroke(Color.nowPlayingBG, lineWidth: 4)
-                            .blur(radius: 4)
-                            .offset(x: -10, y: -10)
-                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                    .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: size * 0.03))
-                    .shadow(color: Color.black.opacity(0.8), radius: 10, x: 5, y: 5)
-                    .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
-                Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
-                    .resizable()
-                    .frame(width: geo.size.width - (geo.size.width * 0.03), height: geo.size.height - (geo.size.height * 0.03), alignment: .center)
-                    .scaledToFit()
+//                    .overlay(
+//                        Rectangle()
+//                            .stroke(Color.black, lineWidth: 4)
+//                            .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
+//                            .blur(radius: 4)
+//                            .offset(x: 10, y: 10)
+//                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.clear, Color.black))))
+//                    .overlay(
+//                        Rectangle()
+//                            .stroke(Color.nowPlayingBG, lineWidth: 4)
+//                            .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
+//                            .blur(radius: 4)
+//                            .offset(x: -10, y: -10)
+//                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
+                    .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
+                    Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
+                        .resizable()
+                        .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: geo.size.width * 0.03))
+                        .shadow(color: Color.black.opacity(0.8), radius: 10, x: 5, y: 5)
+                        .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
+                        .frame(width: geo.size.width - (geo.size.width * 0.03), height: geo.size.width - (geo.size.width * 0.03), alignment: .center)
+                        .scaledToFit()
             }
+            .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
         }
-        .frame(width: size, height: size, alignment: .center)
-    }
-    
-    private func artworkWidth(for state: Bool) -> CGFloat {
-        nowPlayingViewModel.isFull ? UIScreen.main.bounds.width - 80 : UIScreen.main.bounds.width / 7
     }
 }

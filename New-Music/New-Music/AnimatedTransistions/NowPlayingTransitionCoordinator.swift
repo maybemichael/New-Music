@@ -88,6 +88,7 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
             animator.fractionComplete = percentage
             viewToAnimate.layoutIfNeeded()
         case .ended:
+//            musicController.nowPlayingViewModel.getFrame.toggle()
             let yVelocity = gesture.velocity(in: viewToAnimate).y
             if yVelocity > 400 || viewToAnimate.frame.minY > UIScreen.main.bounds.height / 3 {
                 musicController.nowPlayingViewModel.isFull = false

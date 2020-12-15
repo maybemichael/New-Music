@@ -23,16 +23,15 @@ class PresentAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         let containerView = transitionContext.containerView
         containerView.backgroundColor = .clear
         let finalFrame = transitionContext.finalFrame(for: nowPlayingFullVC)
-        print("Final Frame: \(finalFrame)")
         containerView.addSubview(nowPlayingFullVC.view)
         nowPlayingFullVC.view.frame = startFrame
         self.musicController.nowPlayingViewModel.shouldAnimateColorChange = false
         self.musicController.nowPlayingViewModel.isMinimized = false
-        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseOut) {
+        self.musicController.nowPlayingViewModel.isFull = true
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [.curveLinear, .layoutSubviews]) {
             nowPlayingFullVC.view.frame = finalFrame
         } completion: { [weak self] _ in
             guard let self = self else { return }
-            self.musicController.nowPlayingViewModel.isFull = true
             self.musicController.nowPlayingViewModel.shouldAnimateColorChange = true
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }

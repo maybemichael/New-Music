@@ -24,30 +24,10 @@ struct NowPlayingFullView: View {
 //                    .edgesIgnoringSafeArea(.all)
             VStack {
                 GeometryReader { geometry in
-                    if nowPlayingViewModel.isFull {
-                        ArtworkView2(size: UIScreen.main.bounds.width - 80)
-                            .position(x: ((UIScreen.main.bounds.width - 80) / 2), y:  ((UIScreen.main.bounds.width - 80) / 2))
-//                            .position(x: frame.midX, y: frame.midY)
-//                            .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-                            .onAppear {
-                                let frame = CGRect(x: geometry.frame(in: .global).origin.x - ((UIScreen.main.bounds.width - 80) * 0.015), y: geometry.frame(in: .global).origin.y - ((UIScreen.main.bounds.width - 80) * 0.015), width: geometry.frame(in: .global).size.width + ((UIScreen.main.bounds.width - 80) * 0.03), height: geometry.frame(in: .global).size.height + ((UIScreen.main.bounds.width - 80) * 0.03))
-                                nowPlayingViewModel.fullImageFrame = frame
-                                print("Full Image View Frame: \(nowPlayingViewModel.fullImageFrame)")
-                                frameDelegate.getFrame(frame: frame)
-                            }.animation(.easeIn(duration: 0.65))
-                            .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
-                                nowPlayingViewModel.fullImageFrame = geometry.frame(in: .global)
-                                print("Full Image View Frame: \(nowPlayingViewModel.fullImageFrame)")
-                                frameDelegate.getFrame(frame: geometry.frame(in: .global))
-                            })
-                    } else {
                         Rectangle()
                             .foregroundColor(.clear)
-                        
-                    }
                 }
                 .frame(width: UIScreen.main.bounds.width - 80, height: UIScreen.main.bounds.width - 80)
-                if !nowPlayingViewModel.isMinimized {
                     VStack(alignment: .center) {
                         Text(nowPlayingViewModel.artist)
 //                        Text("Fall Out Boy")
@@ -63,7 +43,6 @@ struct NowPlayingFullView: View {
                         
                     }
                     .frame(minHeight: 85, alignment: .center)
-                }
                     TrackProgressBarView(musicController: musicController)
                     HStack(spacing: 40) {
                         NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackBackward, musicController: musicController)
@@ -80,7 +59,7 @@ struct NowPlayingFullView: View {
 
         }
         .frame(width: UIScreen.main.bounds.width)
-        .background(nowPlayingBackground(for: nowPlayingViewModel.isMinimized).animation(nowPlayingViewModel.shouldAnimateColorChange ? Animation.linear(duration: 0.5) : Animation.easeOut(duration: 0.05)))
+        .background(nowPlayingBackground(for: nowPlayingViewModel.isMinimized).animation(nowPlayingViewModel.shouldAnimateColorChange ? Animation.linear(duration: 0.55) : Animation.easeOut(duration: 0.05)))
         .edgesIgnoringSafeArea(.all)
         .coordinateSpace(name: "FullNowPlayingView")
     }

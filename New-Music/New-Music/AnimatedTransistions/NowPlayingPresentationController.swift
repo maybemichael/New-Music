@@ -16,6 +16,9 @@ final class NowPlayingPresentationController: UIPresentationController {
         return view
     }()
     
+    var artworkSnapshot1: UIView?
+    var artworkSnapshot2: UIView?
+    
     override var frameOfPresentedViewInContainerView: CGRect {
         return CGRect(x: 0, y: 0, width: containerView!.bounds.width, height: containerView!.bounds.height)
     }
@@ -30,7 +33,7 @@ final class NowPlayingPresentationController: UIPresentationController {
     }
     
     override func presentationTransitionWillBegin() {
-        let artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
+//        let artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
         let tabBarController = presentingViewController as! UITabBarController
         let nav = tabBarController.viewControllers?[tabBarController.selectedIndex] as! UINavigationController
@@ -54,32 +57,27 @@ final class NowPlayingPresentationController: UIPresentationController {
         
         guard
             let coordinator = presentedViewController.transitionCoordinator,
+            let artworkView = nowPlayingFull.albumArtworkView,
             let barVC = nowPlayingMinimized
         else { return }
-        artworkView.view.frame = nowPlayingFull.animationFrame
-        let snapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
-        let snapshot2 = artworkView.view.snapshotView(afterScreenUpdates: true)
-        matchImageShadows(snapshot1: snapshot, snapshot2: snapshot2)
-        snapshot?.frame = barVC.animationFrame
-        snapshot2?.frame = barVC.animationFrame
-
         
-        presentedView?.addSubview(snapshot2!)
-        presentedView?.addSubview(snapshot!)
-        containerView?.layoutIfNeeded()
-        presentedView?.layoutIfNeeded()
+        artworkView.view.frame = barVC.animationFrame
+        presentedView?.addSubview(artworkView.view)
 
-        coordinator.animateAlongsideTransition(in: containerView) { _ in
-            snapshot?.frame = nowPlayingFull.animationFrame
-            snapshot2?.frame = nowPlayingFull.animationFrame
+        coordinator.animate { [weak self] _ in
+            guard let self = self else { return }
+            artworkView.view.frame = nowPlayingFull.animationFrame
+            self.presentedView?.layoutIfNeeded()
+            self.containerView?.layoutIfNeeded()
+            artworkView.view.layoutIfNeeded()
         } completion: { _ in
-            snapshot?.removeFromSuperview()
-            snapshot2?.removeFromSuperview()
+//            nowPlayingFull.view.bringSubviewToFront(holderView)
+//            holderView.isHidden = false
         }
     }
     
     override func dismissalTransitionWillBegin() {
-        let artworkView = UIHostingController(rootView: ArtworkView2(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
+//        let artworkView = UIHostingController(rootView: ArtworkView2(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
         let barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
         barView.view.backgroundColor = .clear
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
@@ -104,40 +102,30 @@ final class NowPlayingPresentationController: UIPresentationController {
         }
         guard
             let coordinator = presentedViewController.transitionCoordinator,
+            let artworkView = nowPlayingFull.albumArtworkView,
             let barVC = nowPlayingMinimized
         else { return }
 
         barView.view.frame = barVC.view.frame
         artworkView.view.frame = nowPlayingFull.animationFrame
-        let artworkSnapshot = artworkView.view.snapshotView(afterScreenUpdates: true)
-        let artworkSnapshot2 = artworkView.view.snapshotView(afterScreenUpdates: true)
         let barViewSnapshot = barView.view.snapshotView(afterScreenUpdates: true)
         barViewSnapshot?.frame = barVC.view.bounds
         barViewSnapshot?.center = CGPoint(x: containerView!.center.x, y: getStartingY(barVC: barVC))
         barViewSnapshot!.alpha = 0
-        artworkSnapshot?.frame = nowPlayingFull.animationFrame
-        artworkSnapshot2?.frame = nowPlayingFull.animationFrame
         containerView?.addSubview(barViewSnapshot!)
-        presentedView?.addSubview(artworkSnapshot!)
-        presentedView?.addSubview(artworkSnapshot2!)
+        
         barVC.view.isHidden = true
-        coordinator.animate { _ in
-            UIView.animate(withDuration: 0.45, delay: 0, options: .curveEaseIn) {
-                artworkSnapshot?.frame = barVC.animationFrame
-                artworkSnapshot2?.frame = barVC.animationFrame
-                barViewSnapshot?.alpha = 1
-                barViewSnapshot?.frame = barVC.view.frame
-            } completion: { _ in
-                barVC.view.isHidden = false
-                barViewSnapshot?.removeFromSuperview()
-                artworkSnapshot?.removeFromSuperview()
-                artworkSnapshot2?.removeFromSuperview()
-                
-            }
-        } completion: { [weak self] _ in
-//            guard let self = self else { return }
-//            self.presentedView?.sendSubviewToBack(artworkSnapshot!)
-//            self.presentedView?.sendSubviewToBack(artworkSnapshot2!)
+        coordinator.animate {  _ in
+            artworkView.view.frame = barVC.animationFrame
+            barViewSnapshot?.alpha = 1
+            barViewSnapshot?.frame = barVC.view.frame
+            self.presentedView?.layoutIfNeeded()
+            self.containerView?.layoutIfNeeded()
+            artworkView.view.layoutIfNeeded()
+        } completion: { _ in
+            barVC.view.isHidden = false
+            artworkView.view.removeFromSuperview()
+            barViewSnapshot?.removeFromSuperview()
         }
     }
     
@@ -145,11 +133,11 @@ final class NowPlayingPresentationController: UIPresentationController {
         snapshot1?.layer.shadowColor = UIColor.black.cgColor
         snapshot1?.layer.shadowOffset = CGSize(width: 5, height: 5)
         snapshot1?.layer.shadowRadius = 10
-        snapshot1?.layer.shadowOpacity = 0.9
+        snapshot1?.layer.shadowOpacity = 0.7
         snapshot2?.layer.shadowColor = UIColor.white.cgColor
         snapshot2?.layer.shadowOffset = CGSize(width: -3, height: -3)
         snapshot2?.layer.shadowRadius = 10
-        snapshot2?.layer.shadowOpacity = 0.1
+        snapshot2?.layer.shadowOpacity = 0.15
     }
     
     private func getStartingY(barVC: NowPlayingMinimizedViewController) -> CGFloat {

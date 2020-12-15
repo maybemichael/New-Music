@@ -36,6 +36,11 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
         setupViews()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        musicController?.nowPlayingViewModel.getFrame.toggle()
+    }
+    
     private func setupViews() {
         view.addSubview(animationFrameView)
         animationFrameView.frame = CGRect(x: 20, y: 5, width: 55, height: 55)

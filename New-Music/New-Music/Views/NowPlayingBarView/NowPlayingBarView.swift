@@ -189,23 +189,26 @@ struct NowPlayingMinimized2: View {
     var height: CGFloat
     var frame: CGRect
     var frameDelegate: FrameDelegate
+    let size:CGFloat = 55
     
     var body: some View {
         GeometryReader { geo in
             if nowPlayingViewModel.isMinimized {
                 HStack {
                     GeometryReader { geometry in
-                        NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
-                            .frame(width: height - 5, height: height - 5, alignment: .center)
+//                        NeuAlbumArtworkView(shape: Rectangle(), size: height - 5)
+                        ArtworkView2(size: height - 5)
+//                            .frame(width: height - 5, height: height - 5, alignment: .center)
                             .onAppear {
+                                    
                                 nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
                                 print("Minimized Now Playing: \(nowPlayingViewModel.minimizedImageFrame)")
                             }
-                            .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
-                                nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
-                                print("Full Image View Frame: \(nowPlayingViewModel.minimizedImageFrame)")
-                                frameDelegate.getFrame(frame: geometry.frame(in: .named("MinimizedNowPlaying")))
-                            })
+//                            .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
+//                                nowPlayingViewModel.minimizedImageFrame = geometry.frame(in: .named("MinimizedNowPlaying"))
+//                                print("Full Image View Frame: \(nowPlayingViewModel.minimizedImageFrame)")
+//                                frameDelegate.getFrame(frame: geometry.frame(in: .named("MinimizedNowPlaying")))
+//                            })
                     }
                     .frame(width: height - 5, height: height - 5, alignment: .center)
                     GeometryReader { geo in
