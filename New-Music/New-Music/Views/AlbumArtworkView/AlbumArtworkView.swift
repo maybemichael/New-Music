@@ -146,32 +146,20 @@ struct ArtworkAnimationView: View {
         
         GeometryReader { geo in
             ZStack {
-                Rectangle()
-                    .fill(LinearGradient(direction: .diagonalTopToBottom, .sysGraySix, .black))
-//                    .overlay(
-//                        Rectangle()
-//                            .stroke(Color.black, lineWidth: 4)
-//                            .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
-//                            .blur(radius: 4)
-//                            .offset(x: 10, y: 10)
-//                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.clear, Color.black))))
-//                    .overlay(
-//                        Rectangle()
-//                            .stroke(Color.nowPlayingBG, lineWidth: 4)
-//                            .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
-//                            .blur(radius: 4)
-//                            .offset(x: -10, y: -10)
-//                            .mask(Rectangle().fill(LinearGradient(direction: .diagonalTopToBottom, Color.black, Color.clear))))
-                    .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
-                    Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
-                        .resizable()
-                        .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: geo.size.width * 0.03))
-                        .shadow(color: Color.black.opacity(0.8), radius: 10, x: 5, y: 5)
-                        .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
-                        .frame(width: geo.size.width - (geo.size.width * 0.03), height: geo.size.width - (geo.size.width * 0.03), alignment: .center)
-                        .scaledToFit()
+                ZStack {
+                    Rectangle()
+                        .foregroundColor(Color.clear)
+                        .overlay(Rectangle().stroke(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black), lineWidth: geo.size.width * 0.03).shadow(color: Color.black.opacity(0.9), radius: 10, x: 5, y: 5).shadow(color: Color.white.opacity(0.15), radius: 10, x: -3, y: -3))
+                }
+                Image(uiImage: nowPlayingViewModel.albumArtwork ?? UIImage())
+                    .resizable()
+                    .frame(width: geo.size.width - (geo.size.width * 0.03), height: geo.size.width - (geo.size.width * 0.03), alignment: .center)
+                    .scaledToFit()
             }
-            .frame(width: geo.size.width, height: geo.size.width, alignment: .center)
+            .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+            .shadow(color: Color.black.opacity(0.5), radius: 10, x: 5, y: 5)
+            .shadow(color: Color.white.opacity(0.1), radius: 10, x: -3, y: -3)
         }
+        .background(LinearGradient(direction: .diagonalTopToBottom, .sysGrayThree, .black))
     }
 }

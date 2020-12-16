@@ -17,6 +17,7 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
     weak var fromVC: NowPlayingFullViewController?
     var centerPoint = CGPoint()
     var startFrame = CGRect()
+    var velocity: CGFloat?
     
     private lazy var panGesture: UIPanGestureRecognizer = {
         let gesture = UIPanGestureRecognizer()
@@ -90,6 +91,8 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
         case .ended:
 //            musicController.nowPlayingViewModel.getFrame.toggle()
             let yVelocity = gesture.velocity(in: viewToAnimate).y
+            self.velocity = (yVelocity * 0.001)
+            print("Initial Velocity: \(self.velocity)")
             if yVelocity > 400 || viewToAnimate.frame.minY > UIScreen.main.bounds.height / 3 {
                 musicController.nowPlayingViewModel.isFull = false
                 self.fromVC?.dismiss(animated: true, completion: nil)
@@ -111,7 +114,7 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
 
 extension NowPlayingTransitionCoordinator: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return DismissAnimator(finalFrame: self.finalFrame, musicController: self.musicController)
+        return DismissAnimator(finalFrame: self.finalFrame, musicController: self.musicController, initialVelocity: velocity!)
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {

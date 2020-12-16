@@ -68,8 +68,7 @@ final class NowPlayingPresentationController: UIPresentationController {
             guard let self = self else { return }
             artworkView.view.frame = nowPlayingFull.animationFrame
             self.presentedView?.layoutIfNeeded()
-            self.containerView?.layoutIfNeeded()
-            artworkView.view.layoutIfNeeded()
+//            artworkView.view.layoutIfNeeded()
         } completion: { _ in
 //            nowPlayingFull.view.bringSubviewToFront(holderView)
 //            holderView.isHidden = false
@@ -115,13 +114,12 @@ final class NowPlayingPresentationController: UIPresentationController {
         containerView?.addSubview(barViewSnapshot!)
         
         barVC.view.isHidden = true
-        coordinator.animate {  _ in
+        coordinator.animate { [weak self] _ in
+            guard let self = self else { return }
             artworkView.view.frame = barVC.animationFrame
             barViewSnapshot?.alpha = 1
             barViewSnapshot?.frame = barVC.view.frame
             self.presentedView?.layoutIfNeeded()
-            self.containerView?.layoutIfNeeded()
-            artworkView.view.layoutIfNeeded()
         } completion: { _ in
             barVC.view.isHidden = false
             artworkView.view.removeFromSuperview()

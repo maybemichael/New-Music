@@ -18,10 +18,6 @@ struct NowPlayingFullView: View {
     
     var body: some View {
         GeometryReader { geo in
-            
-//            ZStack {
-//                Color.clear
-//                    .edgesIgnoringSafeArea(.all)
             VStack {
                 GeometryReader { geometry in
                         Rectangle()
@@ -34,6 +30,7 @@ struct NowPlayingFullView: View {
                             .font(Font.system(.title3).weight(.medium))
                             .foregroundColor(nowPlayingViewModel.textColor2)
                             .multilineTextAlignment(.center)
+                            .lineLimit(1)
                         Text(nowPlayingViewModel.songTitle)
 //                        Text("Grand Theft Autumn")
                             .font(Font.system(.title3).weight(.medium))
@@ -42,7 +39,8 @@ struct NowPlayingFullView: View {
                             .lineLimit(2)
                         
                     }
-                    .frame(minHeight: 85, alignment: .center)
+                    .frame(minHeight: 85, alignment: .bottom)
+                    
                     TrackProgressBarView(musicController: musicController)
                     HStack(spacing: 40) {
                         NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackBackward, musicController: musicController)

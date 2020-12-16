@@ -92,7 +92,6 @@ struct NeuToggleBackground<S: Shape>: View {
             }
         }
         .frame(width: size, height: size)
-        .transition(.move(edge: .bottom))
     }
     private func gradient(for state: Bool) -> LinearGradient {
         state ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
@@ -243,7 +242,6 @@ struct NeuButtonBackground<S: Shape>: View {
             }
         }
         .frame(width: size, height: size)
-        .transition(.move(edge: .bottom))
     }
     
     private func gradient(for state: Bool) -> LinearGradient {

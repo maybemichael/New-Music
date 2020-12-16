@@ -54,13 +54,15 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
         view.clipsToBounds = true
         view.layer.cornerRadius = 20
         view.addSubview(backgroundView)
-//        backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
-        backgroundView.frame = self.view.bounds
+        backgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+//        backgroundView.frame = self.view.bounds
         addChild(contentView)
         contentView.didMove(toParent: self)
+//        backgroundView.contentView.addSubview(contentView.view)
         view.addSubview(contentView.view)
-        contentView.view.anchor(top: backgroundView.topAnchor, leading: backgroundView.leadingAnchor, trailing: backgroundView.trailingAnchor, bottom: backgroundView.bottomAnchor)
-//        contentView.view.frame = backgroundView.bounds
+//        contentView.view.anchor(top: backgroundView.contentView.topAnchor, leading: backgroundView.contentView.leadingAnchor, trailing: backgroundView.contentView.trailingAnchor, bottom: backgroundView.contentView.bottomAnchor)
+//        contentView.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
+        contentView.view.frame = view.bounds
         contentView.view.backgroundColor = .clear
         view.backgroundColor = .clear
         let artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
