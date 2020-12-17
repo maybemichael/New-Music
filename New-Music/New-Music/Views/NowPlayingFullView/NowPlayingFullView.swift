@@ -39,7 +39,7 @@ struct NowPlayingFullView: View {
                             .lineLimit(2)
                         
                     }
-                    .frame(minHeight: 85, alignment: .bottom)
+                    .frame(height: 80, alignment: .bottom)
                     
                     TrackProgressBarView(musicController: musicController)
                     HStack(spacing: 40) {

@@ -32,6 +32,7 @@ class NowPlayingViewModel: ObservableObject {
     @Published var isMinimized = true 
     @Published var shouldAnimateColorChange = false 
     @Published var getFrame = false
+    @Published var shouldGetPrefChange = false
     @Published var textColor1: Color
     @Published var textColor2: Color
     @Published var textColor3: Color
@@ -134,16 +135,17 @@ class NowPlayingViewModel: ObservableObject {
             self.displaylink = nil
         case .playing:
             isPlaying = true
+            print("Music Player is Playing...")
             if self.displaylink == nil {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 1
+                self.displaylink?.preferredFramesPerSecond = 3
                 displaylink?.add(to: .current, forMode: .common)
             } else {
                 self.displaylink?.invalidate()
                 self.displaylink = nil
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 1
-                displaylink?.add(to: .current, forMode: .common)
+                self.displaylink?.preferredFramesPerSecond = 2
+                self.displaylink?.add(to: .current, forMode: .common)
             }
         case .seekingBackward:
             isPlaying = musicPlayer.playbackState == .playing ? true : false
@@ -252,6 +254,12 @@ class NowPlayingViewModel: ObservableObject {
             blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
             alpha: CGFloat(1.0)
         )
+    }
+    
+    func newDisplayLink() {
+        displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
+        displaylink?.preferredFramesPerSecond = 2
+        displaylink?.add(to: .current, forMode: .common)
     }
     
     deinit {

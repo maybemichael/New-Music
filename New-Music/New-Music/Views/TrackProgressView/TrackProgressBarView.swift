@@ -80,6 +80,7 @@ struct TrackProgressView: View {
                                     .onEnded({ value in
                                         self.isDragging = false
                                         musicController.musicPlayer.currentPlaybackTime = self.time(for: value.location.x, in: geo.size.width)
+                                        nowPlayingViewModel.newDisplayLink()
                                     })
                             )
                         Spacer(minLength: 0)

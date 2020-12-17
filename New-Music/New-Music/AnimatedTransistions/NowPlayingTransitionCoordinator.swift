@@ -73,7 +73,6 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
         guard let viewToAnimate = gesture.view else { return }
         
         var translation = gesture.translation(in: viewToAnimate).y
-        
         switch gesture.state {
         case .began:
             self.animator = slideDownAnimator()
@@ -92,7 +91,6 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
 //            musicController.nowPlayingViewModel.getFrame.toggle()
             let yVelocity = gesture.velocity(in: viewToAnimate).y
             self.velocity = (yVelocity * 0.001)
-            print("Initial Velocity: \(self.velocity)")
             if yVelocity > 400 || viewToAnimate.frame.minY > UIScreen.main.bounds.height / 3 {
                 musicController.nowPlayingViewModel.isFull = false
                 self.fromVC?.dismiss(animated: true, completion: nil)
