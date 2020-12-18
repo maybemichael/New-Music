@@ -111,14 +111,14 @@ final class NowPlayingPresentationController: UIPresentationController {
         barViewSnapshot?.frame = barVC.view.bounds
         barViewSnapshot?.center = CGPoint(x: containerView!.center.x, y: getStartingY(barVC: barVC))
         barViewSnapshot!.alpha = 0
-        containerView?.insertSubview(barViewSnapshot!, belowSubview: artworkView.view)
-//        containerView?.addSubview(barViewSnapshot!)
+//        containerView?.insertSubview(barViewSnapshot!, belowSubview: (nowPlayingFull.contentView?.view)!)
+        containerView?.addSubview(barViewSnapshot!)
         
         barVC.view.isHidden = true
         coordinator.animate { [weak self] _ in
             guard let self = self else { return }
             artworkView.view.frame = barVC.animationFrame
-            barViewSnapshot?.alpha = 1
+            barViewSnapshot?.alpha = 0.8
             barViewSnapshot?.frame = barVC.view.frame
             self.presentedView?.layoutIfNeeded()
         } completion: { _ in

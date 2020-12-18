@@ -37,8 +37,12 @@ class NowPlayingViewModel: ObservableObject {
     @Published var textColor2: Color
     @Published var textColor3: Color
     @Published var textColor4: Color
-    @Published var lighterUIColor: UIColor
-    @Published var beatsPerMinute: Int
+    @Published var lighterUIColor: UIColor {
+        didSet {
+            print("Lighter UIColor: \(self.lighterUIColor)")
+        }
+    }
+    @Published var darkerUIColor: UIColor
     @Published var lighterTextColor2: Color
     @Published var darkerTextColor2: Color
     @Published var minimizedImageFrame: CGRect = CGRect()
@@ -81,8 +85,8 @@ class NowPlayingViewModel: ObservableObject {
         self.textColor3 = Color.lightTextColor
         self.textColor4 = Color.black
         self.timeRemaining = 0.0
-        self.lighterUIColor = .backgroundColor ?? .black
-        self.beatsPerMinute = 90
+        self.lighterUIColor = UIColor.systemBlue.lighter()
+        self.darkerUIColor = .systemBlue
         self.lighterTextColor2 = .black
         self.darkerTextColor2 = .black
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
@@ -94,7 +98,12 @@ class NowPlayingViewModel: ObservableObject {
         if musicPlayer.playbackState == .playing {
             self.elapsedTime = musicPlayer.currentPlaybackTime
             if let duration = musicPlayer.nowPlayingItem?.playbackDuration {
-                self.timeRemaining = duration - musicPlayer.currentPlaybackTime
+                if self.timeRemaining == 0 {
+                    self.elapsedTime = 0.0
+                    self.timeRemaining = duration
+                } else {
+                    self.timeRemaining = duration - musicPlayer.currentPlaybackTime
+                }
             }
         }
     }
@@ -105,16 +114,12 @@ class NowPlayingViewModel: ObservableObject {
         self.songTitle = musicPlayer.nowPlayingItem?.title ?? ""
         if let duration = musicPlayer.nowPlayingItem?.playbackDuration {
             self.duration = duration
+            self.timeRemaining = duration
         }
         self.elapsedTime = 0.0
-        self.timeRemaining = 0.0
         if playingMediaType != .singleSong {
             let index = musicPlayer.indexOfNowPlayingItem
             self.nowPlayingSong = songs[index]
-        }
-        if let bpm = musicPlayer.nowPlayingItem?.beatsPerMinute {
-            print("Beats Per Minute in view model: \(bpm)")
-            self.beatsPerMinute = bpm
         }
         
         if let colors = getGradientColors() {
@@ -138,7 +143,7 @@ class NowPlayingViewModel: ObservableObject {
             print("Music Player is Playing...")
             if self.displaylink == nil {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 3
+                self.displaylink?.preferredFramesPerSecond = 2
                 displaylink?.add(to: .current, forMode: .common)
             } else {
                 self.displaylink?.invalidate()
@@ -188,11 +193,9 @@ class NowPlayingViewModel: ObservableObject {
                 self.isTooLight = false
             }
             self.lighterUIColor = apiColor
+            self.darkerUIColor = secondColor
             return (Color(apiColor), Color(secondColor))
         } else {
-            if self.whiteLevel < 0.05 {
-                
-            }
             secondColor = apiColor.lighter()
             if isLightColor(color: apiColor, threshold: 0.7) && isLightColor(color: secondColor, threshold: 0.7) {
                 self.isTooLight = true
@@ -200,6 +203,7 @@ class NowPlayingViewModel: ObservableObject {
                 self.isTooLight = false
             }
             self.lighterUIColor = secondColor
+            self.darkerUIColor = apiColor
             return (Color(secondColor), Color(apiColor))
         }
     }
@@ -234,7 +238,7 @@ class NowPlayingViewModel: ObservableObject {
         return white >= threshold
     }
     
-    private func hexStringToUIColor (hex:String) -> UIColor {
+    private func hexStringToUIColor (hex: String) -> UIColor {
         var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 
         if (cString.hasPrefix("#")) {

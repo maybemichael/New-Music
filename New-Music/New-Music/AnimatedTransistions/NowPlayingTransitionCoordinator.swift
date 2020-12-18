@@ -41,7 +41,7 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
     
     private func slideDownAnimator() -> UIViewPropertyAnimator {
         toVC?.view.transform = CGAffineTransform(scaleX: 0.87, y: 0.87)
-        let animator = UIViewPropertyAnimator(duration: 0.5, curve: .easeOut) {
+        let animator = UIViewPropertyAnimator(duration: 0.6, curve: .easeOut) {
             self.toVC?.view.transform = .identity
             self.toVC?.view.layoutIfNeeded()
         }
@@ -88,10 +88,10 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
             animator.fractionComplete = percentage
             viewToAnimate.layoutIfNeeded()
         case .ended:
-//            musicController.nowPlayingViewModel.getFrame.toggle()
             let yVelocity = gesture.velocity(in: viewToAnimate).y
             self.velocity = (yVelocity * 0.001)
             if yVelocity > 400 || viewToAnimate.frame.minY > UIScreen.main.bounds.height / 3 {
+                animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeOut), durationFactor: 0.6)
                 musicController.nowPlayingViewModel.isFull = false
                 self.fromVC?.dismiss(animated: true, completion: nil)
             } else {
@@ -99,7 +99,6 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
                 musicController.nowPlayingViewModel.isFull = true
                 animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeOut), durationFactor: 0.3)
             }
-            animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeOut), durationFactor: 0.3)
         default:
             break
         }

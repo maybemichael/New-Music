@@ -58,6 +58,7 @@ class NowPlayingViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         reloadData()
+        musicController?.nowPlayingViewModel.nowPlayingSong = musicController?.nowPlayingViewModel.nowPlayingSong
 
     }
     

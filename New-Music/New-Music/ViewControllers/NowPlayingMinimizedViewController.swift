@@ -30,6 +30,12 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
         return gesture
     }()
     
+    lazy var panGesture: UIPanGestureRecognizer = {
+        let gesture = UIPanGestureRecognizer()
+        gesture.addTarget(self, action: #selector(handlePanGesture(_:)))
+        return gesture
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -59,10 +65,25 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
         nowPlayingMinimizedVC.view.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         nowPlayingMinimizedVC.view.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
         view.addGestureRecognizer(tapGesture)
+        view.addGestureRecognizer(panGesture)
+       tapGesture.require(toFail: panGesture)
     }
     
     @objc private func presentFullScreenNowPlaying() {
         coordinator?.presentNowPlayingFullVC()
+    }
+    
+    @objc private func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
+        switch recognizer.state {
+        case .changed:
+            let yVelocity = recognizer.velocity(in: recognizer.view).y
+            if yVelocity < 0 {
+                coordinator?.presentNowPlayingFullVC()
+                recognizer.state = .ended
+            }
+        default:
+            break
+        }
     }
     
     func getFrame(frame: CGRect) {

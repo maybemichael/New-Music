@@ -22,6 +22,11 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     var isPlaylistSearch: Bool
     var sections = [Section]()
     weak var reloadDataDelegate: ReloadDataDelegate?
+    var indicatorView = UIView() {
+        didSet {
+            self.view.layoutIfNeeded()
+        }
+    }
     
     let separatorView: UIView = {
         let view = UIView()
@@ -36,6 +41,11 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         setUpViews()
         createDataSource()
         setupSearchBarListeners()
+//        self.indicatorView = NowPlayingIndictorView2(frame: CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 100, height: 100), nowPlayingViewModel: musicController.nowPlayingViewModel)
+//        view.addSubview(self.indicatorView)
+//        self.indicatorView.backgroundColor = .clear
+//        self.indicatorView.anchor(centerX: view.centerXAnchor, centerY: view.centerYAnchor, size: .init(width: 100, height: 100))
+       
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -251,15 +261,9 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
             switch result {
             case .success(let imageData):
-//                var mutableMedia = selectedMedia
                 var addedSong = selectedMedia.media as! Song
                 addedSong.albumArtwork = imageData
                 addedSong.isAdded = true
-//                mutableMedia.media = addedSong
-//                var songSnapshot = self.dataSource?.snapshot()
-//                songSnapshot?.insertItems([mutableMedia], beforeItem: selectedMedia)
-//                songSnapshot?.deleteItems([selectedMedia])
-//                self.dataSource?.apply(songSnapshot!)
                 self.musicController.addSongToPlaylist(song: addedSong, isPlaylistSearch: self.isPlaylistSearch)
                 if self.isPlaylistSearch {
                     self.reloadDataDelegate?.reloadData()

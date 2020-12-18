@@ -23,6 +23,7 @@
 		4C1CA3C025514F2E0074A711 /* NowPlayingTransitionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1CA3BF25514F2E0074A711 /* NowPlayingTransitionCoordinator.swift */; };
 		4C1E460C254D01A900E49F17 /* AppTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1E460B254D01A900E49F17 /* AppTabBarViewController.swift */; };
 		4C2186E12544208500DFD391 /* NowPlayingFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2186E02544208500DFD391 /* NowPlayingFull.swift */; };
+		4C22EF85258CCA0D00032601 /* NowPlayingIndictorView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C22EF84258CCA0D00032601 /* NowPlayingIndictorView2.swift */; };
 		4C27C3C22542BC600005BD01 /* PlaylistSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C27C3C12542BC600005BD01 /* PlaylistSongView.swift */; };
 		4C2AE15F25310BAE009164B8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2AE15E25310BAE009164B8 /* Constants.swift */; };
 		4C2C83CA256498FD00D4332F /* ChildVCCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C83C9256498FD00D4332F /* ChildVCCoordinator.swift */; };
@@ -76,6 +77,7 @@
 		4C7291E625497BA50028A5C0 /* ModalPresentation+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */; };
 		4C83037E258ACF1E00E4860F /* NowPlayingViewFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C83037D258ACF1E00E4860F /* NowPlayingViewFull.swift */; };
 		4C83038C258B5AC400E4860F /* GetFrameViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C83038B258B5AC400E4860F /* GetFrameViewModifier.swift */; };
+		4C830394258B84FB00E4860F /* NowPlayingFullView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C830393258B84FB00E4860F /* NowPlayingFullView2.swift */; };
 		4C87CE8C252DB578001B9935 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C87CE8B252DB578001B9935 /* Notifications.swift */; };
 		4C8C7A4B2577AC2300BB4D45 /* HostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8C7A4A2577AC2300BB4D45 /* HostingViewController.swift */; };
 		4C8C7A5C2577C77700BB4D45 /* NowPlayingMinimizedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8C7A5B2577C77700BB4D45 /* NowPlayingMinimizedViewController.swift */; };
@@ -132,6 +134,7 @@
 		4C1CA3BF25514F2E0074A711 /* NowPlayingTransitionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingTransitionCoordinator.swift; sourceTree = "<group>"; };
 		4C1E460B254D01A900E49F17 /* AppTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabBarViewController.swift; sourceTree = "<group>"; };
 		4C2186E02544208500DFD391 /* NowPlayingFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingFull.swift; sourceTree = "<group>"; };
+		4C22EF84258CCA0D00032601 /* NowPlayingIndictorView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingIndictorView2.swift; sourceTree = "<group>"; };
 		4C27C3C12542BC600005BD01 /* PlaylistSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistSongView.swift; sourceTree = "<group>"; };
 		4C2AE15E25310BAE009164B8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		4C2C83C9256498FD00D4332F /* ChildVCCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildVCCoordinator.swift; sourceTree = "<group>"; };
@@ -191,6 +194,7 @@
 		4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModalPresentation+SwiftUI.swift"; sourceTree = "<group>"; };
 		4C83037D258ACF1E00E4860F /* NowPlayingViewFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingViewFull.swift; sourceTree = "<group>"; };
 		4C83038B258B5AC400E4860F /* GetFrameViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetFrameViewModifier.swift; sourceTree = "<group>"; };
+		4C830393258B84FB00E4860F /* NowPlayingFullView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingFullView2.swift; sourceTree = "<group>"; };
 		4C87CE8B252DB578001B9935 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		4C8C7A4A2577AC2300BB4D45 /* HostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostingViewController.swift; sourceTree = "<group>"; };
 		4C8C7A5B2577C77700BB4D45 /* NowPlayingMinimizedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingMinimizedViewController.swift; sourceTree = "<group>"; };
@@ -303,6 +307,7 @@
 			children = (
 				4C3D1CFB2547FCEC0067F57E /* NowPlayingFullView.swift */,
 				4C83037D258ACF1E00E4860F /* NowPlayingViewFull.swift */,
+				4C830393258B84FB00E4860F /* NowPlayingFullView2.swift */,
 			);
 			path = NowPlayingFullView;
 			sourceTree = "<group>";
@@ -359,6 +364,7 @@
 			isa = PBXGroup;
 			children = (
 				4CA9332225668AA4003CC2F5 /* PlayingIndicatorView.swift */,
+				4C22EF84258CCA0D00032601 /* NowPlayingIndictorView2.swift */,
 			);
 			path = NowPlayingIndicatorView;
 			sourceTree = "<group>";
@@ -716,6 +722,7 @@
 				4C83037E258ACF1E00E4860F /* NowPlayingViewFull.swift in Sources */,
 				4C646B5525296D2400B05D8A /* Results.swift in Sources */,
 				4CC643A72542D506003E6EAE /* CurrentPlaylist.swift in Sources */,
+				4C22EF85258CCA0D00032601 /* NowPlayingIndictorView2.swift in Sources */,
 				4CA0ED48253CBDB1001E2ED7 /* NowPlayingBar.swift in Sources */,
 				4C646B8225296FB400B05D8A /* UIColors.swift in Sources */,
 				4C646B8C2529726600B05D8A /* AlbumsCollectionViewCell.swift in Sources */,
@@ -729,6 +736,7 @@
 				4CA9332325668AA4003CC2F5 /* PlayingIndicatorView.swift in Sources */,
 				4C8C7A4B2577AC2300BB4D45 /* HostingViewController.swift in Sources */,
 				4C646B3625296BE500B05D8A /* MainCoordinator.swift in Sources */,
+				4C830394258B84FB00E4860F /* NowPlayingFullView2.swift in Sources */,
 				4C153C32254C01C400A07DAD /* NowPlayingBarViewController.swift in Sources */,
 				4C646B4325296C8A00B05D8A /* UIView+Constraints.swift in Sources */,
 				4CD485A8253AC364005265F3 /* AlbumResource.swift in Sources */,

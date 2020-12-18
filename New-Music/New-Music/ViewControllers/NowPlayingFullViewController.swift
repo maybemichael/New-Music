@@ -48,7 +48,7 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
         animationFrameView.frame = startingFrame()
         self.animationFrame = startingFrame()
 //        let contentView = UIHostingController(rootView: NowPlayingFullView(frame: self.animationFrame, musicController: musicController, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
-        let contentView = UIHostingController(rootView: NowPlayingViewFull2(musicController: musicController, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
+        let contentView = UIHostingController(rootView: NowPlayingFullView2(musicController: musicController, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
         self.contentView = contentView
         let backgroundView = UIVisualEffectView()
         backgroundView.effect = UIBlurEffect(style: .light)
@@ -77,7 +77,8 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
         let horizontalMargin: CGFloat = 40
         let size = UIScreen.main.bounds.width - 80
         let x = horizontalMargin - (size * 0.015)
-        let y = UIScreen.main.bounds.height / 6.5
+//        let y = UIScreen.main.bounds.height / 6.5
+        let y = ((UIScreen.main.bounds.height / 2) + 20) - (UIScreen.main.bounds.width - 80)
         let width = size + (size * 0.03)
         let height = size + (size * 0.03)
         print("Starting Frame in Now Playing Full: \(CGRect(x: x, y: y, width: width, height: height))")

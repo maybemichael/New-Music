@@ -39,10 +39,6 @@ struct PlayingIndicatorView: View {
         }
     }
     
-    private func getAnimationDuration() -> Double {
-        return 60 / Double(nowPlayingViewModel.beatsPerMinute)
-    }
-    
     private func gradient(for whiteLevel: CGFloat) -> LinearGradient {
         whiteLevel < 0.15 ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.textColor2, nowPlayingViewModel.darkerTextColor2) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
     }
