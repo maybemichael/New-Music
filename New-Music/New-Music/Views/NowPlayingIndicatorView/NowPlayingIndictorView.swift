@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class NowPlayingIndictorView2: UIView {
+class NowPlayingIndictorView: UIView {
     
     private var cancellable: AnyCancellable?
     private var nowPlayingViewModel: NowPlayingViewModel
@@ -29,14 +29,14 @@ class NowPlayingIndictorView2: UIView {
         super.layoutSubviews()
         let image = UIImage(systemName: "music.note")
         imageView.frame = bounds
-        self.imageView = UIImageView(image: image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 40, weight: .semibold, scale: .default)))
+        self.imageView = UIImageView(image: image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: imageView.bounds.height * 0.93, weight: .semibold, scale: .default)))
         self.mask = imageView
     }
     
     init(frame: CGRect, nowPlayingViewModel: NowPlayingViewModel) {
         self.nowPlayingViewModel = nowPlayingViewModel
         super.init(frame: frame)
-        createGradientLayer(color1: nowPlayingViewModel.lighterUIColor, color2: nowPlayingViewModel.darkerUIColor)
+        createGradientLayer()
         layer.masksToBounds = false
         layer.shouldRasterize = true
         layer.rasterizationScale = UIScreen.main.scale
@@ -53,8 +53,17 @@ class NowPlayingIndictorView2: UIView {
         fatalError("storyboard is not your friend")
     }
     
-    private func createGradientLayer(color1: UIColor, color2: UIColor) {
+    private func createGradientLayer() {
         let gradient = CAGradientLayer()
+        var color1: UIColor
+        var color2: UIColor
+        if nowPlayingViewModel.whiteLevel < 0.15 {
+            color1 = nowPlayingViewModel.lighterTextColor2
+            color2 = nowPlayingViewModel.lighterTextColor2
+        } else {
+            color1 = nowPlayingViewModel.lighterUIColor
+            color2 = nowPlayingViewModel.lighterUIColor
+        }
         gradient.colors = [color1.cgColor, color2.cgColor]
         gradient.locations = [0.0, 1.0]
         gradient.frame = bounds
@@ -67,6 +76,11 @@ class NowPlayingIndictorView2: UIView {
     
     private func changeGradient() {
         gradientLayer?.removeFromSuperlayer()
-        createGradientLayer(color1: nowPlayingViewModel.lighterUIColor, color2: nowPlayingViewModel.darkerUIColor)
+        createGradientLayer()
+//        if nowPlayingViewModel.whiteLevel < 0.15 {
+//            createGradientLayer(color1: nowPlayingViewModel.lighterTextColor2, color2: nowPlayingViewModel.darkerTextColor2)
+//        } else {
+//            createGradientLayer(color1: nowPlayingViewModel.lighterUIColor, color2: nowPlayingViewModel.darkerUIColor)
+//        }
     }
 }

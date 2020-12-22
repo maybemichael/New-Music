@@ -9,8 +9,8 @@ import SwiftUI
 
 class NowPlayingViewController: UIViewController {
     
-    typealias CurrentPlaylistDataSource = UICollectionViewDiffableDataSource<Int, Song>
-    typealias CurrentPlaylistSnapshot = NSDiffableDataSourceSnapshot<Int, Song>
+    typealias CurrentPlaylistDataSource = UICollectionViewDiffableDataSource<Playlist, Song>
+    typealias CurrentPlaylistSnapshot = NSDiffableDataSourceSnapshot<Playlist, Song>
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
     var childVCCoordinator = ChildVCCoordinator()
@@ -22,33 +22,65 @@ class NowPlayingViewController: UIViewController {
         return view
     }()
     
+//    lazy var collectionView: UICollectionView = {
+//        let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
+//        cv.register(CurrentPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier)
+//        cv.backgroundColor = .clear
+//        cv.contentInset.bottom = 66
+//        return cv
+//    }()
+    
     lazy var collectionView: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
-        cv.register(CurrentPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier)
+        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
+        layoutConfig.headerMode = .supplementary
+        layoutConfig.backgroundColor = .backgroundColor
+        let listLayout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
+        let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
+        cv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         cv.backgroundColor = .clear
         cv.contentInset.bottom = 66
+        cv.register(PlaylistCollectionViewCell.self, forCellWithReuseIdentifier: PlaylistCollectionViewCell.identifier)
+        cv.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
         return cv
     }()
     
+//    lazy var dataSource: CurrentPlaylistDataSource = {
+//        let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, song -> UICollectionViewCell? in
+//            guard let self = self else { return nil }
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier, for: indexPath) as! CurrentPlaylistCollectionViewCell
+//            guard
+//                let song = self.musicController?.currentPlaylist[indexPath.item],
+//                let viewController = self.coordinator?.getPlaylistCellView(for: indexPath, with: song, moveTo: self) as? PlayingIndicatorViewController
+//            else { fatalError("fatal error in NowPlayingViewController data source for collection view") }
+//
+//            viewController.view.backgroundColor = .clear
+//            cell.hostedView = viewController.view
+//            viewController.song = song
+//            cell.song = song
+//
+//            return cell
+//        }
+//        return dataSource
+//    }()
     lazy var dataSource: CurrentPlaylistDataSource = {
         let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, song -> UICollectionViewCell? in
-            guard let self = self else { return nil }
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier, for: indexPath) as! CurrentPlaylistCollectionViewCell
-            guard
-                let song = self.musicController?.currentPlaylist[indexPath.item],
-                let viewController = self.coordinator?.getPlaylistCellView(for: indexPath, with: song, moveTo: self) as? PlayingIndicatorViewController
-            else { fatalError("fatal error in NowPlayingViewController data source for collection view") }
+            guard let self = self else { fatalError() }
+            let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCustomPlaylistCellRegistration(), for: indexPath, item: song)
             
-            viewController.view.backgroundColor = .clear
-            cell.hostedView = viewController.view
-            viewController.song = song
             cell.song = song
-
+            cell.backgroundColor = .clear
+            cell.playID = song.playID
+            
             return cell
+        }
+        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
+            guard let self = self else { return nil }
+            
+            let headerView = collectionView.dequeueConfiguredReusableSupplementary(using: self.makePlaylistHeaderRegistration(), for: indexPath)
+            return headerView
         }
         return dataSource
     }()
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +90,8 @@ class NowPlayingViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         reloadData()
-        musicController?.nowPlayingViewModel.nowPlayingSong = musicController?.nowPlayingViewModel.nowPlayingSong
+        musicController?.nowPlayingViewModel.playID = musicController?.nowPlayingViewModel.playID
+//        musicController?.nowPlayingViewModel.nowPlayingSong = musicController?.nowPlayingViewModel.nowPlayingSong
 
     }
     
@@ -94,9 +127,33 @@ class NowPlayingViewController: UIViewController {
     
     private func reloadData() {
         var snapshot = CurrentPlaylistSnapshot()
-        snapshot.appendSections([0])
-        snapshot.appendItems(musicController?.currentPlaylist ?? [])
+        guard let playlist = musicController?.nowPlayingPlaylist else { return }
+        snapshot.appendSections([playlist])
+        snapshot.appendItems(playlist.songs)
         dataSource.apply(snapshot)
+    }
+    
+    private func makePlaylistHeaderRegistration() -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
+        let playlistHeaderRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { (header: UICollectionViewListCell, string, indexPath) in
+            var content = header.defaultContentConfiguration()
+            content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
+            content.secondaryTextProperties.color = .white
+            content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
+            let playlist = self.dataSource.snapshot().sectionIdentifiers.first!
+            content.secondaryText = playlist.playlistName
+            header.contentConfiguration = content
+        }
+        return playlistHeaderRegistration
+    }
+    
+    private func makeCustomPlaylistCellRegistration() -> UICollectionView.CellRegistration<NowPlayingCollectionViewCell, Song> {
+        let playlistCellRegistration = UICollectionView.CellRegistration<NowPlayingCollectionViewCell, Song> { [weak self] cell, indexPath, song in
+            guard let self = self else { return }
+            cell.song = song
+            cell.nowPlayingViewModel = self.musicController?.nowPlayingViewModel
+            cell.playID = self.musicController?.nowPlayingViewModel.nowPlayingSong?.playID
+        }
+        return playlistCellRegistration
     }
 }
 

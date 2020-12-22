@@ -180,6 +180,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     
     private func makeCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Song> {
         let songCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Song> { [weak self] cell, indexPath, song in
+            guard let self = self else { return }
             var content = cell.defaultContentConfiguration()
             content.imageProperties.maximumSize = CGSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
             content.imageProperties.cornerRadius = 7
@@ -208,7 +209,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             content.text = song.artistName
             content.secondaryText = song.songName
             cell.contentConfiguration = content
-            let delete: UICellAccessory = .delete(displayed: .whenEditing, actionHandler: { self?.deleteSelectedSong(song: song) })
+            let delete: UICellAccessory = .delete(displayed: .whenEditing, actionHandler: { self.deleteSelectedSong(song: song) })
             let reorder: UICellAccessory = .reorder(displayed: .whenEditing)
             cell.accessories = [delete, reorder]
         }
@@ -216,7 +217,8 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     }
     
     private func makePlaylistHeaderRegistration() -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
-        let playlistHeaderRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { (header: UICollectionViewListCell, string, indexPath) in
+        let playlistHeaderRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] (header: UICollectionViewListCell, string, indexPath) in
+            guard let self = self else { return }
             var content = header.defaultContentConfiguration()
             content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
             content.textProperties.color = .white
@@ -263,6 +265,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         let newQueue = playlist.songs.map { $0.playID }
         musicController.updateAlbumArtwork(for: playlist)
         musicController?.musicPlayer.setQueue(with: newQueue)
+        musicController.nowPlayingPlaylist = playlist
         musicController?.currentPlaylist = playlist.songs
         musicController?.play()
     }

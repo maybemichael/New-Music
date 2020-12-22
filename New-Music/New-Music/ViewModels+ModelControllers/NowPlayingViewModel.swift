@@ -16,7 +16,12 @@ class NowPlayingViewModel: ObservableObject {
     var isPlaylistSong = true
     var playingMediaType: PlayingMediaType = .playlist
     var searchedSong: Song?
-    @Published var nowPlayingSong: Song?
+    @Published var nowPlayingSong: Song? {
+        didSet {
+            playID = nowPlayingSong?.playID
+        }
+    }
+    @Published var playID: String?
     @Published var songs: [Song]
     @Published var artist: String = ""
     @Published var songTitle: String = ""
@@ -43,8 +48,8 @@ class NowPlayingViewModel: ObservableObject {
         }
     }
     @Published var darkerUIColor: UIColor
-    @Published var lighterTextColor2: Color
-    @Published var darkerTextColor2: Color
+    @Published var lighterTextColor2: UIColor
+    @Published var darkerTextColor2: UIColor
     @Published var minimizedImageFrame: CGRect = CGRect()
     @Published var fullImageFrame: CGRect = CGRect()
     @Published var albumArtwork: UIImage? = nil {
@@ -226,8 +231,8 @@ class NowPlayingViewModel: ObservableObject {
         self.textColor3 = Color(text3UIColor)
         self.textColor4 = Color(text4UIColor)
         
-        
-        self.darkerTextColor2 = Color(text2UIColor.darker())
+        self.lighterTextColor2 = text2UIColor
+        self.darkerTextColor2 = text2UIColor.darker()
     }
     
     private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {

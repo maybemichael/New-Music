@@ -40,7 +40,8 @@ struct PlayingIndicatorView: View {
     }
     
     private func gradient(for whiteLevel: CGFloat) -> LinearGradient {
-        whiteLevel < 0.15 ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.textColor2, nowPlayingViewModel.darkerTextColor2) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
+//        whiteLevel < 0.15 ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.textColor2, nowPlayingViewModel.darkerTextColor2) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
+        LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
     }
     
     private func opacityForPlayingSong() -> Double {

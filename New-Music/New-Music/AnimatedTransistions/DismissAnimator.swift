@@ -11,11 +11,7 @@ class DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     var finalFrame: CGRect
     var musicController: MusicController
-    var initialVelocity: CGFloat {
-        didSet {
-            print("Initial Velocity: \(self.initialVelocity)")
-        }
-    }
+    var initialVelocity: CGFloat
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return  0.6

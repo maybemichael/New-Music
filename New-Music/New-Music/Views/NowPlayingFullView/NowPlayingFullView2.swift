@@ -61,7 +61,7 @@ struct NowPlayingFullView2: View {
     
     private func nowPlayingBackground(for isMinimized: Bool) -> Color {
         if isMinimized {
-            return Color.nowPlayingBG.opacity(0.8)
+            return Color.nowPlayingBG.opacity(0.6)
         } else {
             return backgroundColorFor(isTooLight: nowPlayingViewModel.isTooLight).opacity(opacity(for: nowPlayingViewModel.whiteLevel))
         }

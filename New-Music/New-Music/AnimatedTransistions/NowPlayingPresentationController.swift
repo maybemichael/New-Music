@@ -33,7 +33,6 @@ final class NowPlayingPresentationController: UIPresentationController {
     }
     
     override func presentationTransitionWillBegin() {
-//        let artworkView = UIHostingController(rootView: ArtworkAnimationView(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
         let tabBarController = presentingViewController as! UITabBarController
         let nav = tabBarController.viewControllers?[tabBarController.selectedIndex] as! UINavigationController
@@ -76,7 +75,6 @@ final class NowPlayingPresentationController: UIPresentationController {
     }
     
     override func dismissalTransitionWillBegin() {
-//        let artworkView = UIHostingController(rootView: ArtworkView2(size: UIScreen.main.bounds.width - 80).environmentObject(musicController.nowPlayingViewModel))
         let barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
         barView.view.backgroundColor = .clear
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
@@ -111,14 +109,13 @@ final class NowPlayingPresentationController: UIPresentationController {
         barViewSnapshot?.frame = barVC.view.bounds
         barViewSnapshot?.center = CGPoint(x: containerView!.center.x, y: getStartingY(barVC: barVC))
         barViewSnapshot!.alpha = 0
-//        containerView?.insertSubview(barViewSnapshot!, belowSubview: (nowPlayingFull.contentView?.view)!)
         containerView?.addSubview(barViewSnapshot!)
         
         barVC.view.isHidden = true
         coordinator.animate { [weak self] _ in
             guard let self = self else { return }
             artworkView.view.frame = barVC.animationFrame
-            barViewSnapshot?.alpha = 0.8
+            barViewSnapshot?.alpha = 1.0
             barViewSnapshot?.frame = barVC.view.frame
             self.presentedView?.layoutIfNeeded()
         } completion: { _ in

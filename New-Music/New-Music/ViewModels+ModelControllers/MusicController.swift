@@ -32,6 +32,13 @@ class MusicController: ObservableObject {
         return playlistURL
     }
     
+    var nowPlayingPlaylist: Playlist? {
+        didSet {
+            guard let songs = self.nowPlayingPlaylist?.songs else { return }
+            self.nowPlayingViewModel.songs = songs
+        }
+    }
+    
     var currentPlaylist = [Song]() {
         didSet {
             self.nowPlayingViewModel.songs = self.currentPlaylist
