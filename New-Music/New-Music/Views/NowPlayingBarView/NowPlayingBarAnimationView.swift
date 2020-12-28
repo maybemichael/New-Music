@@ -38,7 +38,7 @@ struct NowPlayingBarAnimationView: View {
                             BarPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: height - 5)
                                 .foregroundColor(.white)
                                 .frame(width: height - 5, height: height - 5, alignment: .center)
-                            BarTrackButton(size: height - 16, trackDirection: .trackForward, musicController: musicController)
+                            BarTrackButton(size: height - 16, buttonType: .trackForward, musicController: musicController)
                                 .frame(width: height - 16, height: height - 16, alignment: .center)
                         }
                     }

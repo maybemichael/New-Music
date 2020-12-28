@@ -67,15 +67,19 @@ final class NowPlayingPresentationController: UIPresentationController {
             guard let self = self else { return }
             artworkView.view.frame = nowPlayingFull.animationFrame
             self.presentedView?.layoutIfNeeded()
-//            artworkView.view.layoutIfNeeded()
         } completion: { _ in
-//            nowPlayingFull.view.bringSubviewToFront(holderView)
-//            holderView.isHidden = false
+            
         }
     }
     
     override func dismissalTransitionWillBegin() {
-        let barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: 60).environmentObject(musicController.nowPlayingViewModel))
+        var barView = UIViewController()
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: UIScreen.main.bounds.width / 6.2).environmentObject(musicController.nowPlayingViewModel))
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: UIScreen.main.bounds.width / 12).environmentObject(musicController.nowPlayingViewModel))
+        }
+//        let barView = UIHostingController(rootView: NowPlayingMinimized3(musicController: musicController, height: UIScreen.main.bounds.width / 6.2).environmentObject(musicController.nowPlayingViewModel))
         barView.view.backgroundColor = .clear
         let nowPlayingFull = presentedViewController as! NowPlayingFullViewController
         let tabBarController = presentingViewController as! UITabBarController
@@ -106,7 +110,7 @@ final class NowPlayingPresentationController: UIPresentationController {
         barView.view.frame = barVC.view.frame
         artworkView.view.frame = nowPlayingFull.animationFrame
         let barViewSnapshot = barView.view.snapshotView(afterScreenUpdates: true)
-        barViewSnapshot?.frame = barVC.view.bounds
+        barViewSnapshot?.frame = barVC.view.frame
         barViewSnapshot?.center = CGPoint(x: containerView!.center.x, y: getStartingY(barVC: barVC))
         barViewSnapshot!.alpha = 0
         containerView?.addSubview(barViewSnapshot!)

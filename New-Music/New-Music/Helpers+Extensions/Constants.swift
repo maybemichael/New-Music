@@ -7,9 +7,12 @@
 
 import SwiftUI
 
-enum TrackDirection {
+enum NeuButtonType {
     case trackForward
     case trackBackward
+    case shuffle
+    case menu
+    case repeatPlayback
 }
 
 enum CardPosition: Double {

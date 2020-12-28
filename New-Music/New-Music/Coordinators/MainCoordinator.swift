@@ -99,7 +99,11 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
         searchVC.addChild(nowPlayingMinimized)
         nowPlayingMinimized.didMove(toParent: searchVC)
         searchVC.view.addSubview(nowPlayingMinimized.view)
-        nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + 66), width: UIScreen.main.bounds.width, height: 65)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + (UIScreen.main.bounds.width / 6.2)), width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width / 6.2)
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + (UIScreen.main.bounds.width / 12)), width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width / 12)
+        }
         transitionCoordinator.startFrame = nowPlayingMinimized.view.frame
     }
     
@@ -145,43 +149,19 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         let nav = viewController as! UINavigationController
-        
-        switch nav.topViewController {
-        case is SearchViewController:
-            let vc = nav.topViewController as! SearchViewController
-            nowPlayingMinimized.view.removeFromSuperview()
-            nowPlayingMinimized.willMove(toParent: nil)
-            nowPlayingMinimized.removeFromParent()
-            vc.addChild(nowPlayingMinimized)
-            nowPlayingMinimized.didMove(toParent: vc)
-            vc.view.addSubview(nowPlayingMinimized.view)
-//            nowPlayingBarVC.tabBarSelectedView = tabBarController.view
-//            nowPlayingBarVC.tabBarHeight = tabBarController.tabBar.frame.height
-            nowPlayingMinimized.view.frame = CGRect(x: UIScreen.main.bounds.minX, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + 66), width: UIScreen.main.bounds.width, height: 65)
-        case is NowPlayingViewController:
-            let vc = nav.topViewController as! NowPlayingViewController
-            nowPlayingMinimized.view.removeFromSuperview()
-            nowPlayingMinimized.willMove(toParent: nil)
-            nowPlayingMinimized.removeFromParent()
-            vc.addChild(nowPlayingMinimized)
-            nowPlayingMinimized.didMove(toParent: vc)
-            vc.view.addSubview(nowPlayingMinimized.view)
-//            nowPlayingBarVC.tabBarSelectedView = tabBarController.view
-//            nowPlayingBarVC.tabBarHeight = tabBarController.tabBar.frame.height
-            nowPlayingMinimized.view.frame = CGRect(x: UIScreen.main.bounds.minX, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + 66), width: UIScreen.main.bounds.width, height: 65)
-        case is PlaylistViewController:
-            let vc = nav.topViewController as! PlaylistViewController
-            nowPlayingMinimized.view.removeFromSuperview()
-            nowPlayingMinimized.willMove(toParent: nil)
-            nowPlayingMinimized.removeFromParent()
-            vc.addChild(nowPlayingMinimized)
-            nowPlayingMinimized.didMove(toParent: vc)
-            vc.view.addSubview(nowPlayingMinimized.view)
-//            nowPlayingBarVC.tabBarSelectedView = tabBarController.view
-//            nowPlayingBarVC.tabBarHeight = tabBarController.tabBar.frame.height
-            nowPlayingMinimized.view.frame = CGRect(x: UIScreen.main.bounds.minX, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + 66), width: UIScreen.main.bounds.width, height: 65)
-        default:
-            break
+        let vc = nav.topViewController
+        nowPlayingMinimized.view.removeFromSuperview()
+        nowPlayingMinimized.willMove(toParent: nil)
+        nowPlayingMinimized.removeFromParent()
+        vc?.addChild(nowPlayingMinimized)
+        nowPlayingMinimized.didMove(toParent: vc)
+        vc?.view.addSubview(nowPlayingMinimized.view)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + (UIScreen.main.bounds.width / 6.2)), width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width / 6.2)
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + (UIScreen.main.bounds.width / 12)), width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width / 12)
         }
+        print("This is the screen width: \(UIScreen.main.bounds.width)")
+        print("This is the screen width divided by 6: \(UIScreen.main.bounds.width / 6.2)")
     }
 }

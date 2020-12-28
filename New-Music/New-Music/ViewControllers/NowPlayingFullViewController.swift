@@ -74,15 +74,29 @@ class NowPlayingFullViewController: UIViewController, NowPlayingController, Fram
     }
     
     private func startingFrame() -> CGRect {
-        let horizontalMargin: CGFloat = 40
-        let size = UIScreen.main.bounds.width - 80
-        let x = horizontalMargin - (size * 0.015)
-//        let y = UIScreen.main.bounds.height / 6.5
-        let y = ((UIScreen.main.bounds.height / 2) + 20) - (UIScreen.main.bounds.width - 80)
-        let width = size + (size * 0.03)
-        let height = size + (size * 0.03)
-        print("Starting Frame in Now Playing Full: \(CGRect(x: x, y: y, width: width, height: height))")
-        return CGRect(x: x, y: y, width: width, height: height)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            let horizontalMargin: CGFloat = 40
+            let size = UIScreen.main.bounds.width - 80
+            let x = horizontalMargin - (size * 0.015)
+            let y = ((UIScreen.main.bounds.height / 2) + 20) - (UIScreen.main.bounds.width - 80)
+            let width = size + (size * 0.03)
+            let height = size + (size * 0.03)
+//            print("Starting Frame in Now Playing Full: \(CGRect(x: x, y: y, width: width, height: height))")
+            return CGRect(x: x, y: y, width: width, height: height)
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            let size = UIScreen.main.bounds.width / 1.35
+            let x = (UIScreen.main.bounds.width - size) / 2
+            let y = ((UIScreen.main.bounds.height / 2) + (UIScreen.main.bounds.width / 7)) - size
+            return CGRect(x: x, y: y, width: size, height: size)
+        } else {
+            let horizontalMargin: CGFloat = 40
+            let size = UIScreen.main.bounds.width - 80
+            let x = horizontalMargin - (size * 0.015)
+            let y = ((UIScreen.main.bounds.height / 2) + 20) - (UIScreen.main.bounds.width - 80)
+            let width = size + (size * 0.03)
+            let height = size + (size * 0.03)
+            return CGRect(x: x, y: y, width: width, height: height)
+        }
     }
     
     func getFrame(frame: CGRect) {

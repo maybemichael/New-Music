@@ -51,15 +51,15 @@ struct NowPlayingFull: View {
                 }
                 //            .frame(minHeight: 60)
                 .padding(.horizontal, 40)
-                TrackProgressView(musicController: musicController)
+                TrackProgressView(musicController: musicController, barHeight: 8, indicatorHeight: 14, barWidth: UIScreen.main.bounds.width - 80)
                 //                .padding(.bottom, 12)
                 HStack(spacing: 40) {
-                    NeuTrackButton(size: 60, trackDirection: .trackBackward, musicController: musicController)
+                    NeuSwiftUIButton(size: 60, buttonType: .trackBackward, musicController: musicController)
                         .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .frame, isSource: true)
-                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: 90)
+                    NeuPlayPauseButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 90)
                         .frame(width: 90, height: 90)
                         .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .frame, isSource: true)
-                    NeuTrackButton(size: 60, trackDirection: .trackForward, musicController: musicController)
+                    NeuSwiftUIButton(size: 60, buttonType: .trackForward, musicController: musicController)
                         .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .frame, isSource: true)
                 }
             }

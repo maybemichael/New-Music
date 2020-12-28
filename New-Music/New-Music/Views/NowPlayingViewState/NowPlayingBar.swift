@@ -35,7 +35,7 @@ struct NowPlayingBar: View {
                 .frame(width: 150, alignment: .leading)
                 BarPlayButton(isPlaying: songViewModel.isPlaying, musicController: musicController, size: 60, symbolConfig: .barPlayButton)
                     .matchedGeometryEffect(id: "PlayButton", in: namespace, properties: .size, isSource: false)
-                BarTrackButton(size: 45, trackDirection: .trackForward, musicController: musicController)
+                BarTrackButton(size: 45, buttonType: .trackForward, musicController: musicController)
                     .matchedGeometryEffect(id: "TrackBackward", in: namespace, properties: .size, isSource: true)
                     .matchedGeometryEffect(id: "TrackForward", in: namespace, properties: .size, isSource: true)
             }
@@ -83,7 +83,7 @@ struct BarPlayButton: View {
                 .frame(width: 20, height: 20)
                 
         }
-        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size, labelPadding: 40))
+        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size))
     }
     
     private func imageTint(isTooLight: Bool) -> Color {
@@ -102,7 +102,7 @@ struct BarNeuTrackButton: View {
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     var imageName: String
     var size: CGFloat
-    var trackDirection: TrackDirection
+    var trackDirection: NeuButtonType
     var musicController: MusicController
     
     var body: some View {

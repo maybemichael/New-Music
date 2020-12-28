@@ -11,19 +11,18 @@ struct NeuPlayPauseButton: View {
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     @State var isPlaying: Bool
     var musicController: MusicController
-    var labelPadding: CGFloat
     var size: CGFloat
     
     var body: some View {
         Toggle(isOn: $isPlaying) {
             Image(systemName: songViewModel.isPlaying ? "pause": "play.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+                .font(Font.system(size: size / 3, weight: .black, design: .default))
+                .padding()
                 .foregroundColor(Color(imageTint(isTooLight: songViewModel.isTooLight)))
-                .font(Font.system(.callout).weight(.black))
+//                .font(Font.system(.callout).weight(.black))
                 
         }
-        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size, labelPadding: size / 3))
+        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size))
     }
     
     private func imageTint(isTooLight: Bool) -> UIColor {
@@ -39,7 +38,6 @@ struct ToggleButtonStyle: ToggleStyle {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     var musicController: MusicController
     var size: CGFloat
-    var labelPadding: CGFloat
     
     func makeBody(configuration: Self.Configuration) -> some View {
         Button(action: {
@@ -48,7 +46,6 @@ struct ToggleButtonStyle: ToggleStyle {
             configuration.isOn ? musicController.play() : musicController.pause()
         }) {
             configuration.label
-                .padding(labelPadding)
                 .contentShape(Circle())
                 .background(NeuToggleBackground(shape: Circle(), size: size))
         }
@@ -124,21 +121,21 @@ struct NeuToggleBackground<S: Shape>: View {
     }
 }
 
-struct NeuTrackButton: View {
+struct NeuSwiftUIButton: View {
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     var size: CGFloat
-    var trackDirection: TrackDirection
+    var buttonType: NeuButtonType
     var musicController: MusicController
     
     var body: some View {
         Button(action: {
-            trackDirection == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
+            buttonType == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
-            Image(systemName: getImageName())
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+            Image(systemName: imageForButtonType())
+                .font(Font.system(size: size / 4, weight: .semibold, design: .default))
+                .padding()
                 .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
-                .font(Font.system(.callout).weight(.black))
+//                .font(Font.system(.callout).weight(.black))
         }
         .buttonStyle(NeuButtonStyle(size: size))
 //        .frame(width: size, height: size)
@@ -148,7 +145,22 @@ struct NeuTrackButton: View {
     }
     
     private func getImageName() -> String {
-        trackDirection == .trackForward ? "forward.fill" : "backward.fill"
+        buttonType == .trackForward ? "forward.fill" : "backward.fill"
+    }
+    
+    private func imageForButtonType() -> String {
+        switch buttonType {
+        case .trackForward:
+            return "forward.fill"
+        case .trackBackward:
+            return "backward.fill"
+        case .shuffle:
+            return "shuffle"
+        case .menu:
+            return "line.horizontal.3"
+        case .repeatPlayback:
+            return "repeat"
+        }
     }
 }
 
@@ -158,7 +170,7 @@ struct NeuButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .padding(size / 3)
+//            .padding(size / 3)
             .contentShape(Circle())
             .background(NeuButtonBackground(isHighlighted: configuration.isPressed, shape: Circle(), size: size))
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
@@ -292,7 +304,7 @@ struct PlayPauseButton: View {
                 .font(Font.system(.callout).weight(.black))
                 
         }
-        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size, labelPadding: size / 3))
+        .toggleStyle(ToggleButtonStyle(musicController: musicController, size: size))
     }
     
     private func imageTint(isTooLight: Bool) -> UIColor {
@@ -307,7 +319,7 @@ struct PlayPauseButton: View {
 struct TrackButton: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     var size: CGFloat
-    var trackDirection: TrackDirection
+    var trackDirection: NeuButtonType
     var musicController: MusicController
 //    var isHighlighted: Bool
     
@@ -344,10 +356,9 @@ struct BarPlayPauseButton: View {
     var body: some View {
         Toggle(isOn: $isPlaying) {
             Image(systemName: songViewModel.isPlaying ? "pause": "play.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+                .font(Font.system(size: size / 3, weight: .black, design: .default))
+                .padding()
                 .foregroundColor(Color(imageTint(isTooLight: songViewModel.isTooLight)))
-                .font(Font.system(.callout).weight(.bold))
                 
         }
         .toggleStyle(BarToggleButtonStyle(musicController: musicController, size: size, labelPadding: size / 3))
@@ -365,17 +376,17 @@ struct BarPlayPauseButton: View {
 struct BarTrackButton: View {
     @EnvironmentObject var songViewModel: NowPlayingViewModel
     var size: CGFloat
-    var trackDirection: TrackDirection
+    var buttonType: NeuButtonType
     var musicController: MusicController
     
     var body: some View {
         Button(action: {
-            trackDirection == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
+            buttonType == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
-            Image(systemName: getImageName())
+            Image(systemName: imageForButtonType())
+                .font(Font.system(size: size / 3.5, weight: .semibold, design: .default))
+                .padding()
                 .foregroundColor(imageTint(isTooLight: songViewModel.isTooLight))
-                .aspectRatio(contentMode: .fit)
-                .font(Font.system(.callout).weight(.bold))
         }
         .buttonStyle(BarTrackButtonStyle(size: size))
     }
@@ -384,6 +395,21 @@ struct BarTrackButton: View {
     }
     
     private func getImageName() -> String {
-        trackDirection == .trackForward ? "forward.fill" : "backward.fill"
+        buttonType == .trackForward ? "forward.fill" : "backward.fill"
+    }
+    
+    private func imageForButtonType() -> String {
+        switch buttonType {
+        case .trackForward:
+            return "forward.fill"
+        case .trackBackward:
+            return "backward.fill"
+        case .shuffle:
+            return "shuffle"
+        case .menu:
+            return "line.horizontal.3"
+        case .repeatPlayback:
+            return "repeat"
+        }
     }
 }

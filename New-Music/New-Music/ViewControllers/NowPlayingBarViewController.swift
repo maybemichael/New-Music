@@ -117,7 +117,7 @@ class NowPlayingBarViewController: UIViewController, FrameDelegate {
         childVCs.append(fullPlayerView)
         
         // MARK: - Minimized Now Playing View
-        let minimizedNowPlayingView = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60, frame: CGRect(x: 20, y: 5, width: view.bounds.width - 10, height: view.bounds.width - 10), frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
+        let minimizedNowPlayingView = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60, frame: CGRect(x: 20, y: 5, width: view.bounds.width - 10, height: view.bounds.width - 10), frameDelegate: self, verticalMargin: 6).environmentObject(musicController.nowPlayingViewModel))
         addChild(minimizedNowPlayingView)
         minimizedNowPlayingView.didMove(toParent: self)
         view.addSubview(minimizedNowPlayingView.view)

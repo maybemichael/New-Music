@@ -11,7 +11,7 @@ struct TrackProgressBarView: View {
     @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     var musicController: MusicController
     var body: some View {
-        TrackProgressView(musicController: musicController)
+        TrackProgressView(musicController: musicController, barHeight: 8, indicatorHeight: 14, barWidth: UIScreen.main.bounds.width - 80)
     }
 }
 
@@ -27,6 +27,9 @@ struct TrackProgressView: View {
     @State var isDragging: Bool = false
     var musicController: MusicController
     var newPlaybackTime: TimeInterval = 0
+    var barHeight: CGFloat
+    var indicatorHeight: CGFloat
+    var barWidth: CGFloat
     
     var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -40,24 +43,24 @@ struct TrackProgressView: View {
             ZStack(alignment: .center) {
                 GeometryReader { geo in
                     HStack {
-                        RoundedRectangle(cornerRadius: 5)
+                        RoundedRectangle(cornerRadius: barHeight / 2)
                             .fill(LinearGradient(gradient:
                                 Gradient(stops: [Gradient.Stop(color: .sysGrayFour, location: 0.2),
                                                  Gradient.Stop(color: Color.black.opacity(0.75), location: 0.9)]),
                                                  startPoint: .bottom,
                                                  endPoint: .top))
-                            .frame(height: 8)
-                            .padding(.top, 3)
+                            .frame(height: barHeight)
+                            .padding(.top, (indicatorHeight - barHeight) / 2)
                     }
                 }
                 GeometryReader { geo in
                     HStack {
-                        RoundedRectangle(cornerRadius: 5)
+                        RoundedRectangle(cornerRadius: barHeight / 2)
                             .fill(fillGradient(whiteLevel: nowPlayingViewModel.whiteLevel))
-                            .frame(width: geo.size.width * self.percentagePlayedForSong(), height: 8)
-                            .overlay(RoundedRectangle(cornerRadius: 5)
+                            .frame(width: geo.size.width * self.percentagePlayedForSong(), height: barHeight)
+                            .overlay(RoundedRectangle(cornerRadius: barHeight / 2)
                                         .stroke(Color.black, lineWidth: 1))
-                            .padding(.top, 3)
+                            .padding(.top, (indicatorHeight - barHeight) / 2)
                         Spacer(minLength: 0)
                     }
                 }
@@ -65,9 +68,9 @@ struct TrackProgressView: View {
                     HStack {
                         Circle()
                             .fill(fillGradient(whiteLevel: nowPlayingViewModel.whiteLevel))
-                            .frame(width: 14, height: 14)
+                            .frame(width: indicatorHeight, height: indicatorHeight)
                             .scaleEffect(isDragging ? 2.5 : 1)
-                            .padding(.leading, geo.size.width * self.percentagePlayedForSong() - 7)
+                            .padding(.leading, geo.size.width * self.percentagePlayedForSong() - (indicatorHeight / 2))
                             .gesture(
                                 DragGesture()
                                     .onChanged({ value in
@@ -88,18 +91,18 @@ struct TrackProgressView: View {
                 }
                 HStack(alignment: .center) {
                     Text(formattedTimeFor(timeInterval: nowPlayingViewModel.elapsedTime))
-                        .font(.custom("CourierNewPS-BoldMT", size: 15, relativeTo: .title3))
+                        .font(.custom("CourierNewPS-BoldMT", size: indicatorHeight, relativeTo: .title3))
                         .foregroundColor(.white)
 //                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                     Spacer()
                     Text("-\(formattedTimeRemainingFor(timeInterval: nowPlayingViewModel.timeRemaining))")
-                        .font(.custom("CourierNewPS-BoldMT", size: 15, relativeTo: .title3))
+                        .font(.custom("CourierNewPS-BoldMT", size: indicatorHeight, relativeTo: .title3))
                         .foregroundColor(.white)
 //                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                 }
             }
         }
-        .frame(width: UIScreen.main.bounds.width - 80, height: 60, alignment: .bottom)
+        .frame(width: barWidth, height: 60, alignment: .bottom)
     }
     
     private func fillGradient(whiteLevel: CGFloat) -> LinearGradient {

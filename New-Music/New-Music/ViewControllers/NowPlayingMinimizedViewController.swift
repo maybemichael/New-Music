@@ -12,6 +12,7 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
 
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
+    var margin: CGFloat = 8
     var animationFrame: CGRect = CGRect() {
         didSet {
             self.animationFrameView.frame = self.animationFrame
@@ -57,7 +58,13 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
         view.clipsToBounds = true
         blurView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor)
         guard let musicController = self.musicController else { return }
-        let nowPlayingMinimizedVC = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: 60, frame: animationFrame, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
+        var nowPlayingMinimizedVC = UIViewController()
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            nowPlayingMinimizedVC = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: UIScreen.main.bounds.width / 6.2, frame: animationFrame, frameDelegate: self, verticalMargin: 6).environmentObject(musicController.nowPlayingViewModel))
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            nowPlayingMinimizedVC = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: UIScreen.main.bounds.width / 12, frame: animationFrame, frameDelegate: self, verticalMargin: 6).environmentObject(musicController.nowPlayingViewModel))
+        }
+//        let nowPlayingMinimizedVC = UIHostingController(rootView: NowPlayingMinimized2(musicController: musicController, height: UIScreen.main.bounds.width / 6.2, frame: animationFrame, frameDelegate: self).environmentObject(musicController.nowPlayingViewModel))
         addChild(nowPlayingMinimizedVC)
         nowPlayingMinimizedVC.didMove(toParent: self)
         view.addSubview(nowPlayingMinimizedVC.view)
@@ -66,7 +73,8 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
         nowPlayingMinimizedVC.view.backgroundColor = UIColor.backgroundColor?.withAlphaComponent(0.4)
         view.addGestureRecognizer(tapGesture)
         view.addGestureRecognizer(panGesture)
-       tapGesture.require(toFail: panGesture)
+        tapGesture.require(toFail: panGesture)
+        print("Now Playing Minimized VC Frame: \(nowPlayingMinimizedVC.view.frame)")
     }
     
     @objc private func presentFullScreenNowPlaying() {

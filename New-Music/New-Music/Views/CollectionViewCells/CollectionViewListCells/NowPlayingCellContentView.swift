@@ -15,6 +15,7 @@ class NowPlayingCellContentView: UIView, UIContentView {
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
         label.textColor = .white
         label.textAlignment = .left
+        label.numberOfLines = 2
         return label
     }()
     
@@ -23,6 +24,7 @@ class NowPlayingCellContentView: UIView, UIContentView {
         label.textColor = .lightText
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
         label.textAlignment = .left
+        label.numberOfLines = 2
         return label
     }()
     
@@ -48,18 +50,17 @@ class NowPlayingCellContentView: UIView, UIContentView {
     
     
     var playID: String?
-    private var cancellable: AnyCancellable?
-    var indicatorView: NowPlayingIndictorView?
+    private var playIDSubscriber: AnyCancellable?
+    private var isPlayingSubscriber: AnyCancellable?
+    lazy var indicatorView: NowPlayingIndictorView = {
+        let view = NowPlayingIndictorView(frame: CGRect(x: 0, y: 0, width: (UIScreen.main.bounds.width / 7) / 2, height: (UIScreen.main.bounds.width / 7) / 2), nowPlayingViewModel: nowPlayingViewModel)
+        view.isHidden = true
+        return view
+    }()
     
     var mainStackView: UIStackView?
-    
-    var nowPlayingViewModel: NowPlayingViewModel {
-        didSet {
-            
-        }
-    }
-    
     var labelStackView: UIStackView?
+    var nowPlayingViewModel: NowPlayingViewModel
     
     private var currentConfiguration: NowPlayingCellContentConfiguration!
     var configuration: UIContentConfiguration {
@@ -79,18 +80,19 @@ class NowPlayingCellContentView: UIView, UIContentView {
         setupViews()
         apply(configuration: configuration)
         backgroundColor = .clear
-        cancellable = nowPlayingViewModel.$playID.sink { [weak self] id in
+        playIDSubscriber = nowPlayingViewModel.$playID.sink(receiveValue: { [weak self] id in
             guard let self = self else { return }
-            self.indicatorView?.removeFromSuperview()
-            self.indicatorView?.layer.removeAllAnimations()
-            self.indicatorView = nil
-            self.setupIndicatorView()
-            self.removeAnimation()
-        }
+            DispatchQueue.main.async {
+                self.showNowPlayingIndicator()
+            }
+        })
         
-//        cancellable = nowPlayingViewModel.$isPlaying.sink { [weak self] isPlaying in
-//            guard let self = self else { return }
-//        }
+        isPlayingSubscriber = nowPlayingViewModel.$isPlaying.sink(receiveValue: { [weak self] _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.animateNowPlayingIndicator()
+            }
+        })
     }
     
     required init?(coder: NSCoder) {
@@ -108,9 +110,10 @@ class NowPlayingCellContentView: UIView, UIContentView {
         trailing.priority = UILayoutPriority(999)
         let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        containerView.addSubview(holderView)
+//        containerView.addSubview(holderView)
         containerView.addSubview(imageView)
-        holderView.anchor(trailing: containerView.trailingAnchor, centerY: containerView.centerYAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: -20), size: .init(width: (UIScreen.main.bounds.width / 7) / 2, height: (UIScreen.main.bounds.width / 7) / 2))
+        containerView.addSubview(indicatorView)
+        indicatorView.anchor(trailing: containerView.trailingAnchor, centerY: containerView.centerYAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: -20), size: .init(width: (UIScreen.main.bounds.width / 7) / 2, height: (UIScreen.main.bounds.width / 7) / 2))
         let labelStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
         self.labelStackView = labelStackView
         labelStackView.axis = .vertical
@@ -120,13 +123,16 @@ class NowPlayingCellContentView: UIView, UIContentView {
         
         imageView.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, padding: .init(top: 8, left: 20, bottom: 0, right: 0), size: .init(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7))
         containerView.addSubview(labelStackView)
-        labelStackView.anchor(leading: imageView.trailingAnchor, trailing: holderView.leadingAnchor, centerY: containerView.centerYAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -8))
+        labelStackView.anchor(leading: imageView.trailingAnchor, trailing: indicatorView.leadingAnchor, centerY: containerView.centerYAnchor, padding: .init(top: 0, left: 8, bottom: 0, right: -20))
         NSLayoutConstraint.activate([
             top,
             leading,
             trailing,
             bottom
         ])
+//        holderView.addSubview(indicatorView)
+//        indicatorView.anchor(top: holderView.topAnchor, leading: holderView.leadingAnchor, trailing: holderView.trailingAnchor, bottom: holderView.bottomAnchor)
+        layoutIfNeeded()
     }
     
     private func apply(configuration: NowPlayingCellContentConfiguration) {
@@ -141,28 +147,36 @@ class NowPlayingCellContentView: UIView, UIContentView {
         }
     }
     
-    private func setupIndicatorView() {
-        if self.playID == self.nowPlayingViewModel.nowPlayingSong?.playID {            
-            self.indicatorView = NowPlayingIndictorView(frame: .zero, nowPlayingViewModel: nowPlayingViewModel)
-            self.holderView.addSubview(self.indicatorView!)
-            indicatorView?.layer.masksToBounds = false
-            self.indicatorView?.anchor(top: self.holderView.topAnchor, leading: self.holderView.leadingAnchor, trailing: self.holderView.trailingAnchor, bottom: self.holderView.bottomAnchor)
-            self.layoutIfNeeded()
+    private func showNowPlayingIndicator() {
+        if playID == nowPlayingViewModel.playID {
+            indicatorView.isHidden = false
+        } else {
+            indicatorView.isHidden = true
+        }
+    }
+    
+    private func animateNowPlayingIndicator() {
+        if nowPlayingViewModel.isPlaying {
             UIView.animate(withDuration: 0.8, delay: 0, options: [.repeat, .autoreverse, .curveEaseIn]) { [weak self] in
                 guard let self = self else { return }
-                self.indicatorView?.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                self.indicatorView.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
                 self.layoutIfNeeded()
             } completion: { [weak self] _ in
-                self?.indicatorView?.transform = .identity
+                self?.indicatorView.transform = .identity
+            }
+        } else {
+            UIView.animate(withDuration: 0.8, delay: 0, options: [.curveEaseIn]) { [weak self] in
+                guard let self = self else { return }
+                self.indicatorView.transform = .identity
+                self.layoutIfNeeded()
+            } completion: { [weak self] _ in
+                self?.indicatorView.layer.removeAllAnimations()
             }
         }
     }
     
-    private func removeAnimation() {
-        if !nowPlayingViewModel.isPlaying {
-            self.indicatorView?.layer.removeAllAnimations()
-            self.layoutIfNeeded()
-        }
+    deinit {
+        self.indicatorView.layer.removeAllAnimations()
     }
 }
 

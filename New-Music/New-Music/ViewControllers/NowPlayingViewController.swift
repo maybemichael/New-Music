@@ -90,9 +90,9 @@ class NowPlayingViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         reloadData()
-        musicController?.nowPlayingViewModel.playID = musicController?.nowPlayingViewModel.playID
-//        musicController?.nowPlayingViewModel.nowPlayingSong = musicController?.nowPlayingViewModel.nowPlayingSong
-
+        guard let musicController = self.musicController else { return }
+        musicController.nowPlayingViewModel.playID = musicController.nowPlayingViewModel.playID
+        musicController.nowPlayingViewModel.isPlaying =  musicController.nowPlayingViewModel.isPlaying
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

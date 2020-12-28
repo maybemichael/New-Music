@@ -91,13 +91,13 @@ class NowPlayingTransitionCoordinator: UIPercentDrivenInteractiveTransition {
             let yVelocity = gesture.velocity(in: viewToAnimate).y
             self.velocity = (yVelocity * 0.001)
             if yVelocity > 400 || viewToAnimate.frame.minY > UIScreen.main.bounds.height / 3 {
-                animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeOut), durationFactor: 1.0)
+                animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeIn), durationFactor: 0.8)
                 musicController.nowPlayingViewModel.isFull = false
                 self.fromVC?.dismiss(animated: true, completion: nil)
             } else {
                 bounceBackFull()
                 musicController.nowPlayingViewModel.isFull = true
-                animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeOut), durationFactor: 0.3)
+                animator.continueAnimation(withTimingParameters: UICubicTimingParameters(animationCurve: .easeOut), durationFactor: 0.5)
             }
         default:
             break

@@ -129,8 +129,8 @@ struct ArtworkView2: View {
                     .scaledToFit()
             }
         }
-        .frame(minWidth: 50, maxWidth: size, minHeight: 50, maxHeight: size, alignment: .center)
-//        .frame(width: size, height: size, alignment: .center)
+//        .frame(minWidth: 50, maxWidth: size, minHeight: 50, maxHeight: size, alignment: .center)
+        .frame(width: size, height: size, alignment: .center)
     }
     
     private func artworkWidth(for state: Bool) -> CGFloat {

@@ -43,11 +43,11 @@ struct NowPlayingFullView: View {
                     
                     TrackProgressBarView(musicController: musicController)
                     HStack(spacing: 40) {
-                        NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackBackward, musicController: musicController)
+                        NeuSwiftUIButton(size: UIScreen.main.bounds.width / 7, buttonType: .trackBackward, musicController: musicController)
                             .frame(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7, alignment: .center)
-                        NeuPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, labelPadding: 30, size: UIScreen.main.bounds.width / 4.7)
+                        NeuPlayPauseButton(isPlaying: nowPlayingViewModel.isPlaying, musicController: musicController, size: UIScreen.main.bounds.width / 4.7)
                             .frame(width: UIScreen.main.bounds.width / 4.7, height: UIScreen.main.bounds.width / 4.7, alignment: .center)
-                        NeuTrackButton(size: UIScreen.main.bounds.width / 7, trackDirection: .trackForward, musicController: musicController)
+                        NeuSwiftUIButton(size: UIScreen.main.bounds.width / 7, buttonType: .trackForward, musicController: musicController)
                             .frame(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7, alignment: .center)
                     }
                 }
