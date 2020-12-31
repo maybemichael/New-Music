@@ -92,7 +92,7 @@ class NowPlayingViewController: UIViewController {
         reloadData()
         guard let musicController = self.musicController else { return }
         musicController.nowPlayingViewModel.playID = musicController.nowPlayingViewModel.playID
-        musicController.nowPlayingViewModel.isPlaying =  musicController.nowPlayingViewModel.isPlaying
+        musicController.nowPlayingViewModel.isPlaying = musicController.nowPlayingViewModel.isPlaying
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -148,9 +148,12 @@ class NowPlayingViewController: UIViewController {
     
     private func makeCustomPlaylistCellRegistration() -> UICollectionView.CellRegistration<NowPlayingCollectionViewCell, Song> {
         let playlistCellRegistration = UICollectionView.CellRegistration<NowPlayingCollectionViewCell, Song> { [weak self] cell, indexPath, song in
-            guard let self = self else { return }
+            guard
+                let self = self,
+                let nowPlayingViewModel = self.musicController?.nowPlayingViewModel
+            else { return }
             cell.song = song
-            cell.nowPlayingViewModel = self.musicController?.nowPlayingViewModel
+            cell.nowPlayingViewModel = nowPlayingViewModel
             cell.playID = self.musicController?.nowPlayingViewModel.nowPlayingSong?.playID
         }
         return playlistCellRegistration

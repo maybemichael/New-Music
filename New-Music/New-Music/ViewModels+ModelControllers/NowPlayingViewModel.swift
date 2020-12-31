@@ -97,6 +97,7 @@ class NowPlayingViewModel: ObservableObject {
         NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
+        determinePlaybackState()
     }
     
     @objc func updateElapsedTime(_ displayLink: CADisplayLink) {
@@ -138,6 +139,7 @@ class NowPlayingViewModel: ObservableObject {
     
     @objc func musicPlayerStateDidChange(_ notification: Notification) {
         let playbackState = musicPlayer.playbackState
+        determinePlaybackState()
         switch playbackState {
         case .stopped, .paused, .interrupted:
             self.isPlaying = false
@@ -263,6 +265,14 @@ class NowPlayingViewModel: ObservableObject {
             blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
             alpha: CGFloat(1.0)
         )
+    }
+    
+    private func determinePlaybackState() {
+        if musicPlayer.playbackState == .playing {
+            isPlaying = true
+        } else {
+            isPlaying = false
+        }
     }
     
     func newDisplayLink() {

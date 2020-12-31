@@ -19,14 +19,14 @@ class SectionHeader: UICollectionReusableView {
     
     let topSeparatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGrayThree
+        view.backgroundColor = .opaqueSeparator
         return view
     }()
     
     let bottomSeparatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGrayThree
-        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        view.backgroundColor = .opaqueSeparator
+        view.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         return view
     }()
     
@@ -34,7 +34,7 @@ class SectionHeader: UICollectionReusableView {
         super.init(frame: frame)
         addSubview(topSeparatorView)
         addSubview(titleLabel)
-        topSeparatorView.anchor(top: topAnchor, centerX: centerXAnchor, size: .init(width: UIScreen.main.bounds.width - 40, height: 1))
+        topSeparatorView.anchor(top: topAnchor, centerX: centerXAnchor, size: .init(width: UIScreen.main.bounds.width - 40, height: 0.5))
         titleLabel.anchor(top: topSeparatorView.bottomAnchor, leading: leadingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
     }
     

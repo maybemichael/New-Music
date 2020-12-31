@@ -26,15 +26,15 @@ struct NowPlayingFullView2: View {
                     .frame(width: UIScreen.main.bounds.width, height: (geo.size.height / 2) + (UIScreen.main.bounds.width / 7), alignment: .bottom)
                     VStack(spacing: 20) {
                         VStack(alignment: .center) {
-//                            Text(nowPlayingViewModel.artist)
-                            Text("Taking Back Sunday")
+                            Text(nowPlayingViewModel.artist)
+//                            Text("Taking Back Sunday")
                                 .font(Font.system(.title3).weight(.medium))
                                 .foregroundColor(nowPlayingViewModel.textColor2)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.5)
-//                            Text(nowPlayingViewModel.songTitle)
-                            Text("Cute Without the 'E' (Cut From the Team) [Remastered]")
+                            Text(nowPlayingViewModel.songTitle)
+//                            Text("Cute Without the 'E' (Cut From the Team) [Remastered]")
                                 .font(Font.system(.title3).weight(.medium))
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.center)
@@ -101,6 +101,7 @@ struct NowPlayingFullView2: View {
                             .frame(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7, alignment: .center)
                         Spacer()
                     }
+                    .padding(.horizontal, 20)
                 }
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .top)

@@ -43,9 +43,9 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     
     let separatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGrayThree
+        view.backgroundColor = .opaqueSeparator
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         return view
     }()
     

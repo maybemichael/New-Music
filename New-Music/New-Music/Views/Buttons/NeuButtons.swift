@@ -129,7 +129,8 @@ struct NeuSwiftUIButton: View {
     
     var body: some View {
         Button(action: {
-            buttonType == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
+            actionForButtonType()
+//            buttonType == .trackForward ? musicController.nextTrack() : musicController.previousTrack()
         }) {
             Image(systemName: imageForButtonType())
                 .font(Font.system(size: size / 4, weight: .semibold, design: .default))
@@ -144,10 +145,6 @@ struct NeuSwiftUIButton: View {
         isTooLight ? Color.black : Color.white
     }
     
-    private func getImageName() -> String {
-        buttonType == .trackForward ? "forward.fill" : "backward.fill"
-    }
-    
     private func imageForButtonType() -> String {
         switch buttonType {
         case .trackForward:
@@ -160,6 +157,25 @@ struct NeuSwiftUIButton: View {
             return "line.horizontal.3"
         case .repeatPlayback:
             return "repeat"
+        }
+    }
+    
+    private func actionForButtonType() {
+        switch buttonType {
+        case .trackForward:
+            musicController.nextTrack()
+        case .trackBackward:
+            musicController.previousTrack()
+        case .shuffle:
+            musicController.shufflePlaylist()
+        case .repeatPlayback:
+            if musicController.musicPlayer.repeatMode == .none {
+                musicController.musicPlayer.repeatMode = .one
+            } else {
+                musicController.musicPlayer.repeatMode = .none
+            }
+        default:
+            break
         }
     }
 }
@@ -394,10 +410,6 @@ struct BarTrackButton: View {
         isTooLight ? Color.black : Color.white
     }
     
-    private func getImageName() -> String {
-        buttonType == .trackForward ? "forward.fill" : "backward.fill"
-    }
-    
     private func imageForButtonType() -> String {
         switch buttonType {
         case .trackForward:
@@ -410,6 +422,29 @@ struct BarTrackButton: View {
             return "line.horizontal.3"
         case .repeatPlayback:
             return "repeat"
+        }
+    }
+    
+    private func actionForButtonType() {
+        switch buttonType {
+        case .trackForward:
+            musicController.nextTrack()
+        case .trackBackward:
+            musicController.previousTrack()
+        case .shuffle:
+            if musicController.musicPlayer.shuffleMode == .off {
+                musicController.musicPlayer.shuffleMode = .songs
+            } else {
+                musicController.musicPlayer.shuffleMode = .off
+            }
+        case .repeatPlayback:
+            if musicController.musicPlayer.repeatMode == .none {
+                musicController.musicPlayer.repeatMode = .one
+            } else {
+                musicController.musicPlayer.repeatMode = .none
+            }
+        default:
+            break
         }
     }
 }

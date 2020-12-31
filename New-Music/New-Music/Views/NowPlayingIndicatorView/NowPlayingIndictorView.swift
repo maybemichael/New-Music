@@ -19,6 +19,8 @@ class NowPlayingIndictorView: UIView {
         return iv
     }()
     
+    private var playIDSubscriber: AnyCancellable?
+    private var isPlayingSubscriber: AnyCancellable?
     var gradientLayer: CAGradientLayer?
     
     override func layoutSubviews() {

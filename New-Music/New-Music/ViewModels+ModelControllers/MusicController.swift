@@ -59,11 +59,6 @@ class MusicController: ObservableObject {
     
     lazy var nowPlayingViewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: [])
     
-//    lazy var nowPlayingViewModel: NowPlayingViewModel = {
-//        let viewModel = NowPlayingViewModel(musicPlayer: musicPlayer, artist: "", songTitle: "", duration: 0, songs: currentPlaylist)
-//        return viewModel
-//    }()
-    
     func play() {
         musicPlayer.prepareToPlay()
         musicPlayer.play()
@@ -109,6 +104,23 @@ class MusicController: ObservableObject {
         nowPlayingViewModel.nowPlayingSong = currentPlaylist[index]
         musicPlayer.prepareToPlay()
         musicPlayer.play()
+    }
+    
+    func shufflePlaylist() {
+        nowPlayingPlaylist?.songs.shuffle()
+        let shuffledPlaylist = nowPlayingPlaylist?.songs.map { $0.playID }
+        if musicPlayer.playbackState == .playing {
+            pause()
+            musicPlayer.setQueue(with: shuffledPlaylist!)
+            nowPlayingViewModel.songs = nowPlayingPlaylist!.songs
+            play()
+        } else {
+            musicPlayer.setQueue(with: shuffledPlaylist!)
+            nowPlayingViewModel.songs = nowPlayingPlaylist!.songs
+            play()
+            
+        
+        }
     }
     
     func saveToPersistentStore() {
@@ -175,34 +187,10 @@ class MusicController: ObservableObject {
         }
     }
     
-//    func saveToPersistentStore() {
-//        do {
-//            try CoreDataStack.shared.save()
-//        } catch {
-//            print("Error Saving Managed Object Context: \(error)")
-//            CoreDataStack.shared.mainContext.reset()
-//        }
-//    }
-    
     init() {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
         loadFromPersistentStore()
-//        do {
-//            let fetchRequest: NSFetchRequest<PersistedPlaylist> = PersistedPlaylist.fetchRequest()
-//            let playlists = try CoreDataStack.shared.mainContext.fetch(fetchRequest)
-//            DispatchQueue.global().async { [weak self] in
-//                guard let self = self else { return }
-//                playlists.forEach {
-//                    if let playlist = $0.playlist {
-//                        self.userPlaylists.append(playlist)
-//                        self.updateAlbumArtwork(for: playlist)
-//                    }
-//                }
-//            }
-//        } catch {
-//            print("Unable to successfully perform fetch request.")
-//        }
     }
     
     deinit {
