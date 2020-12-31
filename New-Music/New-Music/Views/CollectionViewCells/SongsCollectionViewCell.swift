@@ -95,6 +95,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
             }
         }
     }
+    
     private func setUpViews() {
         addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
         let innerStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])

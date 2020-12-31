@@ -42,11 +42,7 @@ class NowPlayingViewModel: ObservableObject {
     @Published var textColor2: Color
     @Published var textColor3: Color
     @Published var textColor4: Color
-    @Published var lighterUIColor: UIColor {
-        didSet {
-            print("Lighter UIColor: \(self.lighterUIColor)")
-        }
-    }
+    @Published var lighterUIColor: UIColor 
     @Published var darkerUIColor: UIColor
     @Published var lighterTextColor2: UIColor
     @Published var darkerTextColor2: UIColor
@@ -147,7 +143,6 @@ class NowPlayingViewModel: ObservableObject {
             self.displaylink = nil
         case .playing:
             isPlaying = true
-            print("Music Player is Playing...")
             if self.displaylink == nil {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
                 self.displaylink?.preferredFramesPerSecond = 2

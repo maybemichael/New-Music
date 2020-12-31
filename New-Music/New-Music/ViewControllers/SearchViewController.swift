@@ -22,11 +22,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     var isPlaylistSearch: Bool
     var sections = [Section]()
     weak var reloadDataDelegate: ReloadDataDelegate?
-    var indicatorView = UIView() {
-        didSet {
-            self.view.layoutIfNeeded()
-        }
-    }
     
     let separatorView: UIView = {
         let view = UIView()
@@ -35,17 +30,50 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         return view
     }()
     
+//    lazy var dataSource: SearchDataSource = {
+//        let dataSource = SearchDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, media -> UICollectionViewCell? in
+//            guard let self = self else { fatalError() }
+//
+//            switch indexPath.section {
+//            case 0:
+//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumsCollectionViewCell.identifier, for: indexPath) as! AlbumsCollectionViewCell
+//                cell.configure(with: media)
+//                cell.delegate = self
+//                return cell
+//            case 1:
+//                let song = media.media as! Song
+//                let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeSongsSearchedCellRegistration(), for: indexPath, item: song)
+//                cell.song = song
+//
+//                return cell
+//            default:
+//                let song = media.media as! Song
+//                let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeSongsSearchedCellRegistration(), for: indexPath, item: song)
+//                cell.song = song
+//
+//                return cell
+//            }
+//        }
+//        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
+//            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.identifier, for: indexPath) as? SectionHeader else {
+//                return nil
+//            }
+//
+//            guard let media = self?.dataSource.itemIdentifier(for: indexPath) else { return nil }
+//            guard let section = self?.dataSource.snapshot().sectionIdentifier(containingItem: media) else { return nil }
+//
+//            sectionHeader.titleLabel.text = section.mediaType.rawValue
+//            return sectionHeader
+//        }
+//        return dataSource
+//    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
         setUpViews()
-        createDataSource()
         setupSearchBarListeners()
-//        self.indicatorView = NowPlayingIndictorView2(frame: CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 100, height: 100), nowPlayingViewModel: musicController.nowPlayingViewModel)
-//        view.addSubview(self.indicatorView)
-//        self.indicatorView.backgroundColor = .clear
-//        self.indicatorView.anchor(centerX: view.centerXAnchor, centerY: view.centerYAnchor, size: .init(width: 100, height: 100))
-       
+        createDataSource()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -145,39 +173,53 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.layer.cornerRadius = 20
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.delegate = self
-        collectionView.contentInset.bottom = 65
+        collectionView.contentInset.bottom = UIScreen.main.bounds.width / 8
     }
     
-    private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath) -> T {
-        guard var cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.identifier, for: indexPath) as? T else {
-            fatalError("Unable to dequeue cell: \(cellType)")
+    private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath, isListCell: Bool) -> T {
+        if isListCell {
+            let song = media.media as! Song
+            let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeSongsSearchedCellRegistration(), for: indexPath, item: song)
+            cell.song = song
+            cell.delegate = self
+            return cell as! T
+        } else {
+            guard var cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.identifier, for: indexPath) as? T else {
+                fatalError("Unable to dequeue cell: \(cellType)")
+            }
+            cell.configure(with: media)
+            cell.delegate = self
+            return cell
         }
-        cell.configure(with: media)
-        cell.delegate = self
-        return cell
     }
     
     private func createDataSource() {
         dataSource = SearchDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, media in
             switch self?.sections[indexPath.section].mediaType {
             case .song:
-                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
+                return self?.configure(SongsSearchedCollectionViewCell.self, with: media, for: indexPath, isListCell: true)
+//                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
             case .album:
-                return self?.configure(AlbumsCollectionViewCell.self, with: media, for: indexPath)
+                return self?.configure(AlbumsCollectionViewCell.self, with: media, for: indexPath, isListCell: false)
             default:
-                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
+                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath, isListCell: false)
             }
         }
         dataSource?.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.identifier, for: indexPath) as? SectionHeader else {
-                return nil
+            guard let self = self else { return nil }
+            if indexPath.section == 0 {
+                guard
+                    let media = self.dataSource?.itemIdentifier(for: indexPath),
+                    let section = self.dataSource?.snapshot().sectionIdentifier(containingItem: media),
+                let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.identifier, for: indexPath) as? SectionHeader
+                else { return nil }
+                sectionHeader.backgroundColor = .clear
+                sectionHeader.titleLabel.text = section.mediaType.rawValue
+                return sectionHeader
+            } else {
+                let sectionHeader = collectionView.dequeueConfiguredReusableSupplementary(using: (self.makePlaylistHeaderRegistration()), for: indexPath)
+                return sectionHeader
             }
-            
-            guard let media = self?.dataSource?.itemIdentifier(for: indexPath) else { return nil }
-            guard let section = self?.dataSource?.snapshot().sectionIdentifier(containingItem: media) else { return nil }
-
-            sectionHeader.titleLabel.text = section.mediaType.rawValue
-            return sectionHeader
         }
     }
     
@@ -212,12 +254,36 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         return layoutSection
     }
     
+    private func makeSongsSearchedCellRegistration() -> UICollectionView.CellRegistration<SongsSearchedCollectionViewCell, Song> {
+        let playlistCellRegistration = UICollectionView.CellRegistration<SongsSearchedCollectionViewCell, Song> { cell, indexPath, song in
+            cell.song = song
+            cell.delegate = self
+        }
+        return playlistCellRegistration
+    }
+    
+    private func makePlaylistHeaderRegistration() -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
+        let playlistHeaderRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] (header: UICollectionViewListCell, string, indexPath) in
+            var content = header.defaultContentConfiguration()
+            guard
+                let media = self?.dataSource?.itemIdentifier(for: indexPath),
+                let section = self?.dataSource?.snapshot().sectionIdentifier(containingItem: media)
+            else { return }
+            content.secondaryText = section.mediaType.rawValue
+            content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
+            content.secondaryTextProperties.color = .white
+            content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
+            header.contentConfiguration = content
+        }
+        return playlistHeaderRegistration
+    }
+    
     private func createAlbumSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute((UIScreen.main.bounds.width - 48) / 2), heightDimension: .fractionalWidth(0.55))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
-        let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width - 40), heightDimension: .fractionalWidth(0.12))
+        let laytoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width), heightDimension: .fractionalWidth(0.12))
         let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: laytoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
@@ -232,7 +298,10 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             let section = self.sections[sectionIndex]
             switch section.mediaType {
             case .song:
-                return self.createSongsSection()
+                var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
+                layoutConfig.backgroundColor = .backgroundColor
+                layoutConfig.headerMode = .supplementary
+                return NSCollectionLayoutSection.list(using: layoutConfig, layoutEnvironment: layoutEnvironment)
             case .album:
                 return self.createAlbumSection()
             default:
@@ -256,22 +325,22 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     }
     
     func addSongTapped(cell: SongsCollectionViewCell) {
-        guard let indexPath = collectionView.indexPath(for: cell) else { return }
-        let selectedMedia = musicController.searchedSongs[indexPath.item]
-        APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
-            switch result {
-            case .success(let imageData):
-                var addedSong = selectedMedia.media as! Song
-                addedSong.albumArtwork = imageData
-                addedSong.isAdded = true
-                self.musicController.addSongToPlaylist(song: addedSong, isPlaylistSearch: self.isPlaylistSearch)
-                if self.isPlaylistSearch {
-                    self.reloadDataDelegate?.reloadData()
-                }
-            case .failure(let error):
-                print("Error fetching image data: \(error)")
-            }
-        }
+//        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+//        let selectedMedia = musicController.searchedSongs[indexPath.item]
+//        APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
+//            switch result {
+//            case .success(let imageData):
+//                var addedSong = selectedMedia.media as! Song
+//                addedSong.albumArtwork = imageData
+//                addedSong.isAdded = true
+//                self.musicController.addSongToPlaylist(song: addedSong, isPlaylistSearch: self.isPlaylistSearch)
+//                if self.isPlaylistSearch {
+//                    self.reloadDataDelegate?.reloadData()
+//                }
+//            case .failure(let error):
+//                print("Error fetching image data: \(error)")
+//            }
+//        }
     }
     
     @objc private func dismissSearchVC() {

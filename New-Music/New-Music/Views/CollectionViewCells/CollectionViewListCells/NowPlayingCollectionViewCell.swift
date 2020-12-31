@@ -98,12 +98,13 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
         self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: (UIScreen.main.bounds.width / 7) + 28).isActive = true
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("storyboard is trash")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         showNowPlayingIndicator()
-    }
-    required init?(coder: NSCoder) {
-        fatalError("storyboard is trash")
     }
     
     private func makeContentConfiguration() -> UIListContentConfiguration {

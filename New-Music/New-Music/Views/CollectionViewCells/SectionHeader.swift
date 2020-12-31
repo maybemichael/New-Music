@@ -13,7 +13,7 @@ class SectionHeader: UICollectionReusableView {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        label.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
         return label
     }()
     
@@ -26,7 +26,7 @@ class SectionHeader: UICollectionReusableView {
     let bottomSeparatorView: UIView = {
         let view = UIView()
         view.backgroundColor = .opaqueSeparator
-        view.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 0.3333333333333333).isActive = true
         return view
     }()
     
@@ -34,8 +34,8 @@ class SectionHeader: UICollectionReusableView {
         super.init(frame: frame)
         addSubview(topSeparatorView)
         addSubview(titleLabel)
-        topSeparatorView.anchor(top: topAnchor, centerX: centerXAnchor, size: .init(width: UIScreen.main.bounds.width - 40, height: 0.5))
-        titleLabel.anchor(top: topSeparatorView.bottomAnchor, leading: leadingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
+        titleLabel.anchor(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 20, bottom: 0, right: -20))
+        topSeparatorView.anchor(top: titleLabel.bottomAnchor, leading: leadingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0), size: .init(width: UIScreen.main.bounds.width, height: 0.3333333333333333))
     }
     
     required init?(coder: NSCoder) {
