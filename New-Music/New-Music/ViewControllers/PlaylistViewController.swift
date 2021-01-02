@@ -49,7 +49,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
         cv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         cv.backgroundColor = .clear
-        cv.contentInset.bottom = 66
+        cv.contentInset.bottom = UIScreen.main.bounds.width / 8
         cv.register(PlaylistCollectionViewCell.self, forCellWithReuseIdentifier: PlaylistCollectionViewCell.identifier)
         cv.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
         return cv
@@ -211,6 +211,9 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
             cell.contentConfiguration = content
             let delete: UICellAccessory = .delete(displayed: .whenEditing, actionHandler: { self.deleteSelectedSong(song: song) })
             let reorder: UICellAccessory = .reorder(displayed: .whenEditing)
+            var bgConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: cell.configurationState)
+            bgConfig.backgroundColor = .clear
+            cell.backgroundConfiguration = bgConfig
             cell.accessories = [delete, reorder]
         }
         return songCellRegistration

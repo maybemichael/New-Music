@@ -24,7 +24,7 @@ struct NowPlayingBarView: View {
                         .foregroundColor(.lightTextColor)
                         .lineLimit(1)
                     Text(nowPlayingViewModel.songTitle)
-                        .font(Font.system(.headline).weight(.light))
+                        .font(Font.system(.subheadline).weight(.light))
                         .foregroundColor(.white)
                         .lineLimit(1)
                 }
@@ -104,7 +104,7 @@ struct NowPlayingMinimized: View {
                         .foregroundColor(.lightTextColor)
                         .lineLimit(1)
                     Text(nowPlayingViewModel.songTitle)
-                        .font(Font.system(.headline).weight(.light))
+                        .font(Font.system(.subheadline).weight(.light))
                         .foregroundColor(.white)
                         .lineLimit(1)
                 }
@@ -157,7 +157,7 @@ struct NowPlayingMinimized3: View {
                                 .lineLimit(1)
                             Text(nowPlayingViewModel.songTitle)
 //                            Text("Nobody Puts Baby in the Corner")
-                                .font(Font.system(.headline).weight(.light))
+                                .font(Font.system(.subheadline).weight(.light))
                                 .foregroundColor(.white)
                                 .lineLimit(1)
                         }
@@ -195,7 +195,7 @@ struct NowPlayingMinimized3: View {
                             .lineLimit(1)
                         Text(nowPlayingViewModel.songTitle)
 //                                Text("Nobody Puts Baby in the Corner")
-                            .font(Font.system(.headline).weight(.light))
+                            .font(Font.system(.subheadline).weight(.light))
                             .foregroundColor(.white)
                             .lineLimit(1)
                     }
@@ -261,7 +261,7 @@ struct NowPlayingMinimized2: View {
                                     .lineLimit(1)
                                 Text(nowPlayingViewModel.songTitle)
 //                                Text("Nobody Puts Baby in the Corner")
-                                    .font(Font.system(.headline).weight(.light))
+                                    .font(Font.system(.subheadline).weight(.light))
                                     .foregroundColor(.white)
                                     .lineLimit(1)
                             }

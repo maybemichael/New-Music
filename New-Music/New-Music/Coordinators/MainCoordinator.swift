@@ -42,9 +42,9 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
     private func setUpAppNavViews() {
         searchNav.navigationBar.prefersLargeTitles = true
         tabBarController.viewControllers = [searchNav, nowPlayingNav, playlistNav]
-        nowPlayingNav.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "music.quarternote.3"), tag: 0)
+        nowPlayingNav.tabBarItem = UITabBarItem(title: "Now Playing", image: UIImage(systemName: "tv.music.note.fill"), tag: 0)
         searchNav.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 1)
-        playlistNav.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "heart.fill"), tag: 2)
+        playlistNav.tabBarItem = UITabBarItem(title: "Playlists", image: UIImage(systemName: "music.note.list"), tag: 2)
         tabBarController.tabBar.tintColor = .white
         tabBarController.tabBar.unselectedItemTintColor = .lightText
         tabBarController.delegate = self

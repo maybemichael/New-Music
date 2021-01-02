@@ -21,13 +21,15 @@ class NowPlayingIndictorView: UIView {
     
     private var playIDSubscriber: AnyCancellable?
     private var isPlayingSubscriber: AnyCancellable?
+    private var image: UIImage?
     var gradientLayer: CAGradientLayer?
     
     override func layoutSubviews() {
         super.layoutSubviews()
         let image = UIImage(systemName: "music.note")
         imageView.frame = bounds
-        self.imageView = UIImageView(image: image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: imageView.bounds.height * 0.93, weight: .semibold, scale: .default)))
+        self.imageView = UIImageView(image: image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: imageView.bounds.height * 0.9, weight: .semibold, scale: .default)))
+        imageView.image = image
         self.mask = imageView
     }
     
@@ -38,8 +40,12 @@ class NowPlayingIndictorView: UIView {
         layer.shouldRasterize = true
         layer.rasterizationScale = UIScreen.main.scale
         addSubview(imageView)
-        imageView.frame = self.bounds
-        
+        imageView.frame = bounds
+        let image = UIImage(systemName: "music.note")?.applyingSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: self.bounds.height * 0.9, weight: .semibold, scale: .default))
+        self.image = image
+        imageView.image = image
+        self.imageView = UIImageView(image: image)
+        self.mask = imageView
         cancellable = nowPlayingViewModel.$lighterUIColor.sink(receiveValue: { [weak self] color in
             guard let self = self else { return }
             DispatchQueue.main.async {
@@ -51,12 +57,6 @@ class NowPlayingIndictorView: UIView {
                 self.layoutIfNeeded()
             }
         })
-        
-        let image = UIImage(systemName: "music.note")
-        imageView.frame = bounds
-        self.imageView = UIImageView(image: image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: imageView.bounds.height * 0.93, weight: .semibold, scale: .default)))
-        self.mask = imageView
-        layoutSubviews()
     }
     
     required init?(coder: NSCoder) {

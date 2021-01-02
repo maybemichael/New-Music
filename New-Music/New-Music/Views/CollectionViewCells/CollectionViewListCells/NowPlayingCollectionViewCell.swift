@@ -17,16 +17,19 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
             var indicator: NowPlayingIndictorView
             guard let nowPlayingViewModel = self.nowPlayingViewModel else { return }
             if indicatorView == nil {
-                indicator = NowPlayingIndictorView(frame:.zero, nowPlayingViewModel: nowPlayingViewModel)
+                indicator = NowPlayingIndictorView(frame: .zero, nowPlayingViewModel: nowPlayingViewModel)
                 self.indicatorView = indicator
                 holderView.addSubview(indicator)
-                indicator.anchor(top: holderView.topAnchor, leading: holderView.leadingAnchor, trailing: holderView.trailingAnchor, bottom: holderView.bottomAnchor, padding: .init(top: 8, left: 8, bottom: -8, right: -8))
+//                indicator.setSize(width: (UIScreen.main.bounds.width / 7) / 2.25, height: (UIScreen.main.bounds.width / 7) / 2.25)
+//                indicator.anchor(centerX: holderView.centerXAnchor, centerY: holderView.centerYAnchor)
+                indicator.anchor(top: holderView.topAnchor, leading: holderView.leadingAnchor, trailing: holderView.trailingAnchor, bottom: holderView.bottomAnchor)
             }
         }
     }
     var playID: String?
     private var playIDSubscriber: AnyCancellable?
     private var isPlayingSubscriber: AnyCancellable?
+    private var willEnterForegroundSubscriber = Set<AnyCancellable>()
     let containerView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
@@ -74,13 +77,13 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
         stackView.alignment = .center
         stackView.distribution = .fill
         contentView.addSubview(stackView)
-        holderView.setSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
+        holderView.setSize(width: (UIScreen.main.bounds.width / 7) / 2, height: (UIScreen.main.bounds.width / 7) / 2)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         let top = stackView.topAnchor.constraint(equalTo: contentView.topAnchor)
         top.priority = UILayoutPriority(999)
         let leading = stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         leading.priority = UILayoutPriority(999)
-        let trailing = stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        let trailing = stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8)
         trailing.priority = UILayoutPriority(999)
         let bottom = stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
@@ -96,6 +99,8 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
         backgroundConfiguration = backgroundConfig
         
         self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: (UIScreen.main.bounds.width / 7) + 28).isActive = true
+        nowPlayingViewModel?.isPlaying = nowPlayingViewModel?.musicPlayer.playbackState == .playing
+        createWillEnterForegroundListener()
     }
     
     required init?(coder: NSCoder) {
@@ -137,13 +142,23 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
         }
     }
     
+    private func createWillEnterForegroundListener() {
+        let _ = NotificationCenter.default
+            .publisher(for: UIApplication.willEnterForegroundNotification, object: nil)
+            .sink { [weak self] _ in
+                self?.nowPlayingViewModel?.isPlaying = self?.nowPlayingViewModel?.musicPlayer.playbackState == .playing
+                self?.showNowPlayingIndicator()
+            }
+            .store(in: &willEnterForegroundSubscriber)
+    }
+    
     private func animateNowPlayingIndicator() {
         guard let nowPlayingViewModel = self.nowPlayingViewModel else { return }
         if nowPlayingViewModel.isPlaying {
             if indicatorView?.transform == .identity {
-                UIView.animate(withDuration: 0.8, delay: 0, options: [.repeat, .autoreverse, .curveEaseIn]) { [weak self] in
+                UIView.animate(withDuration: 0.7, delay: 0, options: [.repeat, .autoreverse, .curveEaseOut]) { [weak self] in
                     guard let self = self else { return }
-                    self.indicatorView?.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+                    self.indicatorView?.transform = CGAffineTransform(scaleX: 1.6, y: 1.6)
                     self.layoutIfNeeded()
                 } completion: { [weak self] _ in
                     self?.indicatorView?.transform = .identity

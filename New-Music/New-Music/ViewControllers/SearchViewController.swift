@@ -10,7 +10,6 @@ import Combine
 
 class SearchViewController: UIViewController, SearchCellDelegate {
     
-    
     var collectionView: UICollectionView!
     lazy var searchController = UISearchController(searchResultsController: nil)
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Section, Media>
@@ -30,50 +29,17 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         return view
     }()
     
-//    lazy var dataSource: SearchDataSource = {
-//        let dataSource = SearchDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, media -> UICollectionViewCell? in
-//            guard let self = self else { fatalError() }
-//
-//            switch indexPath.section {
-//            case 0:
-//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumsCollectionViewCell.identifier, for: indexPath) as! AlbumsCollectionViewCell
-//                cell.configure(with: media)
-//                cell.delegate = self
-//                return cell
-//            case 1:
-//                let song = media.media as! Song
-//                let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeSongsSearchedCellRegistration(), for: indexPath, item: song)
-//                cell.song = song
-//
-//                return cell
-//            default:
-//                let song = media.media as! Song
-//                let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeSongsSearchedCellRegistration(), for: indexPath, item: song)
-//                cell.song = song
-//
-//                return cell
-//            }
-//        }
-//        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-//            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.identifier, for: indexPath) as? SectionHeader else {
-//                return nil
-//            }
-//
-//            guard let media = self?.dataSource.itemIdentifier(for: indexPath) else { return nil }
-//            guard let section = self?.dataSource.snapshot().sectionIdentifier(containingItem: media) else { return nil }
-//
-//            sectionHeader.titleLabel.text = section.mediaType.rawValue
-//            return sectionHeader
-//        }
-//        return dataSource
-//    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
         setUpViews()
         setupSearchBarListeners()
         createDataSource()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -198,7 +164,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
             switch self?.sections[indexPath.section].mediaType {
             case .song:
                 return self?.configure(SongsSearchedCollectionViewCell.self, with: media, for: indexPath, isListCell: true)
-//                return self?.configure(SongsCollectionViewCell.self, with: media, for: indexPath)
             case .album:
                 return self?.configure(AlbumsCollectionViewCell.self, with: media, for: indexPath, isListCell: false)
             default:

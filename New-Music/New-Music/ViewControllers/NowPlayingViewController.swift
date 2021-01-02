@@ -38,7 +38,7 @@ class NowPlayingViewController: UIViewController {
         let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
         cv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         cv.backgroundColor = .clear
-        cv.contentInset.bottom = 66
+        cv.contentInset.bottom = UIScreen.main.bounds.width / 8
         cv.register(PlaylistCollectionViewCell.self, forCellWithReuseIdentifier: PlaylistCollectionViewCell.identifier)
         cv.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
         return cv
@@ -119,7 +119,7 @@ class NowPlayingViewController: UIViewController {
         collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, bottom: view.bottomAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         view.layer.cornerRadius = 20
         view.backgroundColor = .backgroundColor
-        title = "Now Playing"
+        navigationItem.title = "Now Playing..."
         collectionView.delegate = self
         view.addSubview(separatorView)
         separatorView.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, centerX: view.centerXAnchor)
