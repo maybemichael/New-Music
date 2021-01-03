@@ -8,8 +8,8 @@
 import SwiftUI
 import Combine
 
-class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistDelegate {
-
+class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDelegate {
+    
     private var subscriptions = Set<AnyCancellable>()
     private var nowPlayingViewModel: NowPlayingViewModel!
     typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, PlaylistMedia>
@@ -110,6 +110,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
                     self.musicController.userPlaylists[sectionIndex].songs = songs
                 }
             }
+            self.musicController.saveToPersistentStore()
         }
         return dataSource
     }()
@@ -264,6 +265,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
         }
     }
     
+    
     func setQueue(with playlist: Playlist) {
         let newQueue = playlist.songs.map { $0.playID }
         musicController.updateAlbumArtwork(for: playlist)
@@ -275,5 +277,16 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistD
     
     @objc private func createNewPlaylist() {
         coordinator?.presentCreatePlaylistVC()
+    }
+    
+    func shuffleSongs(for playlist: Playlist) {
+        var sectionSnapshot = dataSource.snapshot(for: playlist)
+        var snapshotSection = NSDiffableDataSourceSectionSnapshot<PlaylistMedia>()
+        playlist.songs.shuffle()
+        let shuffledSongs = playlist.songs.map { PlaylistMedia.song($0) }
+        snapshotSection.append(shuffledSongs)
+        sectionSnapshot.replace(childrenOf: sectionSnapshot.rootItems.first!, using: snapshotSection)
+        dataSource.apply(sectionSnapshot, to: playlist)
+        musicController.saveToPersistentStore()
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 class PlaylistCollectionViewCell: UICollectionViewListCell {
     static let identifier = "PlaylistCell"
     
-    var setPlaylistDelegate: SetPlaylistDelegate?
+    var setPlaylistDelegate: PlaylistDelegate?
     var playlist: Playlist?
     
     @objc private func listenToPlaylist(_ sender: NeuMusicButton) {

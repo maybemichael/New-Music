@@ -10,7 +10,7 @@ import UIKit
 class PlaylistCellContentView: UIView, UIContentView {
     
     var playlist: Playlist?
-    var setPlaylistDelegate: SetPlaylistDelegate?
+    var playlistDelegate: PlaylistDelegate?
     
     let playlistNameLabel: UILabel = {
         let label = UILabel()
@@ -108,6 +108,7 @@ class PlaylistCellContentView: UIView, UIContentView {
             bottomConstraint
         ])
         playButton.addTarget(self, action: #selector(listenToPlaylist), for: .touchUpInside)
+        shuffleButton.addTarget(self, action: #selector(shufflePlaylist), for: .touchUpInside)
         var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
         backgroundConfig.backgroundColor = .clear
     }
@@ -118,12 +119,17 @@ class PlaylistCellContentView: UIView, UIContentView {
         playlistNameLabel.text = configuration.playlistName
         playlistStatsLabel.text = "\(configuration.playlist?.songCount ?? 0) songs, \(String(format: "%.0f", configuration.playlist?.totalDuration ?? 0)) mins"
         playlist = configuration.playlist
-        setPlaylistDelegate = configuration.setPlaylistDelegate
+        playlistDelegate = configuration.setPlaylistDelegate
     }
     
     @objc private func listenToPlaylist(_ sender: NeuMusicButton) {
         guard let playlist = self.playlist else { return }
-        setPlaylistDelegate?.setQueue(with: playlist)
+        playlistDelegate?.setQueue(with: playlist)
+    }
+    
+    @objc private func shufflePlaylist() {
+        guard let playlist = self.playlist else { return }
+        playlistDelegate?.shuffleSongs(for: playlist)
     }
 }
 
@@ -138,7 +144,7 @@ struct PlaylistCellContentConfiguration: UIContentConfiguration, Hashable {
     
     var playlistName: String?
     var playlist: Playlist?
-    var setPlaylistDelegate: SetPlaylistDelegate?
+    var setPlaylistDelegate: PlaylistDelegate?
     
     func makeContentView() -> UIView & UIContentView {
         return PlaylistCellContentView(configuration: self)

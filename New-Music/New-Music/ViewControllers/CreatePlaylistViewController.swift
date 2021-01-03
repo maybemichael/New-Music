@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPlaylistDelegate {
+class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDelegate {
     
     var musicController: MusicController?
     weak var coordinator: MainCoordinator?
@@ -186,5 +186,9 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, SetPla
         searchVC.musicController = self.musicController
         searchVC.reloadDataDelegate = self
         self.present(searchNav, animated: true)
+    }
+    
+    func shuffleSongs(for playlist: Playlist) {
+        
     }
 }

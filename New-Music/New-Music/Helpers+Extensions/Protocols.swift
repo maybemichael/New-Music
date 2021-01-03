@@ -28,8 +28,9 @@ protocol ReloadDataDelegate: AnyObject {
     func reloadData()
 }
 
-protocol SetPlaylistDelegate: AnyObject {
+protocol PlaylistDelegate: AnyObject {
     func setQueue(with playlist: Playlist)
+    func shuffleSongs(for playlist: Playlist)
 }
 
 protocol NowPlayingController {
