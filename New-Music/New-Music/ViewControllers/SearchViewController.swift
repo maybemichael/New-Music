@@ -139,7 +139,9 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.layer.cornerRadius = 20
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.delegate = self
-        collectionView.contentInset.bottom = UIScreen.main.bounds.width / 8
+        if !isPlaylistSearch {
+            collectionView.contentInset.bottom = UIScreen.main.bounds.width / 8
+        }
     }
     
     private func configure<T: SelfConfiguringCell>(_ cellType: T.Type, with media: Media, for indexPath: IndexPath, isListCell: Bool) -> T {
@@ -289,7 +291,7 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         return layout
     }
     
-    func addSongTapped(cell: SongsCollectionViewCell) {
+    func addSongTapped(cell: SongsSearchedCollectionViewCell) {
 //        guard let indexPath = collectionView.indexPath(for: cell) else { return }
 //        let selectedMedia = musicController.searchedSongs[indexPath.item]
 //        APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
@@ -333,10 +335,12 @@ extension SearchViewController: UICollectionViewDelegate {
                     switch result {
                     case .success(let imageData):
                         song.albumArtwork = imageData
+                        let playlist = Playlist(playlistName: "", songs: [song])
+                        self.musicController.nowPlayingPlaylist = playlist
                         self.musicController.musicPlayer.setQueue(with: [song.playID])
                         self.musicController.nowPlayingViewModel.nowPlayingSong = song
                         self.musicController.play()
-                        self.musicController.nowPlayingViewModel.playingMediaType = .singleSong
+//                        self.musicController.nowPlayingViewModel.playingMediaType = .singleSong
                     case .failure(let error):
                         print("Error fetching image data: \(error)")
                     }
@@ -345,8 +349,5 @@ extension SearchViewController: UICollectionViewDelegate {
         default:
             break
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
     }
 }

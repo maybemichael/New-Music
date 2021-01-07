@@ -31,6 +31,10 @@ class PlaylistCollectionViewCell: UICollectionViewListCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        var bgconfig = UIBackgroundConfiguration.listGroupedCell()
+        bgconfig.backgroundColor = .clear
+        backgroundConfiguration = bgconfig
+        
     }
     
     required init?(coder: NSCoder) {

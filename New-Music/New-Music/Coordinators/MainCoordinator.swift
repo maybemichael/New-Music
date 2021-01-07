@@ -161,7 +161,5 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
         } else if UIDevice.current.userInterfaceIdiom == .pad {
             nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + (UIScreen.main.bounds.width / 12)), width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width / 12)
         }
-        print("This is the screen width: \(UIScreen.main.bounds.width)")
-        print("This is the screen width divided by 6: \(UIScreen.main.bounds.width / 6.2)")
     }
 }

@@ -87,7 +87,6 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
         backgroundConfiguration = backgroundConfig
         
         self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: (UIScreen.main.bounds.width / 7) + 28).isActive = true
-        print("Separator Height: \(separatorLayoutGuide.layoutFrame.height)")
     }
     
     required init?(coder: NSCoder) {
@@ -148,5 +147,13 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
         var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
         backgroundConfig.backgroundColor = .backgroundColor
         backgroundConfiguration = backgroundConfig
+    }
+    
+    @objc func addSong(_ sender: UIButton) {
+        self.song?.isAdded = true
+        let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
+        let add = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
+        self.song?.isAdded ?? false ? addButton.setImage(added, for: .normal) : addButton.setImage(add, for: .normal)
+        delegate?.addSongTapped(cell: self)
     }
 }

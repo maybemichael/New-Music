@@ -32,9 +32,10 @@ class PlaylistCellContentView: UIView, UIContentView {
     let playButton: NeuMusicButton = {
         let button = NeuMusicButton()
         button.setTitle("  Play", for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline).withSize(15)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
         button.setTitleColor(.white, for: .normal)
-        button.setImage(UIImage(systemName: "play.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default)), for: .normal)
+        button.setImage(UIImage(systemName: "play.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .normal)
+        button.setImage(UIImage(systemName: "play.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .highlighted)
         button.tintColor = .white
         button.setSize(width: 100, height: 40)
         button.layer.cornerRadius = 8
@@ -45,8 +46,9 @@ class PlaylistCellContentView: UIView, UIContentView {
         let button = NeuMusicButton()
         button.setTitle(" Shuffle", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline).withSize(15)
-        button.setImage(UIImage(systemName: "shuffle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default)), for: .normal)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        button.setImage(UIImage(systemName: "shuffle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .normal)
+        button.setImage(UIImage(systemName: "shuffle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .highlighted)
         button.tintColor = .white
         button.setSize(width: 100, height: 40)
         button.layer.cornerRadius = 8

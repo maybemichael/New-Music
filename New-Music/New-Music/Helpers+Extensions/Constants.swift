@@ -70,11 +70,11 @@ enum TransitionType {
     case modal
 }
 
-enum PlayingMediaType {
-    case singleSong
-    case playlist
-    case album
-}
+//enum PlayingMediaType {
+//    case singleSong
+//    case playlist
+//    case album
+//}
 
 enum MediaType: String, Hashable, Codable {
     case song = "Songs"

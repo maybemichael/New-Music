@@ -74,7 +74,6 @@ class NowPlayingMinimizedViewController: UIViewController, NowPlayingController,
         view.addGestureRecognizer(tapGesture)
         view.addGestureRecognizer(panGesture)
         tapGesture.require(toFail: panGesture)
-        print("Now Playing Minimized VC Frame: \(nowPlayingMinimizedVC.view.frame)")
     }
     
     @objc private func presentFullScreenNowPlaying() {

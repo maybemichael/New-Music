@@ -41,7 +41,7 @@ class MusicController: ObservableObject {
     
     var currentPlaylist = [Song]() {
         didSet {
-            self.nowPlayingViewModel.songs = self.currentPlaylist
+//            self.nowPlayingViewModel.songs = self.currentPlaylist
         }
     }
     var searchedSongs = [Media]() {
@@ -83,14 +83,9 @@ class MusicController: ObservableObject {
     }
     
     func addSongToPlaylist(song: Song, isPlaylistSearch: Bool) {
-        nowPlayingViewModel.playingMediaType = .playlist
-        if isPlaylistSearch {
-            createPlaylistSongs.append(song)
-        } else {
             currentPlaylist.append(song)
             currentQueue.storeIDs?.append(song.playID)
             songsAdded = true
-        }
     }
     
     func playlistSongTapped(index: Int) {
@@ -100,7 +95,7 @@ class MusicController: ObservableObject {
         currentQueue.startItemID = currentPlaylist[index].playID
         currentPlaylist[index].isPlaying = true
         musicPlayer.setQueue(with: currentQueue)
-        nowPlayingViewModel.playingMediaType = .playlist
+//        nowPlayingViewModel.playingMediaType = .playlist
         nowPlayingViewModel.nowPlayingSong = currentPlaylist[index]
         musicPlayer.prepareToPlay()
         musicPlayer.play()

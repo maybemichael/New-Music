@@ -72,11 +72,6 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
             case .playlist(let playlist):
                 let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCustomPlaylistCellRegistration(), for: indexPath, item: playlist)
                 cell.setPlaylistDelegate = self
-//                cell.sizeToFit()
-//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaylistCollectionViewCell.identifier, for: indexPath) as! PlaylistCollectionViewCell
-//                cell.sizeToFit()
-//                cell.playlist = playlist
-//                cell.setPlaylistDelegate = self
                 return cell
             case .song(let song):
                 let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
@@ -271,7 +266,6 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         musicController.updateAlbumArtwork(for: playlist)
         musicController?.musicPlayer.setQueue(with: newQueue)
         musicController.nowPlayingPlaylist = playlist
-        musicController?.currentPlaylist = playlist.songs
         musicController?.play()
     }
     
@@ -288,5 +282,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         sectionSnapshot.replace(childrenOf: sectionSnapshot.rootItems.first!, using: snapshotSection)
         dataSource.apply(sectionSnapshot, to: playlist)
         musicController.saveToPersistentStore()
+        musicController.musicPlayer.stop()
+        setQueue(with: playlist)
     }
 }

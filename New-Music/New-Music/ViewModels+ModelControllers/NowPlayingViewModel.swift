@@ -13,8 +13,6 @@ class NowPlayingViewModel: ObservableObject {
     var musicPlayer: MPMusicPlayerController
     var didChange = PassthroughSubject<UIImage?, Never>()
     var displaylink: CADisplayLink?
-    var isPlaylistSong = true
-    var playingMediaType: PlayingMediaType = .playlist
     var searchedSong: Song?
     @Published var nowPlayingSong: Song? {
         didSet {
@@ -119,14 +117,9 @@ class NowPlayingViewModel: ObservableObject {
             self.timeRemaining = duration
         }
         self.elapsedTime = 0.0
-        if playingMediaType != .singleSong {
-            let index = musicPlayer.indexOfNowPlayingItem
-            self.nowPlayingSong = songs[index]
-        }
-        
+        let index = musicPlayer.indexOfNowPlayingItem
+        self.nowPlayingSong = songs[index]        
         if let colors = getGradientColors() {
-            print("Lighter: \(colors.lighter.description)")
-            print("Darker: \(colors.darker.description)")
             self.lighterAccentColor = colors.lighter
             self.darkerAccentColor = colors.darker
         }
@@ -145,13 +138,13 @@ class NowPlayingViewModel: ObservableObject {
             isPlaying = true
             if self.displaylink == nil {
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 2
+                self.displaylink?.preferredFramesPerSecond = 15
                 displaylink?.add(to: .current, forMode: .common)
             } else {
                 self.displaylink?.invalidate()
                 self.displaylink = nil
                 self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 2
+                self.displaylink?.preferredFramesPerSecond = 15
                 self.displaylink?.add(to: .current, forMode: .common)
             }
         case .seekingBackward:
@@ -235,7 +228,7 @@ class NowPlayingViewModel: ObservableObject {
     private func isLightColor(color: UIColor, threshold: CGFloat) -> Bool {
         var white: CGFloat = 0.0
         color.getWhite(&white, alpha: nil)
-        print("This is the white from the accent color: \(white)")
+//        print("This is the white from the accent color: \(white)")
         self.whiteLevel = white
         return white >= threshold
     }
@@ -272,7 +265,7 @@ class NowPlayingViewModel: ObservableObject {
     
     func newDisplayLink() {
         displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-        displaylink?.preferredFramesPerSecond = 2
+        displaylink?.preferredFramesPerSecond = 15
         displaylink?.add(to: .current, forMode: .common)
     }
     

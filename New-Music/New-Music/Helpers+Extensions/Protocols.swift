@@ -21,7 +21,7 @@ protocol MediaItem {
 }
 
 protocol SearchCellDelegate: AnyObject {
-    func addSongTapped(cell: SongsCollectionViewCell)
+    func addSongTapped(cell: SongsSearchedCollectionViewCell)
 }
 
 protocol ReloadDataDelegate: AnyObject {
