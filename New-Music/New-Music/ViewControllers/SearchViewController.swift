@@ -8,8 +8,8 @@
 import SwiftUI
 import Combine
 
-class SearchViewController: UIViewController, SearchCellDelegate {
-    
+class SearchViewController: UIViewController, UISearchBarDelegate, SearchCellDelegate {
+	
     var collectionView: UICollectionView!
     lazy var searchController = UISearchController(searchResultsController: nil)
     typealias SearchDataSource = UICollectionViewDiffableDataSource<Section, Media>
@@ -28,6 +28,12 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         view.setSize(width: UIScreen.main.bounds.width, height: 1)
         return view
     }()
+	
+	lazy var tapGesture: UITapGestureRecognizer = {
+		let tapGesture = UITapGestureRecognizer()
+		tapGesture.addTarget(self, action: #selector(setSearchControllerInactive))
+		return tapGesture
+	}()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,10 +46,6 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
     }
     
     private func setupSearchBarListeners() {
@@ -109,8 +111,8 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.topItem?.title = isPlaylistSearch ? "Add Songs to Playlist" : "Search"
         if isPlaylistSearch {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissSearchVC))
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissSearchVC))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPlaylistCreation))
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(finishedAddingSongsToPlaylist))
         }
         view.layer.cornerRadius = 20
         navigationController?.navigationBar.layer.cornerRadius = 20
@@ -121,10 +123,12 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         searchController.searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         searchController.searchBar.backgroundImage = UIImage()
+		searchController.searchBar.delegate = self
         if !isPlaylistSearch {
             view.addSubview(separatorView)
             separatorView.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, centerX: view.centerXAnchor)
         }
+		navigationController?.view.addGestureRecognizer(tapGesture)
     }
 
     private func configureCollectionView() {
@@ -139,6 +143,8 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         collectionView.layer.cornerRadius = 20
         collectionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         collectionView.delegate = self
+//        collectionView.contentInset.left = 20
+//        collectionView.contentInset.right = 20
         if !isPlaylistSearch {
             collectionView.contentInset.bottom = UIScreen.main.bounds.width / 8
         }
@@ -182,9 +188,11 @@ class SearchViewController: UIViewController, SearchCellDelegate {
                 else { return nil }
                 sectionHeader.backgroundColor = .clear
                 sectionHeader.titleLabel.text = section.mediaType.rawValue
+				
                 return sectionHeader
             } else {
-                let sectionHeader = collectionView.dequeueConfiguredReusableSupplementary(using: (self.makePlaylistHeaderRegistration()), for: indexPath)
+                let sectionHeader = collectionView.dequeueConfiguredReusableSupplementary(using: (self.makeSearchedSongHeaderRegistration()), for: indexPath)
+				
                 return sectionHeader
             }
         }
@@ -229,18 +237,17 @@ class SearchViewController: UIViewController, SearchCellDelegate {
         return playlistCellRegistration
     }
     
-    private func makePlaylistHeaderRegistration() -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
+    private func makeSearchedSongHeaderRegistration() -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
         let playlistHeaderRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] (header: UICollectionViewListCell, string, indexPath) in
-            var content = header.defaultContentConfiguration()
+            var config = header.defaultContentConfiguration()
             guard
                 let media = self?.dataSource?.itemIdentifier(for: indexPath),
                 let section = self?.dataSource?.snapshot().sectionIdentifier(containingItem: media)
             else { return }
-            content.secondaryText = section.mediaType.rawValue
-            content.textProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
-            content.secondaryTextProperties.color = .white
-            content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
-            header.contentConfiguration = content
+            config.secondaryText = section.mediaType.rawValue
+            config.secondaryTextProperties.color = .white
+            config.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
+            header.contentConfiguration = config
         }
         return playlistHeaderRegistration
     }
@@ -292,27 +299,30 @@ class SearchViewController: UIViewController, SearchCellDelegate {
     }
     
     func addSongTapped(cell: SongsSearchedCollectionViewCell) {
-//        guard let indexPath = collectionView.indexPath(for: cell) else { return }
-//        let selectedMedia = musicController.searchedSongs[indexPath.item]
-//        APIController.shared.fetchImage(mediaItem: selectedMedia, size: 500) { result in
-//            switch result {
-//            case .success(let imageData):
-//                var addedSong = selectedMedia.media as! Song
-//                addedSong.albumArtwork = imageData
-//                addedSong.isAdded = true
-//                self.musicController.addSongToPlaylist(song: addedSong, isPlaylistSearch: self.isPlaylistSearch)
-//                if self.isPlaylistSearch {
-//                    self.reloadDataDelegate?.reloadData()
-//                }
-//            case .failure(let error):
-//                print("Error fetching image data: \(error)")
-//            }
-//        }
+		guard let song = cell.song else { return }
+		if isPlaylistSearch {
+			musicController.createPlaylistSongs.append(song)
+		} else {
+			coordinator?.presentSettingsVC(viewController: self, song: song)
+		}
     }
+	
+	func newPlaylistCreation(with song: Song) {
+		musicController.createPlaylistSongs.append(song)
+	}
     
-    @objc private func dismissSearchVC() {
+    @objc private func cancelPlaylistCreation() {
         self.dismiss(animated: true, completion: nil)
     }
+	
+	@objc private func finishedAddingSongsToPlaylist() {
+		reloadDataDelegate?.reloadData()
+		self.dismiss(animated: true, completion: nil)
+	}
+	
+	@objc private func setSearchControllerInactive() {
+		searchController.isActive = false
+	}
     
     init(isPlaylistSearch: Bool) {
         self.isPlaylistSearch = isPlaylistSearch
@@ -340,7 +350,6 @@ extension SearchViewController: UICollectionViewDelegate {
                         self.musicController.musicPlayer.setQueue(with: [song.playID])
                         self.musicController.nowPlayingViewModel.nowPlayingSong = song
                         self.musicController.play()
-//                        self.musicController.nowPlayingViewModel.playingMediaType = .singleSong
                     case .failure(let error):
                         print("Error fetching image data: \(error)")
                     }

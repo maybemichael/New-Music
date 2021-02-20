@@ -70,7 +70,7 @@ class AlbumsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         addSubview(mediaImageView)
         addSubview(artistLabel)
         addSubview(albumTitleLabel)
-        mediaImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
+        mediaImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
         mediaImageView.heightAnchor.constraint(equalTo: mediaImageView.widthAnchor).isActive = true
         artistLabel.anchor(top: mediaImageView.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0))
         albumTitleLabel.anchor(top: artistLabel.bottomAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))

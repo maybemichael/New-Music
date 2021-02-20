@@ -17,7 +17,7 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
     
     func configure(with mediaItem: Media) {
         guard let song = mediaItem.media as? Song else { return }
-//        self.song = song
+        self.song = song
 //        artistLabel.text = song.artistName
 //        songTitleLabel.text = song.songName
 //        print("Image View Size: \(mediaImageView.frame.size.width)")
@@ -70,12 +70,13 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
         }
     }
     
-    let addButton: UIButton = {
+    lazy var addButton: UIButton = {
         let button = UIButton()
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         button.tintColor = .white
         button.setSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
         button.setImage(UIImage(systemName: "plus")?.applyingSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: (UIScreen.main.bounds.width / 7) / 2.5, weight: .semibold, scale: .default)), for: .normal)
+		button.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -85,8 +86,7 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
         var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
         backgroundConfig.backgroundColor = UIColor.clear
         backgroundConfiguration = backgroundConfig
-        
-        self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: (UIScreen.main.bounds.width / 7) + 28).isActive = true
+//		self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: (UIScreen.main.bounds.width / 7) + 28).isActive = true
     }
     
     required init?(coder: NSCoder) {
@@ -95,6 +95,15 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
     
     override func updateConfiguration(using state: UICellConfigurationState) {
         self.defaultContentView?.configuration = makeContentConfiguration()
+		if state.isHighlighted {
+			var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
+			backgroundConfig.backgroundColorTransformer = .preferredTint
+			backgroundConfiguration = backgroundConfig
+		} else {
+			var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
+			backgroundConfig.backgroundColor = .backgroundColor
+			backgroundConfiguration = backgroundConfig
+		}
     }
     
     func makeContentConfiguration() -> UIListContentConfiguration {
@@ -110,7 +119,7 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
         config.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
         config.secondaryTextProperties.color = .white
         config.axesPreservingSuperviewLayoutMargins = .both
-        config.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 0)
+        config.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20)
         config.secondaryTextProperties.numberOfLines = 2
         config.textToSecondaryTextVerticalPadding = 0
         return config
@@ -129,21 +138,7 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
         stackView.alignment = .center
         stackView.distribution = .fill
         contentView.addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        let top = stackView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        top.priority = UILayoutPriority(999)
-        let leading = stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-        leading.priority = UILayoutPriority(999)
-        let trailing = stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        trailing.priority = UILayoutPriority(999)
-        let bottom = stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        bottom.priority = UILayoutPriority(999)
-        NSLayoutConstraint.activate([
-            top,
-            leading,
-            trailing,
-            bottom
-        ])
+		stackViewConstraints(stackView: stackView, contentView: contentView)
         var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
         backgroundConfig.backgroundColor = .backgroundColor
         backgroundConfiguration = backgroundConfig
@@ -151,9 +146,6 @@ class SongsSearchedCollectionViewCell: UICollectionViewListCell, SelfConfiguring
     
     @objc func addSong(_ sender: UIButton) {
         self.song?.isAdded = true
-        let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
-        let add = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
-        self.song?.isAdded ?? false ? addButton.setImage(added, for: .normal) : addButton.setImage(add, for: .normal)
         delegate?.addSongTapped(cell: self)
     }
 }

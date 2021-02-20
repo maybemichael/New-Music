@@ -32,10 +32,12 @@ class SectionHeader: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(topSeparatorView)
+        addSubview(bottomSeparatorView)
         addSubview(titleLabel)
+//        titleLabel.anchor(leading: leadingAnchor, centerY: centerYAnchor, padding: .init(top: 0, left: 20, bottom: 0, right: -20))
         titleLabel.anchor(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 20, bottom: 0, right: -20))
-        topSeparatorView.anchor(top: titleLabel.bottomAnchor, leading: leadingAnchor, padding: .init(top: 8, left: 0, bottom: 0, right: 0), size: .init(width: UIScreen.main.bounds.width, height: 0.3333333333333333))
+        bottomSeparatorView.anchor(top: titleLabel.bottomAnchor, leading: leadingAnchor, padding: .init(top: 8, left: 0, bottom: -8, right: 0), size: .init(width: UIScreen.main.bounds.width, height: 0.3333333333333333))
+//        topSeparatorView.heightAnchor.constraint(equalToConstant: 0.3333333333333333).isActive = true
     }
     
     required init?(coder: NSCoder) {

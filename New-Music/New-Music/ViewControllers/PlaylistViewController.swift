@@ -29,6 +29,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
     lazy var collectionView: UICollectionView = {
         var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
 //        layoutConfig.headerMode = .supplementary
+        layoutConfig.footerMode = .supplementary
         layoutConfig.backgroundColor = .backgroundColor
         layoutConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration? in
             guard let playlistMedia = self.dataSource.itemIdentifier(for: indexPath) else { return nil }
@@ -49,7 +50,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         let cv = UICollectionView(frame: view.bounds, collectionViewLayout: listLayout)
         cv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         cv.backgroundColor = .clear
-        cv.contentInset.bottom = UIScreen.main.bounds.width / 8
+        cv.contentInset.bottom = UIScreen.main.bounds.width / 6
         cv.register(PlaylistCollectionViewCell.self, forCellWithReuseIdentifier: PlaylistCollectionViewCell.identifier)
         cv.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
         return cv
@@ -78,6 +79,12 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
                 return cell
                 
             }
+        }
+        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
+            guard let self = self else { return nil }
+            let footer = collectionView.dequeueConfiguredReusableSupplementary(using: self.makePlaylistFooterRegistration(), for: indexPath)
+            
+            return footer
         }
 //        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
 //            guard let self = self else { return nil }
@@ -120,7 +127,10 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+		if musicController.songsAdded {
+			musicController.songsAdded = false
+			reloadData()
+		}
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -231,6 +241,24 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         return playlistHeaderRegistration
     }
     
+    private func makePlaylistFooterRegistration() -> UICollectionView.SupplementaryRegistration<SectionFooterCollectionViewCell> {
+        let playlistFooterRegistration = UICollectionView.SupplementaryRegistration(elementKind: UICollectionView.elementKindSectionFooter) { [weak self] (footer: SectionFooterCollectionViewCell, string, indexPath) in
+            guard let self = self else { return }
+//            var config = footer.defaultContentConfiguration()
+//            config.secondaryTextProperties.alignment = .natural
+//            config.secondaryTextProperties.color = .white
+//            config.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            if let item = self.dataSource.itemIdentifier(for: indexPath), let playlist = self.dataSource.snapshot().sectionIdentifier(containingItem: item) {
+//                config.secondaryText = "\(playlist.songCount ) songs, \(String(format: "%.0f", playlist.totalDuration)) mins"
+                footer.playlistDetailLabel.text = "\(playlist.songCount ) songs, \(String(format: "%.0f", playlist.totalDuration)) mins"
+            }
+//            config.imageToTextPadding = 5
+//            config.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20)
+//            footer.contentConfiguration = config
+        }
+        return playlistFooterRegistration
+    }
+    
     private func setupViews() {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Playlists"
@@ -266,10 +294,11 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         musicController.updateAlbumArtwork(for: playlist)
         musicController?.musicPlayer.setQueue(with: newQueue)
         musicController.nowPlayingPlaylist = playlist
+		musicController.currentPlaylist = playlist.songs
         musicController?.play()
     }
     
-    @objc private func createNewPlaylist() {
+    @objc func createNewPlaylist(_ button: UIBarButtonItem) {
         coordinator?.presentCreatePlaylistVC()
     }
     

@@ -117,7 +117,7 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
         createPlaylistVC.musicController = musicController
         createPlaylistVC.coordinator = self
         let playlistVC = playlistNav.topViewController as! PlaylistViewController
-        playlistNav.modalPresentationStyle = .fullScreen
+//        playlistNav.modalPresentationStyle = .fullScreen
         createPlaylistVC.reloadDataDelegate = playlistVC
         playlistNav.present(createPlaylistNav, animated: true)
     }
@@ -162,4 +162,38 @@ class MainCoordinator: NSObject, UITabBarControllerDelegate {
             nowPlayingMinimized.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (tabBarController.tabBar.frame.height + (UIScreen.main.bounds.width / 12)), width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width / 12)
         }
     }
+	
+	func presentSettingsVC(viewController: UIViewController, song: Song) {
+		let settingsNav = UINavigationController(rootViewController: SettingsViewController(song: song, settingType: .searchedSongSetting))
+		let settingsVC = settingsNav.topViewController as! SettingsViewController
+		settingsVC.musicController = musicController
+		settingsVC.coordinator = self
+		settingsNav.navigationBar.isHidden = true
+		settingsNav.modalPresentationStyle = .custom
+		settingsNav.transitioningDelegate = self
+		viewController.present(settingsNav, animated: true, completion: nil)
+	}
+	
+	func presentExistingPlaylists(viewController: UIViewController, song: Song) {
+		let settingsNav = UINavigationController(rootViewController: SettingsViewController(song: song, settingType: .addToExistingPlaylist))
+		let settingsVC = settingsNav.topViewController as! SettingsViewController
+		settingsVC.musicController = musicController
+		settingsVC.coordinator = self
+		settingsNav.navigationBar.isHidden = true
+//		settingsNav.modalPresentationStyle = .fullScreen
+		viewController.present(settingsNav, animated: true, completion: nil)
+		
+	}
+	
+	func switchToPlaylistTab() {
+		let playlistVC = playlistNav.topViewController as! PlaylistViewController
+		tabBarController.selectedIndex = 2
+		playlistVC.createNewPlaylist(UIBarButtonItem())
+	}
+}
+
+extension MainCoordinator: UIViewControllerTransitioningDelegate {
+	func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+		return SettingsPresentationController(presentedViewController: presented, presenting: presenting)
+	}
 }

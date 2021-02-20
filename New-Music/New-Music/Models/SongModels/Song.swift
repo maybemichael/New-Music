@@ -88,7 +88,6 @@ struct Song: Codable, Hashable, Identifiable, MediaItem {
             self.textColor4 = try artworkContainer.decode(String.self, forKey: .textColor4)
             let durationInMillis = try container.decode(Int.self, forKey: .durationInMillis)
             self.duration = Double(Double(durationInMillis) / Double(1000)) / Double(60)
-            print("Duration: \(self.duration)")
         }
         
     }

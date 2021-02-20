@@ -13,12 +13,16 @@ class MusicController: ObservableObject {
 
     let musicPlayer = MPMusicPlayerController.applicationMusicPlayer
     private var currentQueue = MPMusicPlayerStoreQueueDescriptor(storeIDs: [])
-    private var songsAdded = false
+    var songsAdded = false
     private let library = MPMediaLibrary()
     private var indexOfSongAdded = Int()
     private var isSearchedSong = false
     var sections = [Section]()
-    var createPlaylistSongs = [Song]()
+	var createPlaylistSongs = [Song]() {
+		didSet {
+			songsAdded = true
+		}
+	}
     var userPlaylists = [Playlist]() {
         didSet {
             self.saveToPersistentStore()
@@ -83,19 +87,19 @@ class MusicController: ObservableObject {
     }
     
     func addSongToPlaylist(song: Song, isPlaylistSearch: Bool) {
-            currentPlaylist.append(song)
-            currentQueue.storeIDs?.append(song.playID)
-            songsAdded = true
+		currentPlaylist.append(song)
+		currentQueue.storeIDs?.append(song.playID)
+		songsAdded = true
     }
     
     func playlistSongTapped(index: Int) {
         musicPlayer.stop()
         currentQueue.storeIDs?.removeAll()
         currentQueue.storeIDs = currentPlaylist.map { $0.playID }
-        currentQueue.startItemID = currentPlaylist[index].playID
-        currentPlaylist[index].isPlaying = true
+		currentQueue.startItemID = nowPlayingPlaylist?.songs[index].playID
+//        currentQueue.startItemID = currentPlaylist[index].playID
+//        currentPlaylist[index].isPlaying = true
         musicPlayer.setQueue(with: currentQueue)
-//        nowPlayingViewModel.playingMediaType = .playlist
         nowPlayingViewModel.nowPlayingSong = currentPlaylist[index]
         musicPlayer.prepareToPlay()
         musicPlayer.play()
@@ -113,8 +117,6 @@ class MusicController: ObservableObject {
             musicPlayer.setQueue(with: shuffledPlaylist!)
             nowPlayingViewModel.songs = nowPlayingPlaylist!.songs
             play()
-            
-        
         }
     }
     

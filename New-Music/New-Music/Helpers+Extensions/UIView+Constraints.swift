@@ -66,3 +66,23 @@ extension UIView {
         }
     }
 }
+
+// This is used to add constraints to the stack view of the collection view cells
+public func stackViewConstraints(stackView: UIStackView, contentView: UIView) {
+	stackView.translatesAutoresizingMaskIntoConstraints = false
+	let top = stackView.topAnchor.constraint(equalTo: contentView.topAnchor)
+	top.priority = UILayoutPriority(999)
+	let leading = stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+	leading.priority = UILayoutPriority(999)
+	let trailing = stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+	trailing.priority = UILayoutPriority(999)
+	let bottom = stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+	bottom.priority = UILayoutPriority(999)
+
+	NSLayoutConstraint.activate([
+		top,
+		leading,
+		trailing,
+		bottom
+	])
+}

@@ -59,9 +59,9 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     
     var song: Song? {
         didSet {
-            let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
-            let add = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
-            self.song?.isAdded ?? false ? addButton.setImage(added, for: .normal) : addButton.setImage(add, for: .normal)
+//            let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
+//            let add = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
+//            self.song?.isAdded ?? false ? addButton.setImage(added, for: .normal) : addButton.setImage(add, for: .normal)
         }
     }
     
@@ -97,7 +97,7 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
     }
     
     private func setUpViews() {
-//        addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
+        addButton.addTarget(self, action: #selector(addSong(_:)), for: .touchUpInside)
         let innerStackView = UIStackView(arrangedSubviews: [artistLabel, songTitleLabel])
         innerStackView.axis = .vertical
         let outerStackView = UIStackView(arrangedSubviews: [mediaImageView, innerStackView, addButton])
@@ -112,11 +112,8 @@ class SongsCollectionViewCell: UICollectionViewCell, SelfConfiguringCell {
         mainStackView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
     }
     
-//    @objc func addSong(_ sender: UIButton) {
-//        self.song?.isAdded = true
-//        let added = UIImage(systemName: "checkmark.seal", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
-//        let add = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration.addSongConfig)
-//        self.song?.isAdded ?? false ? addButton.setImage(added, for: .normal) : addButton.setImage(add, for: .normal)
-//        delegate?.addSongTapped(cell: self)
-//    }
+    @objc func addSong(_ sender: UIButton) {
+		guard let song = self.song else { return }
+		delegate?.newPlaylistCreation(with: song)
+    }
 }

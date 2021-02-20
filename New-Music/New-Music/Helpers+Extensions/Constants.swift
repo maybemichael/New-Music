@@ -82,7 +82,25 @@ enum MediaType: String, Hashable, Codable {
     case artist = "Artists"
 }
 
-enum PlaylistMedia: Hashable {
+enum PlaylistMedia: Hashable, SettingItem {
     case song(Song)
     case playlist(Playlist)
+	
+	var settingType: SettingType {
+		switch self {
+		case .playlist(_):
+			return .addToExistingPlaylist
+		case .song(_):
+			return .searchedSongSetting
+		}
+	}
+	
+	var description: String {
+		switch self {
+		case .song(let song):
+			return song.songName
+		case .playlist(let playlist):
+			return playlist.playlistName
+		}
+	}
 }

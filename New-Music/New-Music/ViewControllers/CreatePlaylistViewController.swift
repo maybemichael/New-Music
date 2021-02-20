@@ -68,6 +68,7 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+		reloadData()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

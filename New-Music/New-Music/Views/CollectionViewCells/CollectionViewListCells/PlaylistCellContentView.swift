@@ -29,28 +29,30 @@ class PlaylistCellContentView: UIView, UIContentView {
         return label
     }()
     
-    let playButton: NeuMusicButton = {
+    lazy var playButton: NeuMusicButton = {
         let button = NeuMusicButton()
         button.setTitle("  Play", for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
         button.setTitleColor(.white, for: .normal)
         button.setImage(UIImage(systemName: "play.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .normal)
         button.setImage(UIImage(systemName: "play.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .highlighted)
+        button.addTarget(self, action: #selector(listenToPlaylist), for: .touchUpInside)
+        button.setSize(width: UIScreen.main.bounds.width / 3, height: 40)
         button.tintColor = .white
-        button.setSize(width: 100, height: 40)
         button.layer.cornerRadius = 8
         return button
     }()
     
-    let shuffleButton: NeuMusicButton = {
+    lazy var shuffleButton: NeuMusicButton = {
         let button = NeuMusicButton()
         button.setTitle(" Shuffle", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
         button.setImage(UIImage(systemName: "shuffle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .normal)
         button.setImage(UIImage(systemName: "shuffle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default).configurationWithoutPointSizeAndWeight()), for: .highlighted)
+        button.addTarget(self, action: #selector(shufflePlaylist), for: .touchUpInside)
+        button.setSize(width: UIScreen.main.bounds.width / 3, height: 40)
         button.tintColor = .white
-        button.setSize(width: 100, height: 40)
         button.layer.cornerRadius = 8
         return button
     }()
@@ -88,31 +90,27 @@ class PlaylistCellContentView: UIView, UIContentView {
         let buttonStackView = UIStackView(arrangedSubviews: [playButton, shuffleButton])
         buttonStackView.axis = .horizontal
         buttonStackView.spacing = 20
-        let stackView = UIStackView(arrangedSubviews: [playlistNameLabel, buttonStackView, playlistStatsLabel])
+        let stackView = UIStackView(arrangedSubviews: [playlistNameLabel, buttonStackView])
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.distribution = .fill
         stackView.spacing = 8
         addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .topMargin, multiplier: 1, constant: 0)
-        topConstraint.priority = UILayoutPriority(999)
-        let leadingConstraint = NSLayoutConstraint(item: stackView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1, constant: 20)
-        leadingConstraint.priority = UILayoutPriority(999)
-        let trailingConstraint = NSLayoutConstraint(item: stackView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailingMargin, multiplier: 1, constant: 0)
-        trailingConstraint.priority = UILayoutPriority(999)
-        let bottomConstraint = NSLayoutConstraint(item: stackView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottomMargin, multiplier: 1, constant: 0)
-        bottomConstraint.priority = UILayoutPriority(999)
+        let top = stackView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor)
+        top.priority = UILayoutPriority(999)
+        let leading = stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20)
+        leading.priority = UILayoutPriority(999)
+        let trailing = stackView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor)
+        trailing.priority = UILayoutPriority(999)
+        let bottom = stackView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+        bottom.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
-            topConstraint,
-            leadingConstraint,
-            trailingConstraint,
-            bottomConstraint
+            top,
+            leading,
+            trailing,
+            bottom
         ])
-        playButton.addTarget(self, action: #selector(listenToPlaylist), for: .touchUpInside)
-        shuffleButton.addTarget(self, action: #selector(shufflePlaylist), for: .touchUpInside)
-        var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
-        backgroundConfig.backgroundColor = .clear
     }
     
     private func apply(configuration: PlaylistCellContentConfiguration) {

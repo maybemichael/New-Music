@@ -63,6 +63,15 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
     
     override func updateConfiguration(using state: UICellConfigurationState) {
         self.defaultContentView?.configuration = makeContentConfiguration()
+		if state.isHighlighted {
+			var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
+			backgroundConfig.backgroundColorTransformer = .preferredTint
+			backgroundConfiguration = backgroundConfig
+		} else {
+			var backgroundConfig = UIBackgroundConfiguration.listGroupedCell()
+			backgroundConfig.backgroundColor = .backgroundColor
+			backgroundConfiguration = backgroundConfig
+		}
     }
     
     override init(frame: CGRect) {

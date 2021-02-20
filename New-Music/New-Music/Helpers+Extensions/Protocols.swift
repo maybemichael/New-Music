@@ -22,6 +22,7 @@ protocol MediaItem {
 
 protocol SearchCellDelegate: AnyObject {
     func addSongTapped(cell: SongsSearchedCollectionViewCell)
+	func newPlaylistCreation(with song: Song)
 }
 
 protocol ReloadDataDelegate: AnyObject {
@@ -40,4 +41,9 @@ protocol NowPlayingController {
 
 protocol FrameDelegate: AnyObject {
     func getFrame(frame: CGRect)
+}
+
+protocol SettingsDelegate: AnyObject {
+	func dismissVC()
+	func createNewPlaylist()
 }

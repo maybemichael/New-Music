@@ -36,8 +36,8 @@ class NeuMusicButton: UIButton {
     
     private func createGradientLayer() {
         let gradientlayer = CAGradientLayer()
-//        gradientlayer.colors = [UIColor.darkGray.cgColor, UIColor.darkGray.darker().cgColor]
-        gradientlayer.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray4.darker(componentDelta: 0.075).cgColor]
+        gradientlayer.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray5.cgColor]
+//        gradientlayer.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray4.darker(componentDelta: 0.075).cgColor]
         gradientlayer.locations = [0.0, 1.0]
         gradientlayer.frame = bounds
         gradientlayer.startPoint = CGPoint(x: 0.0, y: 0.0)
@@ -62,10 +62,11 @@ class NeuMusicButton: UIButton {
     
     private func gradientColors(for state: Bool) {
         if isHighlighted {
-//            gradientLayer?.colors = [UIColor.systemBlue.cgColor, UIColor.systemGreen.cgColor]
-            gradientLayer?.colors = [UIColor.systemGray4.darker(componentDelta: 0.075).cgColor, UIColor.systemGray4.cgColor]
+            gradientLayer?.colors = [UIColor.systemGray5.cgColor, UIColor.systemGray4.cgColor]
+//            gradientLayer?.colors = [UIColor.systemGray4.darker(componentDelta: 0.075).cgColor, UIColor.systemGray4.cgColor]
         } else {
-            gradientLayer?.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray4.darker(componentDelta: 0.075).cgColor]
+            gradientLayer?.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray5.cgColor]
+//            gradientLayer?.colors = [UIColor.systemGray4.cgColor, UIColor.systemGray4.darker(componentDelta: 0.075).cgColor]
         }
     }
 }
