@@ -265,13 +265,13 @@ extension SettingsViewController: UICollectionViewDelegate, SettingsDelegate {
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if settingType == .addToExistingPlaylist {
-			switch indexPath.section {
-			default:
-				let playlist = musicController?.userPlaylists[indexPath.section]
-				playlist?.songs.append(song)
-				musicController?.saveToPersistentStore()
-				dismiss(animated: true, completion: nil)
-			}
+			guard let playlist = musicController?.userPlaylists[indexPath.section] else { return }
+			playlist.songs.append(song)
+			musicController?.saveToPersistentStore()
+			musicController?.userPlaylistsBackingStore.updateValue(song, forKey: song.id)
+			musicController?.songsAdded = true
+			musicController?.addSongToPlaylistTuple = (playlist, song)
+			dismiss(animated: true, completion: nil)
 		} else if settingType == .searchedSongSetting {
 			switch indexPath.item {
 			case 0:

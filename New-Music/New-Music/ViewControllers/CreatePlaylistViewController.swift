@@ -68,7 +68,7 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-		reloadData()
+		applySnapshot()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -142,7 +142,7 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
-    func reloadData() {
+    func applySnapshot() {
         var snapshot = CreatePlaylistSnapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(musicController?.createPlaylistSongs ?? [])
@@ -152,7 +152,7 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
     func setQueue(with playlist: Playlist) {
         let newQueue = playlist.songs.map { $0.playID }
         musicController?.musicPlayer.setQueue(with: newQueue)
-        musicController?.currentPlaylist = playlist.songs
+        musicController?.currentPlaylist = playlist
         musicController?.play()
     }
     
@@ -176,8 +176,13 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
         _ = PersistedPlaylist(playlist: playlist)
         musicController.userPlaylists.append(playlist)
 //        musicController.saveToPersistentStore()
+		
+		musicController.userPlaylistsBackingStore.updateValue(playlist, forKey: playlist.id)
+		playlist.songs.forEach {
+			musicController.userPlaylistsBackingStore.updateValue($0, forKey: $0.id)
+		}
         musicController.createPlaylistSongs.removeAll()
-        reloadDataDelegate?.reloadData()
+        reloadDataDelegate?.applySnapshot()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -192,4 +197,8 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
     func shuffleSongs(for playlist: Playlist) {
         
     }
+	
+	func presentCreatePlaylistVC() {
+		
+	}
 }

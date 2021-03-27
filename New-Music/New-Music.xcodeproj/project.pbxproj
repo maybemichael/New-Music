@@ -102,11 +102,12 @@
 		4CD485AD253ACC9B005265F3 /* SongData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD485AC253ACC9B005265F3 /* SongData.swift */; };
 		4CD485B2253ACE00005265F3 /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD485B1253ACE00005265F3 /* MediaType.swift */; };
 		4CD485BF253AD6D0005265F3 /* NowPlayingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B7EE8252D05D0005A1424 /* NowPlayingViewModel.swift */; };
-		4CEC2430256BADE100784F8B /* DeveloperToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC242F256BADE100784F8B /* DeveloperToken.swift */; };
 		4CFB1DC7256F8D1B00546BA0 /* CreatePlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB1DC6256F8D1B00546BA0 /* CreatePlaylistCollectionViewCell.swift */; };
 		4CFB1DCF256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB1DCE256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift */; };
 		4CFE2AB8259096C50011B2EF /* NowPlayingCellContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE2AB7259096C50011B2EF /* NowPlayingCellContentView.swift */; };
 		4CFE2ABD2590982B0011B2EF /* NowPlayingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE2ABC2590982B0011B2EF /* NowPlayingCollectionViewCell.swift */; };
+		9520082625E1063500018F67 /* DeveloperToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520082525E1063500018F67 /* DeveloperToken.swift */; };
+		9520082B25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520082A25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -228,11 +229,12 @@
 		4CD485A7253AC364005265F3 /* AlbumResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumResource.swift; sourceTree = "<group>"; };
 		4CD485AC253ACC9B005265F3 /* SongData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongData.swift; sourceTree = "<group>"; };
 		4CD485B1253ACE00005265F3 /* MediaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
-		4CEC242F256BADE100784F8B /* DeveloperToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToken.swift; sourceTree = "<group>"; };
 		4CFB1DC6256F8D1B00546BA0 /* CreatePlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
 		4CFB1DCE256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+UserInfoAlert.swift"; sourceTree = "<group>"; };
 		4CFE2AB7259096C50011B2EF /* NowPlayingCellContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCellContentView.swift; sourceTree = "<group>"; };
 		4CFE2ABC2590982B0011B2EF /* NowPlayingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCollectionViewCell.swift; sourceTree = "<group>"; };
+		9520082525E1063500018F67 /* DeveloperToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeveloperToken.swift; sourceTree = "<group>"; };
+		9520082A25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewPlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -555,10 +557,10 @@
 				4C87CE8B252DB578001B9935 /* Notifications.swift */,
 				4C2AE15E25310BAE009164B8 /* Constants.swift */,
 				4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */,
+				9520082525E1063500018F67 /* DeveloperToken.swift */,
 				4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */,
 				4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */,
 				4C6E64692563E88B00353615 /* Protocols.swift */,
-				4CEC242F256BADE100784F8B /* DeveloperToken.swift */,
 				4C5F40EB256DE5C400DBDA8C /* PlaylistSong+Convenience.swift */,
 				4C5F40F1256DFB9500DBDA8C /* PersistedPlaylist+Convenience.swift */,
 				4CFB1DCE256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift */,
@@ -608,6 +610,7 @@
 				4C3F349725A94A4F00AD9BC1 /* SectionFooterCollectionViewCell.swift */,
 				4C0038B325BD2F0E00EBD519 /* SearchedSongSettingCollectionViewCell.swift */,
 				4C8BF22A25BD7C3D003497EB /* ExistingPlaylistCollectionViewCell.swift */,
+				9520082A25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift */,
 			);
 			path = CollectionViewListCells;
 			sourceTree = "<group>";
@@ -802,10 +805,10 @@
 				4C4BB626253C2C94005B086A /* Album.swift in Sources */,
 				4C646B912529727200B05D8A /* ArtistCollectionViewCell.swift in Sources */,
 				4C92A442252C5C1100376FCD /* LinearGradient+Init.swift in Sources */,
-				4CEC2430256BADE100784F8B /* DeveloperToken.swift in Sources */,
 				4C0FD8E2252ADFC1003AA808 /* NowPlayingView.swift in Sources */,
 				4C4312DF259DFF2800B8804F /* SongsSearchedCollectionViewCell.swift in Sources */,
 				4C5F4100256E484E00DBDA8C /* CreatePlaylistViewController.swift in Sources */,
+				9520082B25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift in Sources */,
 				4C32722F2547DC3200C5A169 /* ButtonStyles.swift in Sources */,
 				4CC1A977257B080B00D3A434 /* PresentAnimator.swift in Sources */,
 				4C7291E625497BA50028A5C0 /* ModalPresentation+SwiftUI.swift in Sources */,
@@ -816,6 +819,7 @@
 				4CFB1DCF256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift in Sources */,
 				4C4BB613253C121E005B086A /* SearchResult.swift in Sources */,
 				4C319907258381E4007D9A3F /* NowPlayingBarAnimationView.swift in Sources */,
+				9520082625E1063500018F67 /* DeveloperToken.swift in Sources */,
 				4C83038C258B5AC400E4860F /* GetFrameViewModifier.swift in Sources */,
 				4C646B872529725800B05D8A /* SongsCollectionViewCell.swift in Sources */,
 				4C2C83CA256498FD00D4332F /* ChildVCCoordinator.swift in Sources */,

@@ -8,8 +8,8 @@
 import UIKit
 
 struct Song: Codable, Hashable, Identifiable, MediaItem {
-    var mediaType: MediaType = .song
-    let id: String = UUID().uuidString
+	var mediaType: MediaType = .song
+	let id: String = UUID().uuidString
     let songName: String
     let playID: String
     let kind: String
@@ -107,6 +107,28 @@ struct Song: Codable, Hashable, Identifiable, MediaItem {
         self.textColor4 = textColor4Hex
         self.duration = duration
     }
+	
+	init(copiedFrom song: Song) {
+		self.mediaType = .song
+		self.songName = song.songName
+		self.playID = song.playID
+		self.kind = song.kind
+		self.albumName = song.albumName
+		self.artistName = song.artistName
+		self.accentColorHex = song.accentColorHex
+		self.textColor1 = song.textColor1
+		self.textColor2 = song.textColor2
+		self.textColor3 = song.textColor3
+		self.textColor4 = song.textColor4
+		self.albumArtwork = song.albumArtwork
+		self.imageURL = song.imageURL
+		self.stringURL = song.stringURL
+		self.duration = song.duration
+	}
+	
+	static func == (lhs: Song, rhs: Song) -> Bool {
+		return lhs.id == rhs.id
+	}
 }
 
 extension Song {

@@ -316,7 +316,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, SearchCellDel
     }
 	
 	@objc private func finishedAddingSongsToPlaylist() {
-		reloadDataDelegate?.reloadData()
+		reloadDataDelegate?.applySnapshot()
 		self.dismiss(animated: true, completion: nil)
 	}
 	

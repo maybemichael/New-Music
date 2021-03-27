@@ -26,12 +26,13 @@ protocol SearchCellDelegate: AnyObject {
 }
 
 protocol ReloadDataDelegate: AnyObject {
-    func reloadData()
+    func applySnapshot()
 }
 
 protocol PlaylistDelegate: AnyObject {
     func setQueue(with playlist: Playlist)
     func shuffleSongs(for playlist: Playlist)
+	func presentCreatePlaylistVC()
 }
 
 protocol NowPlayingController {

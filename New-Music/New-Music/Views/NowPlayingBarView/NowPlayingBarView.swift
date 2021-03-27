@@ -247,8 +247,7 @@ struct NowPlayingMinimized2: View {
 //                        }
                                 .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
                                     frameDelegate.getFrame(frame: geometry.frame(in: .named("MinimizedNowPlaying")))
-                                    print("This is the newest minimized frame: \(geometry.frame(in: .named("MinimizedNowPlaying")))")
-//                                    print("This is the newest minimized frame but in local: \(geometry.frame(in: .local))")
+//                                    print("This is the newest minimized frame: \(geometry.frame(in: .named("MinimizedNowPlaying")))")
                                 })
                         }
                         .frame(width: height - (verticalMargin * 2), height: height - (verticalMargin * 2), alignment: .center)
@@ -275,7 +274,7 @@ struct NowPlayingMinimized2: View {
                             BarTrackButton(size: height - (verticalMargin * 4), buttonType: .trackForward, musicController: musicController)
                                 .frame(width: height - (verticalMargin * 4), height: height - (verticalMargin * 4), alignment: .center)
                                 .onAppear {
-                                    print("This is height of bar track button: \(height - (verticalMargin * 4))")
+                                    
                                 }
                         }
                     }
@@ -291,7 +290,7 @@ struct NowPlayingMinimized2: View {
                                 .frame(width: height - (verticalMargin * 2), height: height - (verticalMargin * 2), alignment: .center)
                                 .onChange(of: nowPlayingViewModel.getFrame, perform: { value in
                                     frameDelegate.getFrame(frame: geometry.frame(in: .named("MinimizedNowPlaying")))
-                                    print("This is the newest minimized frame: \(geometry.frame(in: .named("MinimizedNowPlaying")))")
+//                                    print("This is the newest minimized frame: \(geometry.frame(in: .named("MinimizedNowPlaying")))")
                                 })
                         }
                         .frame(width: height - (verticalMargin * 2), height: height - (verticalMargin * 2), alignment: .center)

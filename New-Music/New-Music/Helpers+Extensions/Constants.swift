@@ -103,4 +103,26 @@ enum PlaylistMedia: Hashable, SettingItem {
 			return playlist.playlistName
 		}
 	}
+	
+	var identifier: String {
+		switch self {
+		case .playlist(let playlist):
+			return playlist.id
+		case .song(let song):
+			return song.id
+		}
+	}
+	
+	func hash(into hasher: inout Hasher) {
+		switch self {
+		case .playlist(let playlist):
+			hasher.combine(playlist.id)
+		case .song(let song):
+			hasher.combine(song.id)
+		}
+	}
+	
+	static func == (lhs: PlaylistMedia, rhs: PlaylistMedia) -> Bool {
+		return lhs.identifier == rhs.identifier
+	}
 }
