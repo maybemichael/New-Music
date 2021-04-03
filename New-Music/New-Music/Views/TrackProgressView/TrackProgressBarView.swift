@@ -31,13 +31,6 @@ struct TrackProgressView: View {
     var indicatorHeight: CGFloat
     var barWidth: CGFloat
     
-    var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "m:ss"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter
-    }()
-    
     var body: some View {
         VStack {
             ZStack(alignment: .center) {
@@ -75,15 +68,14 @@ struct TrackProgressView: View {
                                 DragGesture()
                                     .onChanged({ value in
                                         self.isDragging = true
-                                        nowPlayingViewModel.displaylink?.invalidate()
-                                        nowPlayingViewModel.displaylink = nil
+										nowPlayingViewModel.stopDisplayLink()
                                         self.nowPlayingViewModel.elapsedTime = self.time(for: value.location.x, in: geo.size.width)
                                             
                                     })
                                     .onEnded({ value in
                                         self.isDragging = false
                                         musicController.musicPlayer.currentPlaybackTime = self.time(for: value.location.x, in: geo.size.width)
-                                        nowPlayingViewModel.newDisplayLink()
+										nowPlayingViewModel.startDisplayLink()
                                     })
                             )
                         Spacer(minLength: 0)
@@ -93,12 +85,10 @@ struct TrackProgressView: View {
                     Text(formattedTimeFor(timeInterval: nowPlayingViewModel.elapsedTime))
                         .font(.custom("CourierNewPS-BoldMT", size: indicatorHeight, relativeTo: .title3))
                         .foregroundColor(.white)
-//                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                     Spacer()
                     Text("-\(formattedTimeRemainingFor(timeInterval: nowPlayingViewModel.timeRemaining))")
                         .font(.custom("CourierNewPS-BoldMT", size: indicatorHeight, relativeTo: .title3))
                         .foregroundColor(.white)
-//                        .foregroundColor(fontColor(isTooLight: nowPlayingViewModel.isTooLight))
                 }
             }
         }
@@ -115,23 +105,18 @@ struct TrackProgressView: View {
     
     private func formattedTimeRemainingFor(timeInterval: TimeInterval) -> String {
         let date = Date(timeIntervalSinceReferenceDate: timeInterval)
-        return dateFormatter.string(from: date)
+		return nowPlayingViewModel.dateFormatter.string(from: date)
     }
     
     private func formattedTimeFor(timeInterval: TimeInterval) -> String {
         let date = Date(timeIntervalSinceReferenceDate: timeInterval)
-        return dateFormatter.string(from: date)
+		return nowPlayingViewModel.dateFormatter.string(from: date)
     }
 
     private func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
         let percentage = location / width
         let time = nowPlayingViewModel.duration * TimeInterval(percentage)
-        if time < 0 {
-            return 0
-        } else if time > nowPlayingViewModel.duration {
-            return nowPlayingViewModel.duration
-        }
-        return time
+		return min(max(time, 0), nowPlayingViewModel.duration)
     }
 
     private func percentagePlayedForSong() -> CGFloat {

@@ -30,6 +30,7 @@
 		4C22EF85258CCA0D00032601 /* NowPlayingIndictorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C22EF84258CCA0D00032601 /* NowPlayingIndictorView.swift */; };
 		4C27C3C22542BC600005BD01 /* PlaylistSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C27C3C12542BC600005BD01 /* PlaylistSongView.swift */; };
 		4C2AE15F25310BAE009164B8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2AE15E25310BAE009164B8 /* Constants.swift */; };
+		4C2BBADA2614426200945983 /* DeveloperToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2BBAD92614426200945983 /* DeveloperToken.swift */; };
 		4C2C83CA256498FD00D4332F /* ChildVCCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C83C9256498FD00D4332F /* ChildVCCoordinator.swift */; };
 		4C319907258381E4007D9A3F /* NowPlayingBarAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C319906258381E4007D9A3F /* NowPlayingBarAnimationView.swift */; };
 		4C32722A2547DA9700C5A169 /* ButtonBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3272292547DA9700C5A169 /* ButtonBackgrounds.swift */; };
@@ -106,7 +107,6 @@
 		4CFB1DCF256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB1DCE256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift */; };
 		4CFE2AB8259096C50011B2EF /* NowPlayingCellContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE2AB7259096C50011B2EF /* NowPlayingCellContentView.swift */; };
 		4CFE2ABD2590982B0011B2EF /* NowPlayingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE2ABC2590982B0011B2EF /* NowPlayingCollectionViewCell.swift */; };
-		9520082625E1063500018F67 /* DeveloperToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520082525E1063500018F67 /* DeveloperToken.swift */; };
 		9520082B25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520082A25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -152,6 +152,7 @@
 		4C22EF84258CCA0D00032601 /* NowPlayingIndictorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingIndictorView.swift; sourceTree = "<group>"; };
 		4C27C3C12542BC600005BD01 /* PlaylistSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistSongView.swift; sourceTree = "<group>"; };
 		4C2AE15E25310BAE009164B8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		4C2BBAD92614426200945983 /* DeveloperToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToken.swift; sourceTree = "<group>"; };
 		4C2C83C9256498FD00D4332F /* ChildVCCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildVCCoordinator.swift; sourceTree = "<group>"; };
 		4C319906258381E4007D9A3F /* NowPlayingBarAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingBarAnimationView.swift; sourceTree = "<group>"; };
 		4C3272292547DA9700C5A169 /* ButtonBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonBackgrounds.swift; sourceTree = "<group>"; };
@@ -233,7 +234,6 @@
 		4CFB1DCE256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+UserInfoAlert.swift"; sourceTree = "<group>"; };
 		4CFE2AB7259096C50011B2EF /* NowPlayingCellContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCellContentView.swift; sourceTree = "<group>"; };
 		4CFE2ABC2590982B0011B2EF /* NowPlayingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCollectionViewCell.swift; sourceTree = "<group>"; };
-		9520082525E1063500018F67 /* DeveloperToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeveloperToken.swift; sourceTree = "<group>"; };
 		9520082A25E1103B00018F67 /* CreateNewPlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewPlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -549,6 +549,7 @@
 			isa = PBXGroup;
 			children = (
 				4C646B4225296C8A00B05D8A /* UIView+Constraints.swift */,
+				4C2BBAD92614426200945983 /* DeveloperToken.swift */,
 				4C646B5E25296D7A00B05D8A /* NetworkError+Init.swift */,
 				4C646B8125296FB400B05D8A /* UIColors.swift */,
 				4C0FD8E6252AF62E003AA808 /* Colors.swift */,
@@ -557,7 +558,6 @@
 				4C87CE8B252DB578001B9935 /* Notifications.swift */,
 				4C2AE15E25310BAE009164B8 /* Constants.swift */,
 				4C7291E525497BA50028A5C0 /* ModalPresentation+SwiftUI.swift */,
-				9520082525E1063500018F67 /* DeveloperToken.swift */,
 				4C646B9A2529769900B05D8A /* SelfConfiguringCell.swift */,
 				4C07BE1A25555CF000A2D85A /* InstantPanGestureRecognizer.swift */,
 				4C6E64692563E88B00353615 /* Protocols.swift */,
@@ -812,6 +812,7 @@
 				4C32722F2547DC3200C5A169 /* ButtonStyles.swift in Sources */,
 				4CC1A977257B080B00D3A434 /* PresentAnimator.swift in Sources */,
 				4C7291E625497BA50028A5C0 /* ModalPresentation+SwiftUI.swift in Sources */,
+				4C2BBADA2614426200945983 /* DeveloperToken.swift in Sources */,
 				4C8C7A5C2577C77700BB4D45 /* NowPlayingMinimizedViewController.swift in Sources */,
 				4CFE2AB8259096C50011B2EF /* NowPlayingCellContentView.swift in Sources */,
 				4C2186E12544208500DFD391 /* NowPlayingFull.swift in Sources */,
@@ -819,7 +820,6 @@
 				4CFB1DCF256FAC4400546BA0 /* UIViewController+UserInfoAlert.swift in Sources */,
 				4C4BB613253C121E005B086A /* SearchResult.swift in Sources */,
 				4C319907258381E4007D9A3F /* NowPlayingBarAnimationView.swift in Sources */,
-				9520082625E1063500018F67 /* DeveloperToken.swift in Sources */,
 				4C83038C258B5AC400E4860F /* GetFrameViewModifier.swift in Sources */,
 				4C646B872529725800B05D8A /* SongsCollectionViewCell.swift in Sources */,
 				4C2C83CA256498FD00D4332F /* ChildVCCoordinator.swift in Sources */,

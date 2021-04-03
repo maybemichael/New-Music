@@ -12,7 +12,11 @@ import Combine
 class NowPlayingViewModel: ObservableObject {
     var musicPlayer: MPMusicPlayerController
     var didChange = PassthroughSubject<UIImage?, Never>()
-    var displaylink: CADisplayLink?
+	private var displaylink: CADisplayLink? {
+		willSet {
+			displaylink?.invalidate()
+		}
+	}
     var searchedSong: Song?
     @Published var nowPlayingSong: Song? {
         didSet {
@@ -95,17 +99,12 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     @objc func updateElapsedTime(_ displayLink: CADisplayLink) {
-        if musicPlayer.playbackState == .playing {
-            if let duration = musicPlayer.nowPlayingItem?.playbackDuration {
-                if timeRemaining == 0 {
-                    self.elapsedTime = 0.0
-                    self.timeRemaining = 0.0
-                } else {
-                    self.timeRemaining = duration - musicPlayer.currentPlaybackTime
-                    self.elapsedTime = musicPlayer.currentPlaybackTime
-                }
-            }
-        }
+		if let duration = musicPlayer.nowPlayingItem?.playbackDuration {
+			let currentElapsedTime = musicPlayer.currentPlaybackTime
+			let currentTimeRemaining = duration - currentElapsedTime
+			timeRemaining = max(0, currentTimeRemaining)
+			elapsedTime = min(duration, currentElapsedTime)
+		}
     }
     
     @objc func updateNowPlayingItem(_ notification: Notification) {
@@ -127,32 +126,15 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     @objc func musicPlayerStateDidChange(_ notification: Notification) {
-        let playbackState = musicPlayer.playbackState
         determinePlaybackState()
-        switch playbackState {
+        switch musicPlayer.playbackState {
         case .stopped, .paused, .interrupted:
-            self.isPlaying = false
             self.displaylink?.invalidate()
             self.displaylink = nil
         case .playing:
-            isPlaying = true
-            if self.displaylink == nil {
-                self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 3
-                displaylink?.add(to: .current, forMode: .common)
-            } else {
-                self.displaylink?.invalidate()
-                self.displaylink = nil
-                self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-                self.displaylink?.preferredFramesPerSecond = 3
-                self.displaylink?.add(to: .current, forMode: .common)
-            }
-        case .seekingBackward:
-            isPlaying = musicPlayer.playbackState == .playing ? true : false
-        case .seekingForward:
-            isPlaying = musicPlayer.playbackState == .playing ? true : false
-        @unknown default:
-            fatalError("Unknown default case for the music players playback state.")
+			createDisplayLink()
+        default:
+			break
         }
     }
     
@@ -255,18 +237,30 @@ class NowPlayingViewModel: ObservableObject {
     }
     
     private func determinePlaybackState() {
-        if musicPlayer.playbackState == .playing {
-            isPlaying = true
-        } else {
-            isPlaying = false
-        }
+		let isMusicPlaying = musicPlayer.playbackState == .playing
+		if isPlaying != isMusicPlaying {
+			isPlaying = isMusicPlaying
+		}
     }
-    
-    func newDisplayLink() {
-        displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
-        displaylink?.preferredFramesPerSecond = 3
-        displaylink?.add(to: .current, forMode: .common)
-    }
+
+	private func createDisplayLink() {
+		self.displaylink = CADisplayLink(target: self, selector: #selector (updateElapsedTime))
+		self.displaylink?.preferredFramesPerSecond = 30
+		self.displaylink?.add(to: .current, forMode: .common)
+	}
+
+	func startDisplayLink() {
+		guard displaylink != nil else {
+			createDisplayLink()
+			return
+		}
+		displaylink?.add(to: .current, forMode: .common)
+	}
+
+	func stopDisplayLink() {
+		displaylink?.invalidate()
+	}
+
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .elapsedTime, object: nil)
