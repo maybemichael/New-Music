@@ -127,7 +127,12 @@ struct Song: Codable, Hashable, Identifiable, MediaItem {
 	}
 	
 	static func == (lhs: Song, rhs: Song) -> Bool {
-		return lhs.id == rhs.id
+		return lhs.id == rhs.id && lhs.playID == rhs.playID
+	}
+
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(id)
+		hasher.combine(playID)
 	}
 }
 

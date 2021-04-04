@@ -21,8 +21,13 @@ class NowPlayingViewModel: ObservableObject {
     @Published var nowPlayingSong: Song? {
         didSet {
             playID = nowPlayingSong?.playID
+			if isInitial {
+				setLastNowPlayingSong()
+				isInitial = false
+			}
         }
     }
+	var isInitial = true
     @Published var playID: String?
     @Published var songs: [Song]
     @Published var artist: String = ""
@@ -73,31 +78,6 @@ class NowPlayingViewModel: ObservableObject {
         return formatter
     }()
     
-    init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.systemGraySix!), darkerAccentColor: Color = Color.black) {
-        self.artist = artist
-        self.songTitle = songTitle
-        self.albumArtwork = albumArtwork
-        self.elapsedTime = elapsedTime
-        self.duration = duration
-        self.musicPlayer = musicPlayer
-        self.lighterAccentColor = lighterAccentColor
-        self.darkerAccentColor = darkerAccentColor
-        self.songs = songs
-        self.textColor1 = Color.black
-        self.textColor2 = Color.white
-        self.textColor3 = Color.lightTextColor
-        self.textColor4 = Color.black
-        self.timeRemaining = 0.0
-        self.lighterUIColor = UIColor.systemBlue.lighter()
-        self.darkerUIColor = .systemBlue
-        self.lighterTextColor2 = .black
-        self.darkerTextColor2 = .black
-        NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
-        determinePlaybackState()
-    }
-    
     @objc func updateElapsedTime(_ displayLink: CADisplayLink) {
 		if let duration = musicPlayer.nowPlayingItem?.playbackDuration {
 			let currentElapsedTime = musicPlayer.currentPlaybackTime
@@ -117,7 +97,8 @@ class NowPlayingViewModel: ObservableObject {
         }
         self.elapsedTime = 0.0
         let index = musicPlayer.indexOfNowPlayingItem
-        self.nowPlayingSong = songs[index]        
+        self.nowPlayingSong = songs[index]
+		UserDefaults.standard.set(index, forKey: UserDefaults.lastPlayedSongIndex)
         if let colors = getGradientColors() {
             self.lighterAccentColor = colors.lighter
             self.darkerAccentColor = colors.darker
@@ -125,12 +106,12 @@ class NowPlayingViewModel: ObservableObject {
         getTextColors()
     }
     
-    @objc func musicPlayerStateDidChange(_ notification: Notification) {
+    @objc
+	func musicPlayerStateDidChange(_ notification: Notification) {
         determinePlaybackState()
         switch musicPlayer.playbackState {
         case .stopped, .paused, .interrupted:
-            self.displaylink?.invalidate()
-            self.displaylink = nil
+			displaylink?.isPaused = true
         case .playing:
 			createDisplayLink()
         default:
@@ -153,7 +134,6 @@ class NowPlayingViewModel: ObservableObject {
             }
             completion(.success(self.albumArtwork))
         }.resume()
-
     }
     
     private func getGradientColors() -> (lighter: Color, darker: Color)? {
@@ -254,15 +234,56 @@ class NowPlayingViewModel: ObservableObject {
 			createDisplayLink()
 			return
 		}
-		displaylink?.add(to: .current, forMode: .common)
+		displaylink?.isPaused = false
 	}
 
 	func stopDisplayLink() {
-		displaylink?.invalidate()
+		displaylink?.isPaused = true
 	}
 
-    
+	func setLastNowPlayingSong() {
+		guard let nowPlayingSong = self.nowPlayingSong else { return }
+		self.albumArtwork = UIImage(data: nowPlayingSong.albumArtwork ?? Data())
+		self.artist = nowPlayingSong.artistName
+		self.songTitle = nowPlayingSong.songName
+		self.duration = nowPlayingSong.duration
+		self.timeRemaining = nowPlayingSong.duration
+		self.elapsedTime = 0.0
+		if let colors = getGradientColors() {
+			self.lighterAccentColor = colors.lighter
+			self.darkerAccentColor = colors.darker
+		}
+		getTextColors()
+	}
+
+	init(musicPlayer: MPMusicPlayerController, artist: String, songTitle: String, albumArtwork: UIImage? = UIImage(), elapsedTime: TimeInterval = 0.0, duration: TimeInterval, songs: [Song], lighterAccentColor: Color = Color(UIColor.systemGraySix!), darkerAccentColor: Color = Color.black) {
+		self.artist = artist
+		self.songTitle = songTitle
+		self.albumArtwork = albumArtwork
+		self.elapsedTime = elapsedTime
+		self.duration = duration
+		self.musicPlayer = musicPlayer
+		self.lighterAccentColor = lighterAccentColor
+		self.darkerAccentColor = darkerAccentColor
+		self.songs = songs
+		self.textColor1 = Color.black
+		self.textColor2 = Color.white
+		self.textColor3 = Color.lightTextColor
+		self.textColor4 = Color.black
+		self.timeRemaining = 0.0
+		self.lighterUIColor = UIColor.systemBlue.lighter()
+		self.darkerUIColor = .systemBlue
+		self.lighterTextColor2 = .black
+		self.darkerTextColor2 = .black
+		NotificationCenter.default.addObserver(self, selector: #selector(updateElapsedTime(_:)), name: .elapsedTime, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(updateNowPlayingItem(_:)), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(musicPlayerStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
+		determinePlaybackState()
+	}
+
     deinit {
+		displaylink?.invalidate()
+		displaylink = nil
         NotificationCenter.default.removeObserver(self, name: .elapsedTime, object: nil)
         NotificationCenter.default.removeObserver(self, name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: nil)
         NotificationCenter.default.removeObserver(self, name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)

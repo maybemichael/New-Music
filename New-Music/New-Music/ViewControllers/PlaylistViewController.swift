@@ -9,13 +9,11 @@ import SwiftUI
 import Combine
 
 class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDelegate {
-    
-//    private var subscriptions = Set<AnyCancellable>()
+
     private var nowPlayingViewModel: NowPlayingViewModel!
-//    typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, PlaylistMedia>
-	typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, String>
-//    typealias PlaylistSnapshot = NSDiffableDataSourceSnapshot<Playlist, PlaylistMedia>
-	typealias PlaylistSnapshot = NSDiffableDataSourceSnapshot<Playlist, String>
+    typealias PlaylistsDataSource = UICollectionViewDiffableDataSource<Playlist, PlaylistMedia>
+	    typealias PlaylistSnapshot = NSDiffableDataSourceSnapshot<Playlist, PlaylistMedia>
+
     var musicController: MusicController!
     weak var coordinator: MainCoordinator?
     let artistLabel = UILabel()
@@ -34,70 +32,52 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         return view
     }()
 	
-	lazy var backingStore: Dictionary<Playlist, [String]> = { initialBackingStore() }() {
-		didSet {
-//			self.updateUserPlaylists()
-//			DispatchQueue.global(qos: .utility).async { [weak self] in
-//				guard let self = self else { return }
-//				self.applyBackingStore(animated: false, isInitial: false)
-//			}
-		}
-	}
-	
 	lazy var collectionView: UICollectionView = {
 		let layout = UICollectionViewCompositionalLayout() { sectionIndex, layoutEnvironment in
 			var configuration = UICollectionLayoutListConfiguration(appearance: .grouped)
 			configuration.backgroundColor = .backgroundColor
-//			configuration.headerMode = sectionIndex == 0 ? .supplementary : .none
+			configuration.headerMode = sectionIndex == 0 ? .supplementary : .none
 			configuration.footerMode = .supplementary
-			configuration.headerMode = .firstItemInSection
+//			configuration.headerMode = .firstItemInSection
 			configuration.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration? in
-				guard
-					let identifier = self.dataSource.itemIdentifier(for: indexPath),
-					let value = self.musicController.userPlaylistsBackingStore[identifier]
-				else { return nil }
-				
-				switch value {
-				case is Playlist:
-					let playlist = value as! Playlist
+				guard let identifier = self.dataSource.itemIdentifier(for: indexPath) else { return nil }
+				switch identifier {
+				case .playlist(let playlist):
 					return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "Delete", handler: { [weak self] _, _, completion in
 						self?.deleteSelectedPlaylist(playlist: playlist)
 						completion(true)
 					})])
-				case is Song:
-					let song = value as! Song
+				case .song(let song):
 					return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "Delete", handler: { [weak self] _, _, completion in
 						self?.deleteSelectedSong(song: song)
 						completion(true)
 					})])
-				default:
-					return nil
 				}
 			}
 			let section = NSCollectionLayoutSection.list(using: configuration,
 														 layoutEnvironment: layoutEnvironment)
-//			if sectionIndex == 0 {
-//				let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-//					layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-//													   heightDimension: .estimated(44)),
-//					elementKind: UICollectionView.elementKindSectionHeader,
-//					alignment: .top)
+			if sectionIndex == 0 {
+				let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+					layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+													   heightDimension: .estimated(44)),
+					elementKind: UICollectionView.elementKindSectionHeader,
+					alignment: .top)
 //				sectionHeader.pinToVisibleBounds = true
 //				sectionHeader.zIndex = 25
-//				let sectionFooter = NSCollectionLayoutBoundarySupplementaryItem(
-//					layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-//													   heightDimension: .estimated(44)),
-//					elementKind: UICollectionView.elementKindSectionFooter,
-//					alignment: .bottom)
-//				section.boundarySupplementaryItems = [sectionHeader, sectionFooter]
-//			} else {
+				let sectionFooter = NSCollectionLayoutBoundarySupplementaryItem(
+					layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+													   heightDimension: .estimated(44)),
+					elementKind: UICollectionView.elementKindSectionFooter,
+					alignment: .bottom)
+				section.boundarySupplementaryItems = [sectionHeader, sectionFooter]
+			} else {
 				let sectionFooter = NSCollectionLayoutBoundarySupplementaryItem(
 					layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
 													   heightDimension: .estimated(44)),
 					elementKind: UICollectionView.elementKindSectionFooter,
 					alignment: .bottom)
 				section.boundarySupplementaryItems = [sectionFooter]
-//			}
+			}
 			return section
 		}
 		layout.configuration.interSectionSpacing = 0
@@ -122,22 +102,15 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
     
 	func configureDataSource() {
 		dataSource = PlaylistsDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, playlistMedia -> UICollectionViewCell? in
-			guard
-				let self = self,
-				let value = self.musicController.userPlaylistsBackingStore[playlistMedia]
-			else { fatalError() }
-			switch value {
-			case is Playlist:
-				let playlist = value as! Playlist
+			guard let self = self else { return nil }
+			switch playlistMedia {
+			case .playlist(let playlist):
 				let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCustomPlaylistCellRegistration(), for: indexPath, item: playlist)
 				cell.setPlaylistDelegate = self
 				return cell
-			case is Song:
-				let song = value as! Song
+			case .song(let song):
 				let cell = collectionView.dequeueConfiguredReusableCell(using: self.makeCellRegistration(), for: indexPath, item: song)
 				return cell
-			default:
-				return nil
 			}
 		}
 		
@@ -156,35 +129,14 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 		dataSource.reorderingHandlers.canReorderItem = { _ -> Bool in
 			self.collectionView.isEditing
 		}
-		
-		dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
-			guard let self = self else { return }
-			defer {
-				self.updateSnapshotAfterValidMove(using: transaction.sectionTransactions)
-			}
-			self.printDataSourceItems(stringIDs: transaction.finalSnapshot.itemIdentifiers)
-			transaction.sectionTransactions.forEach {
-				self.printDataSourceItems("Section Transaction:", stringIDs: $0.finalSnapshot.items)
-			}
+
+		dataSource.reorderingHandlers.didReorder = { transaction in
+			var playlistsToReload: [Playlist] = []
 			for sectionTransation in transaction.sectionTransactions {
-				guard
-					let firstIdentifier = sectionTransation.finalSnapshot.items.first,
-					let _ = self.musicController.userPlaylistsBackingStore[firstIdentifier] as? Playlist
-				else {
-					self.isValidMove = false
-					defer { self.refreshSnapshot(using: transaction.sectionTransactions, animated: false) }
-					return
-				}
-				var songs = [Song]()
-				sectionTransation.finalSnapshot.items.forEach {
-					if let song = self.musicController.userPlaylistsBackingStore[$0] as? Song {
-						songs.append(song)
-					}
-				}
 				let playlist = sectionTransation.sectionIdentifier
-				sectionTransation.sectionIdentifier.songs = songs
-				self.printDataSourceItems("This is the playlists songs...", stringIDs: playlist.songIDs)
-				self.musicController.saveToPersistentStore()
+				let playlistSongs = sectionTransation.finalSnapshot.snapshot(of: PlaylistMedia.playlist(playlist), includingParent: false).items
+				playlist.updatePlaylistSongsAfterEditing(updatedSongs: playlistSongs)
+				playlistsToReload.append(playlist)
 			}
 		}
 	}
@@ -195,8 +147,9 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         navigationController?.view.layer.cornerRadius = 20
         setupViews()
 		configureDataSource()
-		applyBackingStore(animated: true, isInitial: true)
-//        applySnapshot()
+		collectionView.delegate = self
+//		applyBackingStore(animated: true, isInitial: true)
+        applySnapshot()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -214,64 +167,26 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
     }
     
 	private func deleteSelectedPlaylist(playlist: Playlist) {
+		guard let playlistIndex = musicController.userPlaylists.firstIndex(of: playlist) else { return }
 		var snapshot = dataSource.snapshot()
-		guard
-			let playlist = snapshot.sectionIdentifier(containingItem: playlist.id),
-			let index = musicController.userPlaylists.firstIndex(of: playlist)
-		else { return }
-		
-		let sectionItems = snapshot.itemIdentifiers(inSection: playlist)
-		var sectionSnapshot = dataSource.snapshot(for: playlist)
-		sectionSnapshot.deleteAll()
-		snapshot.deleteItems(sectionItems)
 		snapshot.deleteSections([playlist])
-		musicController.userPlaylists.remove(at: index)
-		musicController.userPlaylistsBackingStore.removeValue(forKey: playlist.id)
-		playlist.songs.forEach {
-			musicController.userPlaylistsBackingStore.removeValue(forKey: $0.id)
-		}
+		musicController.userPlaylists.remove(at: playlistIndex)
 		musicController.saveToPersistentStore()
 		dataSource.apply(snapshot, animatingDifferences: true)
 	}
-	
-//    private func deleteSelectedPlaylist(playlist: PlaylistMedia) {
-//        var snapshot = dataSource.snapshot()
-//        guard let indexPath = dataSource.indexPath(for: playlist) else { return }
-//        if case PlaylistMedia.playlist(let playlist) = playlist {
-//            snapshot.deleteSections([playlist])
-//            musicController.userPlaylists.remove(at: indexPath.section)
-//            musicController.saveToPersistentStore()
-//        }
-//        dataSource.apply(snapshot, animatingDifferences: true)
-//    }
-    
+
 	private func deleteSelectedSong(song: Song) {
 		var snapshot = dataSource.snapshot()
-		guard
-			let playlist = snapshot.sectionIdentifier(containingItem: song.id),
-			let index = playlist.songs.firstIndex(of: song)
-		else { return }
-		snapshot.deleteItems([song.id])
-		playlist.songs.remove(at: index)
-		musicController.userPlaylistsBackingStore.removeValue(forKey: song.id)
-		backingStore.removeValue(forKey: playlist)
+		let playlistMediaSong = PlaylistMedia.song(song)
+		guard let playlist = snapshot.sectionIdentifier(containingItem: playlistMediaSong) else { return }
+		snapshot.deleteItems([playlistMediaSong])
+		playlist.removeSong(song: song)
+		snapshot.reloadSections([playlist])
 		musicController.saveToPersistentStore()
 		dataSource.apply(snapshot, animatingDifferences: true)
 	}
-	
-//    private func deleteSelectedSong(song: Song) {
-//        var snapshot = dataSource.snapshot()
-//        let playlistMedia = PlaylistMedia.song(song)
-//        guard let indexPath = dataSource.indexPath(for: playlistMedia) else { return }
-//        snapshot.deleteItems([playlistMedia])
-//        if let index = musicController.userPlaylists[indexPath.section].songs.firstIndex(of: song) {
-//            musicController.userPlaylists[indexPath.section].songs.remove(at: index)
-//            musicController.saveToPersistentStore()
-//        }
-//        dataSource.apply(snapshot, animatingDifferences: true)
-//    }
-    
-    private func makeCustomPlaylistCellRegistration() -> UICollectionView.CellRegistration<PlaylistCollectionViewCell, Playlist> {
+
+    func makeCustomPlaylistCellRegistration() -> UICollectionView.CellRegistration<PlaylistCollectionViewCell, Playlist> {
         let playlistCellRegistration = UICollectionView.CellRegistration<PlaylistCollectionViewCell, Playlist> { cell, indexPath, playlist in
             cell.playlist = playlist
 			let headerDisclosureOption = UICellAccessory.OutlineDisclosureOptions(style: .header, isHidden: false, tintColor: .white)
@@ -282,7 +197,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         return playlistCellRegistration
     }
     
-    private func makeCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Song> {
+    func makeCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Song> {
         let songCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Song> { [weak self] cell, indexPath, song in
             guard let self = self else { return }
             var content = cell.defaultContentConfiguration()
@@ -313,14 +228,12 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
             content.text = song.artistName
             content.secondaryText = song.songName
             cell.contentConfiguration = content
-//			let options = UICellAccessory.DeleteOptions(isHidden: nil, reservedLayoutWidth: .custom(80), tintColor: nil, backgroundColor: nil)
-			let delete: UICellAccessory = .delete(displayed: .whenEditing) {
+			let deleteOptions = UICellAccessory.DeleteOptions(isHidden: nil, reservedLayoutWidth: .standard, tintColor: nil, backgroundColor: nil)
+			let delete: UICellAccessory = .delete(displayed: .whenEditing, options: deleteOptions) {
 				self.deleteSelectedSong(song: song)
 			}
-//            let delete: UICellAccessory = .delete(displayed: .whenEditing, actionHandler: { self.deleteSelectedSong(song: song) })
-			let options = UICellAccessory.ReorderOptions(isHidden: nil, reservedLayoutWidth: .standard, tintColor: nil, showsVerticalSeparator: true)
-			let reorder: UICellAccessory = .reorder(displayed: .whenEditing, options: options)
-//            let reorder: UICellAccessory = .reorder(displayed: .whenEditing)
+			let reorderOptions = UICellAccessory.ReorderOptions(isHidden: nil, reservedLayoutWidth: .standard, tintColor: .white, showsVerticalSeparator: true)
+			let reorder: UICellAccessory = .reorder(displayed: .whenEditing, options: reorderOptions)
             var bgConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: cell.configurationState)
             bgConfig.backgroundColor = .clear
             cell.backgroundConfiguration = bgConfig
@@ -365,13 +278,8 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
     private func setupViews() {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Playlists"
-//        navigationItem.leftBarButtonItem = editButtonItem
-//        navigationItem.leftBarButtonItem?.tintColor = .white
-//		navigationItem.rightBarButtonItems = [UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"), style: .plain, target: self, action: #selector(createNewPlaylist(_:)))]
 		let navItem = UIBarButtonItem(title: "", image: UIImage(systemName: "ellipsis.circle"), menu: createMenu())
 		navigationItem.rightBarButtonItems = [navItem]
-//		navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createNewPlaylist))
-//        navigationItem.rightBarButtonItem?.tintColor = .white
         view.backgroundColor = .backgroundColor
         view.layer.cornerRadius = 20
         view.addSubview(collectionView)
@@ -380,25 +288,23 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
     }
     
 	func applySnapshot() {
-		var snapshot = PlaylistSnapshot()
-		snapshot.appendSections(musicController.userPlaylists)
 		musicController.userPlaylists.forEach {
-			var sectionSnapshot = NSDiffableDataSourceSectionSnapshot<String>()
-			sectionSnapshot.append([$0.id])
-			let songIDs = $0.songs.map { $0.id }
-			sectionSnapshot.append(songIDs, to: $0.id)
-			dataSource.apply(sectionSnapshot, to: $0, animatingDifferences: true)
+			var sectionSnapshot = NSDiffableDataSourceSectionSnapshot<PlaylistMedia>()
+			let playlistItem = PlaylistMedia.playlist($0)
+			sectionSnapshot.append([playlistItem])
+			sectionSnapshot.append($0.playlistMedia, to: playlistItem)
+			dataSource.apply(sectionSnapshot, to: $0)
 		}
 	}
 	
-	private func refreshSnapshot(using sectionTransactions: [NSDiffableDataSourceSectionTransaction<Playlist, String>], animated: Bool = false) {
+	private func refreshSnapshot(using sectionTransactions: [NSDiffableDataSourceSectionTransaction<Playlist, PlaylistMedia>], animated: Bool = false) {
 		DispatchQueue.main.async { [weak self] in
 			guard let self = self else { return }
 			for transaction in sectionTransactions {
 				let playlist = transaction.sectionIdentifier
 				var oldSectionSnapshot = self.dataSource.snapshot(for: playlist)
 				oldSectionSnapshot = transaction.initialSnapshot
-				self.printDataSourceItems("Items after invalid move...", stringIDs: transaction.initialSnapshot.items)
+//				self.printDataSourceItems("Items after invalid move...", stringIDs: transaction.initialSnapshot.items)
 				var snapshot = self.dataSource.snapshot()
 				snapshot.reloadSections([playlist])
 				self.dataSource.apply(oldSectionSnapshot, to: playlist, animatingDifferences: false)
@@ -445,10 +351,9 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 	/// - Parameter playlist: The playlist whose songs will be shuffled
 	func shuffleSongs(for playlist: Playlist) {
 		var sectionSnapshot = dataSource.snapshot(for: playlist)
-		var snapshotSection = NSDiffableDataSourceSectionSnapshot<String>()
-		playlist.songs.shuffle()
-		let shuffledSongIDs = playlist.songs.map { $0.id }
-		snapshotSection.append(shuffledSongIDs)
+		var snapshotSection = NSDiffableDataSourceSectionSnapshot<PlaylistMedia>()
+		playlist.shufflePlaylistSongs()
+		snapshotSection.append(playlist.playlistMedia)
 		sectionSnapshot.replace(childrenOf: sectionSnapshot.rootItems.first!, using: snapshotSection)
 		dataSource.apply(sectionSnapshot, to: playlist)
 		musicController.saveToPersistentStore()
@@ -456,119 +361,16 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 		setQueue(with: playlist)
 	}
 	
-//    func shuffleSongs(for playlist: Playlist) {
-//        var sectionSnapshot = dataSource.snapshot(for: playlist)
-//        var snapshotSection = NSDiffableDataSourceSectionSnapshot<PlaylistMedia>()
-//        playlist.songs.shuffle()
-//        let shuffledSongs = playlist.songs.map { PlaylistMedia.song($0) }
-//        snapshotSection.append(shuffledSongs)
-//        sectionSnapshot.replace(childrenOf: sectionSnapshot.rootItems.first!, using: snapshotSection)
-//        dataSource.apply(sectionSnapshot, to: playlist)
-//        musicController.saveToPersistentStore()
-//        musicController.musicPlayer.stop()
-//        setQueue(with: playlist)
-//    }
-	
 	func checkForSongAddedToExistingPlaylist() {
-		if let addedSongToPlaylist = musicController.addSongToPlaylistTuple {
-			let playlist = addedSongToPlaylist.playlist
-			let song = addedSongToPlaylist.song
-			var sectionSnapshot = dataSource.snapshot(for: playlist)
-			sectionSnapshot.append([song.id], to: playlist.id)
-			dataSource.apply(sectionSnapshot, to: playlist, animatingDifferences: true)
-			musicController.addSongToPlaylistTuple = nil
-		}
-	}
-	
-	private func initialBackingStore() -> Dictionary<Playlist, [String]> {
-		var allPlaylists = Dictionary<Playlist, [String]>()
-		musicController.userPlaylists.forEach {
-			allPlaylists[$0, default: [$0.id]] += $0.songIDs
-		}
-		return allPlaylists
-	}
-	
-	private func applyBackingStore(animated: Bool, isInitial: Bool) {
-		if isInitial {
-			for (playlist, songs) in backingStore {
-				var sectionSnapshot = NSDiffableDataSourceSectionSnapshot<String>()
-				sectionSnapshot.append([songs[0]])
-				let songIDs = Array(songs[1..<songs.count])
-				sectionSnapshot.append(songIDs, to: playlist.id)
-				dataSource.apply(sectionSnapshot, to: playlist, animatingDifferences: animated)
+		if musicController.songsAdded {
+			for playlist in musicController.userPlaylists {
+				guard !playlist.songsAddedFromSearch.isEmpty else { continue }
+				var sectionSnapshot = dataSource.snapshot(for: playlist)
+				sectionSnapshot.append(playlist.songsAddedPlaylistMedia, to: sectionSnapshot.rootItems.first!)
+				dataSource.apply(sectionSnapshot, to: playlist, animatingDifferences: false)
+				playlist.songsAddedFromSearch.removeAll()
 			}
-		} else {
-			var sections = [NSDiffableDataSourceSectionSnapshot<String>]()
-			
-			musicController.userPlaylists.forEach {
-				var newSectionSnapshot = NSDiffableDataSourceSectionSnapshot<String>()
-				var oldSectionSnapshot = dataSource.snapshot(for: $0)
-				newSectionSnapshot.append($0.songIDs)
-				oldSectionSnapshot.replace(childrenOf: oldSectionSnapshot.rootItems.first ?? $0.id, using: newSectionSnapshot)
-				sections.append(newSectionSnapshot)
-			}
-			
-			musicController.userPlaylists.enumerated().forEach {
-				var sectionSnapshot = sections[$0.offset]
-				sectionSnapshot.expand(sectionSnapshot.snapshot(of: sectionSnapshot.rootItems.first ?? $0.element.id, includingParent: false).items)
-				dataSource.apply(sectionSnapshot, to: $0.element, animatingDifferences: animated)
-			}
-		}
-	}
-	
-	private func updateSnapshotAfterValidMove(using sectionTransactions: [NSDiffableDataSourceSectionTransaction<Playlist, String>]) {
-		DispatchQueue.main.async { [weak self] in
-			guard let self = self else { return }
-			if self.isValidMove {
-				for transaction in sectionTransactions {
-					let playlist = transaction.sectionIdentifier
-					var oldSectionSnapshot = self.dataSource.snapshot(for: playlist)
-					
-					oldSectionSnapshot = transaction.finalSnapshot
-					
-					self.dataSource.apply(oldSectionSnapshot, to: playlist, animatingDifferences: false)
-					if transaction.difference.insertions.count > 0 {
-						let finalItemsSet = Set(transaction.finalSnapshot.items)
-						if let newSongID = finalItemsSet.symmetricDifference(transaction.initialSnapshot.items).first, let indexPath = self.dataSource.indexPath(for: newSongID) {
-							defer { self.collectionView.scrollToItem(at: indexPath, at: .top, animated: false) }
-							continue
-						}
-					}
-				}
-			} else {
-				self.isValidMove = true
-			}
-		}
-	}
-	
-	private func printDataSourceItems(_ title: String? = nil, stringIDs: [String]) {
-		if let title = title {
-			print("\n\(title)\n")
-		}
-		for identifier in stringIDs {
-			if let value = musicController.userPlaylistsBackingStore[identifier] {
-				if value is Song {
-					let song = value as! Song
-					print("Song Name: \(song.songName)")
-				}
-				if value is Playlist {
-					let playlist = value as! Playlist
-					print("Playlist Name: \(playlist.playlistName)")
-				}
-			}
-		}
-	}
-	
-	private func updateSnapshot(with snapshot: PlaylistSnapshot) {
-		DispatchQueue.global().async { [weak self] in
-			guard let self = self else { return }
-			var newSnapshot = PlaylistSnapshot()
-			newSnapshot = snapshot
-			var oldSnapshot = self.dataSource.snapshot()
-			oldSnapshot.deleteAllItems()
-			print("\nSnapshot Items:")
-			self.printDataSourceItems(stringIDs: snapshot.itemIdentifiers)
-			self.dataSource.apply(newSnapshot)
+			musicController.songsAdded = false
 		}
 	}
 	
@@ -592,5 +394,15 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 		collectionView.isEditing = false
 		let navItem = UIBarButtonItem(title: "", image: UIImage(systemName: "ellipsis.circle"), menu: createMenu())
 		navigationItem.rightBarButtonItems = [navItem]
+	}
+}
+
+extension PlaylistViewController: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath, toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath {
+		if proposedIndexPath.item == 0 {
+			return originalIndexPath
+		}
+		print("\nOriginal IndexPath: \(originalIndexPath), Proposed IndexPath: \(proposedIndexPath)\n")
+		return proposedIndexPath
 	}
 }

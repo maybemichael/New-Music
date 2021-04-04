@@ -42,6 +42,7 @@ class MusicController: ObservableObject {
         didSet {
             guard let songs = self.nowPlayingPlaylist?.songs else { return }
             self.nowPlayingViewModel.songs = songs
+			UserDefaults.standard.setValue(nowPlayingPlaylist?.id, forKey: UserDefaults.nowPlayingPlaylistID)
         }
     }
     
@@ -82,14 +83,8 @@ class MusicController: ObservableObject {
         musicPlayer.skipToPreviousItem()
     }
     
-    func removeSongFromPlaylist(song: Song) {
-		if let index = currentPlaylist.songs.firstIndex(of: song) {
-			currentPlaylist.songs.remove(at: index)
-        }
-    }
-    
     func addSongToPlaylist(song: Song, isPlaylistSearch: Bool) {
-		currentPlaylist.songs.append(song)
+		currentPlaylist.addNewSong(song: song)
 		currentQueue.storeIDs?.append(song.playID)
 		songsAdded = true
     }
@@ -108,7 +103,7 @@ class MusicController: ObservableObject {
     }
     
     func shufflePlaylist() {
-        nowPlayingPlaylist?.songs.shuffle()
+        nowPlayingPlaylist?.shufflePlaylistSongs()
         let shuffledPlaylist = nowPlayingPlaylist?.songs.map { $0.playID }
         if musicPlayer.playbackState == .playing {
             pause()
@@ -172,7 +167,7 @@ class MusicController: ObservableObject {
                 songs.append(song)
             }
         if let index = userPlaylists.firstIndex(of: playlist) {
-            userPlaylists[index].songs = songs
+			userPlaylists[index].replacePlaylistSongs(with: songs)
         }
     }
     
@@ -201,6 +196,11 @@ class MusicController: ObservableObject {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
         loadFromPersistentStore()
+		guard let currentPlaylistID = UserDefaults.standard.string(forKey: UserDefaults.nowPlayingPlaylistID) else { return }
+		self.nowPlayingPlaylist = userPlaylists.first(where: { $0.id == currentPlaylistID })
+		guard nowPlayingPlaylist != nil else { return }
+		let index = UserDefaults.standard.integer(forKey: UserDefaults.lastPlayedSongIndex)
+		nowPlayingViewModel.nowPlayingSong = nowPlayingPlaylist?.songs[index]
     }
     
     deinit {

@@ -22,6 +22,7 @@ enum NetworkError: Error {
     case decodingError(Error)
     case encodingError(Error)
     case genericError
+	case noSearchResultsFound
 }
 
 class APIController {
@@ -87,7 +88,7 @@ class APIController {
             completion(.failure(.genericError))
             return
         }
-        print("Request: \(request)")
+
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let networkError = NetworkError(data: data, response: response, error: error) {
                 completion(.failure(networkError))
@@ -105,7 +106,11 @@ class APIController {
                 }
                 self.songsNext = searchResults.songs?.next
                 self.albumsNext = searchResults.albums?.next
-                print("Searched Albums Count: \(self.searchedAlbums.count)")
+
+				guard !searchedSongs.isEmpty && !searchedAlbums.isEmpty else {
+					completion(.failure(.noSearchResultsFound))
+					return
+				}
                 completion(.success((songs: searchedSongs, albums: searchedAlbums)))
             } catch {
                 print("Error decoding json data \(error)")

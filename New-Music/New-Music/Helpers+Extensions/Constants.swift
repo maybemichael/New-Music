@@ -80,6 +80,7 @@ enum MediaType: String, Hashable, Codable {
     case song = "Songs"
     case album = "Albums"
     case artist = "Artists"
+	case playlist = "Playlist"
 }
 
 enum PlaylistMedia: Hashable, SettingItem {
