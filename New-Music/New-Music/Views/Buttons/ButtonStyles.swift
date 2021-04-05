@@ -110,9 +110,8 @@ struct BarToggleButtonStyle: ToggleStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         Button(action: {
-            nowPlayingViewModel.isPlaying.toggle()
-            configuration.isOn = nowPlayingViewModel.isPlaying ? true : false
-            configuration.isOn ? musicController.play() : musicController.pause()
+			configuration.isOn = nowPlayingViewModel.isPlaying
+			configuration.isOn ? musicController.pause() : musicController.play()
         }) {
             configuration.label
                 .padding(labelPadding)

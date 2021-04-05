@@ -21,8 +21,9 @@ class NowPlayingViewModel: ObservableObject {
     @Published var nowPlayingSong: Song? {
         didSet {
             playID = nowPlayingSong?.playID
+			UserDefaults.standard.set(index, forKey: UserDefaults.lastPlayedSongIndex)
 			if isInitial {
-				setLastNowPlayingSong()
+				setLastSongOnInitialAppLoad()
 				isInitial = false
 			}
         }
@@ -98,13 +99,26 @@ class NowPlayingViewModel: ObservableObject {
         self.elapsedTime = 0.0
         let index = musicPlayer.indexOfNowPlayingItem
         self.nowPlayingSong = songs[index]
-		UserDefaults.standard.set(index, forKey: UserDefaults.lastPlayedSongIndex)
         if let colors = getGradientColors() {
             self.lighterAccentColor = colors.lighter
             self.darkerAccentColor = colors.darker
         }
         getTextColors()
     }
+
+	private func setLastSongOnInitialAppLoad() {
+		albumArtwork = nowPlayingSong?.albumArtwork == nil ? nil : UIImage(data: nowPlayingSong?.albumArtwork ?? Data())
+		artist = nowPlayingSong?.artistName ?? ""
+		songTitle = nowPlayingSong?.songName ?? ""
+		duration = nowPlayingSong?.duration ?? 0.0
+		timeRemaining = nowPlayingSong?.duration ?? 0.0
+		elapsedTime = 0.0
+		if let colors = getGradientColors() {
+			self.lighterAccentColor = colors.lighter
+			self.darkerAccentColor = colors.darker
+		}
+		getTextColors()
+	}
     
     @objc
 	func musicPlayerStateDidChange(_ notification: Notification) {

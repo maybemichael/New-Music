@@ -41,16 +41,13 @@ class MusicController: ObservableObject {
     var nowPlayingPlaylist: Playlist? {
         didSet {
             guard let songs = self.nowPlayingPlaylist?.songs else { return }
-            self.nowPlayingViewModel.songs = songs
+			if nowPlayingViewModel.songs != songs {
+				self.nowPlayingViewModel.songs = songs
+			}
 			UserDefaults.standard.setValue(nowPlayingPlaylist?.id, forKey: UserDefaults.nowPlayingPlaylistID)
         }
     }
-    
-	var currentPlaylist = Playlist(playlistName: "") {
-        didSet {
-//            self.nowPlayingViewModel.songs = self.currentPlaylist
-        }
-    }
+
     var searchedSongs = [Media]() {
         didSet {
 
@@ -83,23 +80,18 @@ class MusicController: ObservableObject {
         musicPlayer.skipToPreviousItem()
     }
     
-    func addSongToPlaylist(song: Song, isPlaylistSearch: Bool) {
-		currentPlaylist.addNewSong(song: song)
-		currentQueue.storeIDs?.append(song.playID)
-		songsAdded = true
-    }
-    
-    func playlistSongTapped(index: Int) {
+	func playlistSongTapped(at index: Int, shouldPlayMusic: Bool) {
         musicPlayer.stop()
         currentQueue.storeIDs?.removeAll()
-		currentQueue.storeIDs = currentPlaylist.songs.map { $0.playID }
+		currentQueue.storeIDs = nowPlayingPlaylist?.songs.map { $0.playID }
 		currentQueue.startItemID = nowPlayingPlaylist?.songs[index].playID
-//        currentQueue.startItemID = currentPlaylist[index].playID
-//        currentPlaylist[index].isPlaying = true
         musicPlayer.setQueue(with: currentQueue)
-		nowPlayingViewModel.nowPlayingSong = currentPlaylist.songs[index]
-        musicPlayer.prepareToPlay()
-        musicPlayer.play()
+		nowPlayingViewModel.nowPlayingSong = nowPlayingPlaylist?.songs[index]
+		UserDefaults.standard.set(index, forKey: UserDefaults.lastPlayedSongIndex)
+		musicPlayer.prepareToPlay()
+		if shouldPlayMusic {
+			musicPlayer.play()
+		}
     }
     
     func shufflePlaylist() {
@@ -147,7 +139,6 @@ class MusicController: ObservableObject {
 				userPlaylistsBackingStore[newSong.id] = newSong
 			}
 		}
-		print("This is it: \(userPlaylistsBackingStore["A88F38AC-C783-459E-9111-123AB1809B3E"])")
     }
     
     func updateAlbumArtwork(for playlist: Playlist) {
@@ -170,6 +161,17 @@ class MusicController: ObservableObject {
 			userPlaylists[index].replacePlaylistSongs(with: songs)
         }
     }
+
+	func setQueue(with playlist: Playlist, shouldPlayMusic: Bool) {
+		let newQueue = playlist.songs.map { $0.playID }
+		updateAlbumArtwork(for: playlist)
+		musicPlayer.setQueue(with: newQueue)
+		nowPlayingPlaylist = playlist
+		musicPlayer.prepareToPlay()
+		if shouldPlayMusic {
+			play()
+		}
+	}
     
     @objc func playbackStateDidChange(_ notification: Notification) {
         let playbackState = musicPlayer.playbackState
@@ -196,11 +198,14 @@ class MusicController: ObservableObject {
         musicPlayer.beginGeneratingPlaybackNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange(_:)), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: nil)
         loadFromPersistentStore()
-		guard let currentPlaylistID = UserDefaults.standard.string(forKey: UserDefaults.nowPlayingPlaylistID) else { return }
-		self.nowPlayingPlaylist = userPlaylists.first(where: { $0.id == currentPlaylistID })
-		guard nowPlayingPlaylist != nil else { return }
+		guard
+			let currentPlaylistID = UserDefaults.standard.string(forKey: UserDefaults.nowPlayingPlaylistID),
+			let lastPlaylist = userPlaylists.first(where: { $0.id == currentPlaylistID })
+		else { return }
+		self.nowPlayingPlaylist = lastPlaylist
+		self.nowPlayingViewModel.songs = lastPlaylist.songs
 		let index = UserDefaults.standard.integer(forKey: UserDefaults.lastPlayedSongIndex)
-		nowPlayingViewModel.nowPlayingSong = nowPlayingPlaylist?.songs[index]
+		playlistSongTapped(at: index, shouldPlayMusic: false)
     }
     
     deinit {

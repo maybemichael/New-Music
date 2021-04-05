@@ -132,6 +132,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 
 		dataSource.reorderingHandlers.didReorder = { transaction in
 			var playlistsToReload: [Playlist] = []
+			defer { self.reloadSectionsAfterEditing(playlists: playlistsToReload) }
 			for sectionTransation in transaction.sectionTransactions {
 				let playlist = sectionTransation.sectionIdentifier
 				let playlistSongs = sectionTransation.finalSnapshot.snapshot(of: PlaylistMedia.playlist(playlist), includingParent: false).items
@@ -296,6 +297,15 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 			dataSource.apply(sectionSnapshot, to: $0)
 		}
 	}
+
+	func reloadSectionsAfterEditing(playlists: [Playlist]) {
+		DispatchQueue.main.async { [weak self] in
+			guard let self = self else { return }
+			var snapshot = self.dataSource.snapshot()
+			snapshot.reloadSections(playlists)
+			self.dataSource.apply(snapshot)
+		}
+	}
 	
 	private func refreshSnapshot(using sectionTransactions: [NSDiffableDataSourceSectionTransaction<Playlist, PlaylistMedia>], animated: Bool = false) {
 		DispatchQueue.main.async { [weak self] in
@@ -333,7 +343,7 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
         musicController.updateAlbumArtwork(for: playlist)
         musicController?.musicPlayer.setQueue(with: newQueue)
         musicController.nowPlayingPlaylist = playlist
-		musicController.currentPlaylist = playlist
+//		musicController.currentPlaylist = playlist
         musicController?.play()
     }
     
@@ -358,7 +368,8 @@ class PlaylistViewController: UIViewController, ReloadDataDelegate, PlaylistDele
 		dataSource.apply(sectionSnapshot, to: playlist)
 		musicController.saveToPersistentStore()
 		musicController.musicPlayer.stop()
-		setQueue(with: playlist)
+		musicController.setQueue(with: playlist, shouldPlayMusic: true)
+//		setQueue(with: playlist)
 	}
 	
 	func checkForSongAddedToExistingPlaylist() {

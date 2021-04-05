@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct NeuPlayPauseButton: View {
-    @EnvironmentObject var songViewModel: NowPlayingViewModel
+    @EnvironmentObject var nowPlayingViewModel: NowPlayingViewModel
     @State var isPlaying: Bool
     var musicController: MusicController
     var size: CGFloat
     
     var body: some View {
-        Toggle(isOn: $isPlaying) {
-            Image(systemName: songViewModel.isPlaying ? "pause": "play.fill")
+		Toggle(isOn: $isPlaying) {
+            Image(systemName: nowPlayingViewModel.isPlaying ? "pause": "play.fill")
                 .font(Font.system(size: size / 3, weight: .black, design: .default))
                 .padding()
-                .foregroundColor(Color(imageTint(isTooLight: songViewModel.isTooLight)))
+                .foregroundColor(Color(imageTint(isTooLight: nowPlayingViewModel.isTooLight)))
 //                .font(Font.system(.callout).weight(.black))
                 
         }
@@ -30,7 +30,7 @@ struct NeuPlayPauseButton: View {
     }
     
     private func gradient(for state: Bool) -> LinearGradient {
-        state ? LinearGradient(direction: .diagonalTopToBottom, songViewModel.darkerAccentColor, songViewModel.lighterAccentColor) : LinearGradient(direction: .diagonalTopToBottom, songViewModel.lighterAccentColor, songViewModel.darkerAccentColor)
+        state ? LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.darkerAccentColor, nowPlayingViewModel.lighterAccentColor) : LinearGradient(direction: .diagonalTopToBottom, nowPlayingViewModel.lighterAccentColor, nowPlayingViewModel.darkerAccentColor)
     }
 }
 
@@ -41,9 +41,9 @@ struct ToggleButtonStyle: ToggleStyle {
     
     func makeBody(configuration: Self.Configuration) -> some View {
         Button(action: {
-            nowPlayingViewModel.isPlaying.toggle()
-            configuration.isOn = nowPlayingViewModel.isPlaying ? true : false
-            configuration.isOn ? musicController.play() : musicController.pause()
+			configuration.isOn = nowPlayingViewModel.isPlaying
+			configuration.isOn ? musicController.pause() : musicController.play()
+//			configuration.isOn = nowPlayingViewModel.isPlaying ? configuration.isOn : !configuration.isOn
         }) {
             configuration.label
                 .contentShape(Circle())

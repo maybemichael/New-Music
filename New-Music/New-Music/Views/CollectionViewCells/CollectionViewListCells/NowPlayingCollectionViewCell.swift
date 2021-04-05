@@ -20,8 +20,6 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
                 indicator = NowPlayingIndictorView(frame: .zero, nowPlayingViewModel: nowPlayingViewModel)
                 self.indicatorView = indicator
                 holderView.addSubview(indicator)
-//                indicator.setSize(width: (UIScreen.main.bounds.width / 7) / 2.25, height: (UIScreen.main.bounds.width / 7) / 2.25)
-//                indicator.anchor(centerX: holderView.centerXAnchor, centerY: holderView.centerYAnchor)
                 indicator.anchor(top: holderView.topAnchor, leading: holderView.leadingAnchor, trailing: holderView.trailingAnchor, bottom: holderView.bottomAnchor)
             }
         }
@@ -108,7 +106,7 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
         backgroundConfiguration = backgroundConfig
         
         self.separatorLayoutGuide.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: (UIScreen.main.bounds.width / 7) + 28).isActive = true
-        nowPlayingViewModel?.isPlaying = nowPlayingViewModel?.musicPlayer.playbackState == .playing
+//        nowPlayingViewModel?.isPlaying = nowPlayingViewModel?.musicPlayer.playbackState == .playing
         createWillEnterForegroundListener()
     }
     
@@ -123,9 +121,22 @@ class NowPlayingCollectionViewCell: UICollectionViewListCell {
     
     private func makeContentConfiguration() -> UIListContentConfiguration {
         var config = defaultContentConfiguration()
-        config.text = song?.artistName
-        config.secondaryText = song?.songName
-        config.image = UIImage(data: song?.albumArtwork ?? Data())
+		if let song = song {
+			config.text = song.artistName
+			config.secondaryText = song.songName
+			if let albumArtwork = song.albumArtwork {
+				config.image = UIImage(data: albumArtwork)
+			} else {
+				APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+					switch result {
+					case .success(let imageData):
+						config.image = UIImage(data: imageData ?? Data())
+					case .failure(let error):
+						print("Unable to fetch image data for song: \(song). Error: \(error.localizedDescription)")
+					}
+				}
+			}
+		}
         config.imageProperties.maximumSize = CGSize(width: UIScreen.main.bounds.width / 7, height: UIScreen.main.bounds.width / 7)
         config.imageToTextPadding = 8
         config.imageProperties.cornerRadius = 8

@@ -152,7 +152,6 @@ class CreatePlaylistViewController: UIViewController, ReloadDataDelegate, Playli
     func setQueue(with playlist: Playlist) {
         let newQueue = playlist.songs.map { $0.playID }
         musicController?.musicPlayer.setQueue(with: newQueue)
-        musicController?.currentPlaylist = playlist
         musicController?.play()
     }
     

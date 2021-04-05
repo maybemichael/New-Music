@@ -61,7 +61,10 @@ class Playlist: Hashable, Codable, MediaItem {
 	}
 
 	func replacePlaylistSongs(with updatedSongs: [Song]) {
-		songs = updatedSongs
+		songs.removeAll()
+		updatedSongs.forEach {
+			addNewSong(song: $0)
+		}
 	}
 
 	func updatePlaylistSongsAfterEditing(updatedSongs: [PlaylistMedia]) {
@@ -97,11 +100,39 @@ class Playlist: Hashable, Codable, MediaItem {
 		songs.shuffle()
 	}
 
-//	@objc
-//	private func updatePlaylistDuration() {
-//		NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(updatePlaylistDuration), object: nil)
-//		perform(#selector(updatePlaylistDuration), with: nil, afterDelay: 0.5)
-//	}
+	func updateAlbumArtwork(completion: @escaping () -> Void) {
+		guard !songs.isEmpty else { return }
+		for index in (0..<songs.count) {
+			guard songs[index].albumArtwork == nil else { continue }
+			APIController.shared.fetchImage(mediaItem: songs[index], size: 500) { result in
+				switch result {
+				case .success(let imageData):
+					self.songs[index].albumArtwork = imageData
+				case .failure(let error):
+					print("Error fetching songs for searchTerm: \(error.localizedDescription)")
+				}
+			}
+		}
+	}
+
+	func updateAlbumArtwork(for playlist: Playlist) {
+		var updatedSongs = [Song]()
+		songs.forEach {
+			var song = $0
+			if song.albumArtwork == nil {
+				APIController.shared.fetchImage(mediaItem: song, size: 500) { result in
+					switch result {
+					case .success(let imageData):
+						song.albumArtwork = imageData
+					case .failure(let error):
+						print("Error fetching songs for searchTerm: \(error.localizedDescription)")
+					}
+				}
+			}
+			updatedSongs.append(song)
+		}
+		self.replacePlaylistSongs(with: updatedSongs)
+	}
 
 	init(playlistName: String, songs: [Song] = []) {
 		self.playlistName = playlistName

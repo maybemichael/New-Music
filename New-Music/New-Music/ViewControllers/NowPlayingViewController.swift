@@ -22,14 +22,6 @@ class NowPlayingViewController: UIViewController {
         return view
     }()
     
-//    lazy var collectionView: UICollectionView = {
-//        let cv = UICollectionView(frame: .zero, collectionViewLayout: createCompLayout())
-//        cv.register(CurrentPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier)
-//        cv.backgroundColor = .clear
-//        cv.contentInset.bottom = 66
-//        return cv
-//    }()
-    
     lazy var collectionView: UICollectionView = {
         var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
         layoutConfig.headerMode = .supplementary
@@ -43,25 +35,7 @@ class NowPlayingViewController: UIViewController {
         cv.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.identifier)
         return cv
     }()
-    
-//    lazy var dataSource: CurrentPlaylistDataSource = {
-//        let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, song -> UICollectionViewCell? in
-//            guard let self = self else { return nil }
-//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrentPlaylistCollectionViewCell.identifier, for: indexPath) as! CurrentPlaylistCollectionViewCell
-//            guard
-//                let song = self.musicController?.currentPlaylist[indexPath.item],
-//                let viewController = self.coordinator?.getPlaylistCellView(for: indexPath, with: song, moveTo: self) as? PlayingIndicatorViewController
-//            else { fatalError("fatal error in NowPlayingViewController data source for collection view") }
-//
-//            viewController.view.backgroundColor = .clear
-//            cell.hostedView = viewController.view
-//            viewController.song = song
-//            cell.song = song
-//
-//            return cell
-//        }
-//        return dataSource
-//    }()
+
     lazy var dataSource: CurrentPlaylistDataSource = {
         let dataSource = CurrentPlaylistDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, song -> UICollectionViewCell? in
             guard let self = self else { fatalError() }
@@ -162,7 +136,7 @@ class NowPlayingViewController: UIViewController {
 
 extension NowPlayingViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        musicController?.playlistSongTapped(index: indexPath.item)
+		musicController?.playlistSongTapped(at: indexPath.item, shouldPlayMusic: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
